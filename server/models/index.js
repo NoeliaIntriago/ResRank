@@ -1,5 +1,7 @@
 const dbConfig = require("../config/config.js");
 const Sequelize = require("sequelize");
+const fs = require('fs');
+const path = require('path');
 
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     host: dbConfig.HOST,
@@ -15,22 +17,19 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 
 const { relationSetup } = require('./relationSetup');
 
-const modelDefiners = [
-  require('./model/Food'),
-  require('./model/Local'),
-  require('./model/Opinion'),
-  require('./model/Owner'),
-  require('./model/Student'),
-  require('./model/UserType'),
-];
+var dirPath = path.dirname(__dirname);
+var files = fs.readdirSync(dirPath+'/models/model');
 
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-for (const modelDefiner of modelDefiners) {
-  modelDefiner(sequelize, Sequelize);
+for (const modelPath of files) {
+  const model=require(`./model/${modelPath}`)(sequelize, Sequelize);
+  const modelName=modelPath.replace('.js','');
+  db[modelName]=model;
 }
+
 relationSetup(sequelize);
 
 module.exports = db;
