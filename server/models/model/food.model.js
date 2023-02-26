@@ -17,7 +17,11 @@ module.exports = (sequalize, Sequalize) => {
             id_local: {
                 type: Sequalize.INTEGER
             }
-        },
+        },{
+            timestamps: false,
+            createdAt: false,
+            updatedAt: false,
+        }
     );
     return Food;
 };

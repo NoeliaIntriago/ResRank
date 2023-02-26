@@ -11,7 +11,11 @@ module.exports = (sequalize, Sequalize) => {
             description: {
                 type: Sequalize.STRING
             }
-        },
+        },{
+            timestamps: false,
+            createdAt: false,
+            updatedAt: false,
+        }
     );
     return Type;
 };

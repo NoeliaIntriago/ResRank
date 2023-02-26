@@ -32,7 +32,11 @@ module.exports = (sequalize, Sequalize) => {
             id_owner: {
                 type: Sequalize.INTEGER
             }
-        },
+        },{
+            timestamps: false,
+            createdAt: false,
+            updatedAt: false,
+        }
     );
     return Local;
 };

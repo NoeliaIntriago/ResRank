@@ -26,7 +26,11 @@ module.exports = (sequalize, Sequalize) => {
             user_type: {
                 type: Sequalize.INTEGER
             }
-        },
+        },{
+            timestamps: false,
+            createdAt: false,
+            updatedAt: false,
+        }
     );
     return Student;
 };

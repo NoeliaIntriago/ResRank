@@ -14,7 +14,11 @@ module.exports = (sequalize, Sequalize) => {
             id_type: {
                 type: Sequalize.STRING
             }
-        },
+        },{
+            timestamps: false,
+            createdAt: false,
+            updatedAt: false,
+        }
     );
     return UserType;
 };

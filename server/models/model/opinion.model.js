@@ -20,7 +20,11 @@ module.exports = (sequalize, Sequalize) => {
             id_student: {
                 type: Sequalize.INTEGER
             }
-        },
+        },{
+            timestamps: false,
+            createdAt: false,
+            updatedAt: false,
+        }
     );
     return Opinion;
 };

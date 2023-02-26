@@ -26,7 +26,7 @@ db.sequelize = sequelize;
 
 for (const modelPath of files) {
   const model=require(`./model/${modelPath}`)(sequelize, Sequelize);
-  const modelName=modelPath.replace('.js','');
+  const modelName=modelPath.replace('.model.js','');
   db[modelName]=model;
 }
 
