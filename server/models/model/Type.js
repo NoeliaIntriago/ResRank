@@ -1,6 +1,6 @@
 module.exports = (sequalize, Sequalize) => {
-    const UserType = sequalize.define(
-        'userType',
+    const Type = sequalize.define(
+        'type',
         {
             id: {
                 allowNull: false,
@@ -8,13 +8,10 @@ module.exports = (sequalize, Sequalize) => {
                 primaryKey: true,
                 type: Sequalize.INTEGER
             },
-            id_user: {
-                type: Sequalize.STRING
-            },
-            id_type: {
+            description: {
                 type: Sequalize.STRING
             }
         },
     );
-    return UserType;
+    return Type;
 };
