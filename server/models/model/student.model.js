@@ -30,6 +30,8 @@ module.exports = (sequalize, Sequalize) => {
             timestamps: false,
             createdAt: false,
             updatedAt: false,
+            modelName: 'student',
+            tableName: 'student',
         }
     );
     return Student;

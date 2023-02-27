@@ -28,14 +28,13 @@ module.exports = (sequalize, Sequalize) => {
             },
             close_time: {
                 type: Sequalize.TIME
-            },
-            id_owner: {
-                type: Sequalize.INTEGER
             }
         },{
             timestamps: false,
             createdAt: false,
             updatedAt: false,
+            modelName: 'local',
+            tableName: 'local',
         }
     );
     return Local;

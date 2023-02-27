@@ -13,14 +13,13 @@ module.exports = (sequalize, Sequalize) => {
             },
             description: {
                 type: Sequalize.STRING
-            },
-            id_local: {
-                type: Sequalize.INTEGER
             }
         },{
             timestamps: false,
             createdAt: false,
             updatedAt: false,
+            modelName: 'food',
+            tableName: 'food',
         }
     );
     return Food;

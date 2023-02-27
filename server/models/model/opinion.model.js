@@ -12,18 +12,14 @@ module.exports = (sequalize, Sequalize) => {
                 type: Sequalize.INTEGER
             },
             details: {
-                type: Sequalize.STRING
-            },
-            id_local: {
-                type: Sequalize.INTEGER
-            },
-            id_student: {
-                type: Sequalize.INTEGER
+                type: Sequalize.TEXT('long')
             }
         },{
             timestamps: false,
             createdAt: false,
             updatedAt: false,
+            modelName: 'opinion',
+            tableName: 'opinion',
         }
     );
     return Opinion;
