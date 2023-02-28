@@ -9,7 +9,7 @@ module.exports = (sequalize, Sequalize) => {
                 type: Sequalize.INTEGER
             },
             price: {
-                type: Sequalize.INTEGER
+                type: Sequalize.FLOAT
             },
             description: {
                 type: Sequalize.STRING

@@ -21,7 +21,8 @@ module.exports = (sequalize, Sequalize) => {
                 type: Sequalize.INTEGER
             },
             score: {
-                type: Sequalize.INTEGER
+                type: Sequalize.FLOAT,
+                defaultValue: 0
             },
             open_time: {
                 type: Sequalize.TIME

@@ -15,9 +15,17 @@ app.use(express.json());
 app.use(express.urlencoded());
 
 // Routers
+var foodRouter = require('./routes/food.route');
+var localRouter = require('./routes/local.route');
+var opinionRouter = require('./routes/opinion.route');
 var ownerRouter = require('./routes/owner.route');
+var studentRouter = require('./routes/student.route');
 
+app.use("/food", foodRouter);
+app.use("/local", localRouter);
+app.use("/opinion", opinionRouter);
 app.use("/owner", ownerRouter);
+app.use("/student", studentRouter);
 
 app.listen(3001, () => {
     console.log("Server running on port 3001");
