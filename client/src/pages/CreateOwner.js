@@ -2,6 +2,7 @@ import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function CreateOwner() {
     const initialValues = {
@@ -24,8 +25,11 @@ function CreateOwner() {
     const onSubmit = (data) => {
         axios.post("http://localhost:3001/owner", data).then((res) => {
             console.log(data);
+            navigate(`/`);
         });
     };
+
+    let navigate = useNavigate();
 
     return (
         <div className="createOwnerPage">

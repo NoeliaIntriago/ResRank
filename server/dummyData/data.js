@@ -7,7 +7,7 @@ module.exports = {
             cellphone: '0939001295',
             email: 'noelia-2345@hotmail.com',
             password: 'asdas',
-            user_type: 1
+            userType: 1
         },
         {
             id: 2,
@@ -16,7 +16,7 @@ module.exports = {
             cellphone: '0915001395',
             email: 'dintriago@hotmail.com',
             password: 'asdas',
-            user_type: 1
+            userType: 1
         },
         {
             id: 3,
@@ -25,7 +25,7 @@ module.exports = {
             cellphone: '0987005695',
             email: 'mlopez@hotmail.com',
             password: 'asdas',
-            user_type: 1
+            userType: 1
         },
         {
             id: 4,
@@ -34,7 +34,7 @@ module.exports = {
             cellphone: '0925148995',
             email: 'dserrani@hotmail.com',
             password: 'asdas',
-            user_type: 1
+            userType: 1
         },
     ],
     student: [
@@ -45,7 +45,7 @@ module.exports = {
             email: 'noinsanc@espol.edu.ec',
             password: 'asdas',
             career: 'FIEC',
-            user_type: 2
+            userType: 2
         },
         {
             id: 2,
@@ -54,7 +54,7 @@ module.exports = {
             email: 'dlandeta@espol.edu.ec',
             password: 'asdas',
             career: 'FIEC',
-            user_type: 2
+            userType: 2
         },
         {
             id: 3,
@@ -63,7 +63,7 @@ module.exports = {
             email: 'ykim@espol.edu.ec',
             password: 'asdas',
             career: 'FIMCP',
-            user_type: 2
+            userType: 2
         },
         {
             id: 4,
@@ -72,7 +72,7 @@ module.exports = {
             email: 'marsdel@espol.edu.ec',
             password: 'asdas',
             career: 'FIEC',
-            user_type: 2
+            userType: 2
         },
         {
             id: 5,
@@ -81,7 +81,7 @@ module.exports = {
             email: 'marrcarr@espol.edu.ec',
             password: 'asdas',
             career: 'FIEC',
-            user_type: 2
+            userType: 2
         },
     ],
     local: [
