@@ -11,6 +11,7 @@ exports.create = async (req, res) => {
     }
     var owner = { ...req.body };
     try {
+        console.log(owner);
         var data = await Owner.create(owner);
         res.send(data);
     } catch(err) {

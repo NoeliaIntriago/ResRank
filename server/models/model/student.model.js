@@ -23,7 +23,7 @@ module.exports = (sequalize, Sequalize) => {
             career: {
                 type: Sequalize.STRING
             },
-            user_type: {
+            userType: {
                 type: Sequalize.INTEGER
             }
         },{

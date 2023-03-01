@@ -23,7 +23,7 @@ module.exports = (sequalize, Sequalize) => {
             password: {
                 type: Sequalize.STRING
             },
-            user_type: {
+            userType: {
                 type: Sequalize.INTEGER
             }
         },{
