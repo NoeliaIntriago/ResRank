@@ -16,7 +16,7 @@ function Home() {
         <div>
             {owners.map((value, key) => {
                 return (
-                    <div className="owner" onClick={() => navigate(`/owner/${value.id}`)}>
+                    <div key={key} className="owner" onClick={() => navigate(`/owner/${value.id}`)}>
                         <div className="name"> {value.name} {value.lastName} </div>
                         <div className="cellphone"> {value.cellphone} </div>
                         <div className="email"> {value.email} </div>

@@ -133,7 +133,7 @@ span {
   height: 100%;
 }
 
-.ownerInfo {
+.leftSide {
   flex: 50%;
   height: calc(100vh - 70px);
   display: grid;
@@ -151,4 +151,53 @@ span {
 
 #individual .body {
   font-size: 25px;
+}
+
+.rightSide {
+  flex: 50%;
+  height: calc(100vh - 70px);
+  display: grid;
+  place-items: center;
+}
+
+.rightSide .addLocalContainer {
+  flex: 20%;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  margin-top: 25px;
+}
+
+.addLocalContainer input,
+button {
+  width: 200px;
+  height: 50px;
+  border-radius: 8px;
+  border: none;
+}
+
+.addLocalContainer button {
+  background-color: dodgerblue;
+  color: white;
+}
+
+.addLocalContainer input {
+  border: 2px solid dodgerblue;
+}
+
+.rightSide .localsContainer {
+  flex: 80%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.localsContainer .local {
+  width: 70%;
+  height: auto;
+  padding: 30px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  margin-top: 20px;
 }

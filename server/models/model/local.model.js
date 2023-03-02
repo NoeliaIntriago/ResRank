@@ -15,10 +15,10 @@ module.exports = (sequalize, Sequalize) => {
                 type: Sequalize.STRING
             },
             latitude: {
-                type: Sequalize.INTEGER
+                type: Sequalize.FLOAT
             },
             longitude: {
-                type: Sequalize.INTEGER
+                type: Sequalize.FLOAT
             },
             score: {
                 type: Sequalize.FLOAT,
