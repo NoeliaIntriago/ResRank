@@ -10,6 +10,7 @@ exports.create = async (req, res) => {
         });
     }
     var opinion = { ...req.body };
+    console.log(opinion);
     try {
         var data = await Opinion.create(opinion);
         res.send(data);

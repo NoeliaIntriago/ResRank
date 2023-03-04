@@ -11,8 +11,8 @@ body {
   padding: 0;
 }
 
-/* SHOW OWNERS CSS */
-.owner {
+/* SHOW OWNERS/STUDENT CSS */
+.owner, .student {
   width: 400px;
   height: 300px;
   display: flex;
@@ -26,12 +26,13 @@ body {
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
-.owner:hover {
+.owner:hover, .student:hover {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   cursor: pointer;
 }
 
-.owner .name {
+.owner .name, 
+.student .name {
   flex: 20%;
   border-bottom: 1px solid lightgray;
   background-color: dodgerblue;
@@ -42,13 +43,17 @@ body {
 
 .owner .cellphone, 
 .owner .email,
-.owner .password  {
+.owner .password,
+.student .career, 
+.student .email,
+.student .password   {
   flex: 60%;
   display: grid;
   place-content: center;
 }
 
-.owner .footer {
+.owner .footer,
+.student .footer {
   flex: 20%;
   border-top: 1px solid lightgray;
   display: flex;
@@ -61,7 +66,8 @@ body {
 }
 
 /* CREATE POST PAGE CSS */
-.createOwnerPage {
+.createOwnerPage,
+.createStudentPage {
   font-family: Arial, Helvetica, sans-serif;
   width: 100vw;
   height: 70vh;
@@ -81,7 +87,8 @@ body {
   border-radius: 5px;
 }
 
-.formContainer #inputCreateOwner {
+.formContainer #inputCreateOwner,
+.formContainer #inputCreateStudent {
   height: 40px;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -125,8 +132,9 @@ span {
   color: white;
 }
 
-/* INDIVIDUAL OWNER */
-.ownerPage {
+/* INDIVIDUAL OWNER/STUDENT */
+.ownerPage,
+.studentPage {
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -160,7 +168,8 @@ span {
   place-items: center;
 }
 
-.rightSide .addLocalContainer {
+.rightSide .addLocalContainer,
+.rightSide .addOpinionContainer {
   flex: 20%;
   width: 100%;
   display: grid;
@@ -168,24 +177,27 @@ span {
   margin-top: 25px;
 }
 
-.addLocalContainer input,
-button {
+.addLocalContainer input, button,
+.addOpinionContainer input, button {
   width: 200px;
   height: 50px;
   border-radius: 8px;
   border: none;
 }
 
-.addLocalContainer button {
+.addLocalContainer button,
+.addOpinionContainer button  {
   background-color: dodgerblue;
   color: white;
 }
 
-.addLocalContainer input {
+.addLocalContainer input,
+.addOpinionContainer input {
   border: 2px solid dodgerblue;
 }
 
-.rightSide .localsContainer {
+.rightSide .localsContainer,
+.rightSide .opinionsContainer {
   flex: 80%;
   width: 100%;
   display: flex;
@@ -193,7 +205,8 @@ button {
   align-items: center;
 }
 
-.localsContainer .local {
+.localsContainer .local,
+.opinionsContainer .opinion {
   width: 70%;
   height: auto;
   padding: 30px;

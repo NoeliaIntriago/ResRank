@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function CreateOwner() {
+function CreateLocal() {
     const initialValues = {
         name: "",
         lastName: "",
@@ -87,4 +87,4 @@ function CreateOwner() {
     )
 }
 
-export default CreateOwner
+export default CreateLocal

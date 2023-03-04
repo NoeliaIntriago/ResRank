@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
 
-function Post() {
+function Owner() {
   let { id } = useParams();
   const [owner, setOwnerObject] = useState({});
   const [locals, setLocals] = useState([]);
@@ -73,4 +73,4 @@ function Post() {
   )
 }
 
-export default Post
+export default Owner

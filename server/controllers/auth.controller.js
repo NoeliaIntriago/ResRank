@@ -88,7 +88,7 @@ exports.loginStudent = async(req, res) => {
     var {email, password} = req.body;
     const student = await Student.findOne({ where: { email: email }});
 
-    if (!owner){
+    if (!student){
         res.send("Student doesn't exist");
     } else {
         bcrypt.compare(password, student.password).then((match) => {

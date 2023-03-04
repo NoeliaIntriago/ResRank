@@ -25,20 +25,20 @@ function RegisterStudent() {
     const onSubmit = (data) => {
         axios.post("http://localhost:3001/auth/register/student", data).then((res) => {
             console.log(data);
-            navigate(`/owners`);
+            navigate(`/students`);
         });
     };
 
     let navigate = useNavigate();
 
     return (
-        <div className="createOwnerPage">
+        <div className="createStudentPage">
             <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
                 <Form className="formContainer">
                     <label>Name: </label>
                     <Field
                         autoComplete="off"
-                        id="inputCreateOwner"
+                        id="inputCreateStudent"
                         name="name"
                         placeholder="Ingrese nombre"
                     />
@@ -47,7 +47,7 @@ function RegisterStudent() {
                     <label>Lastname: </label>
                     <Field
                         autoComplete="off"
-                        id="inputCreateOwner"
+                        id="inputCreateStudent"
                         name="lastName"
                         placeholder="Ingrese apellido"
                     />
@@ -56,7 +56,7 @@ function RegisterStudent() {
                     <label>Career: </label>
                     <Field
                         autoComplete="off"
-                        id="inputCreateOwner"
+                        id="inputCreateStudent"
                         name="career"
                         placeholder="Ingrese career"
                     />
@@ -65,7 +65,7 @@ function RegisterStudent() {
                     <label>Email: </label>
                     <Field
                         autoComplete="off"
-                        id="inputCreateOwner"
+                        id="inputCreateStudent"
                         name="email"
                         placeholder="Ingrese email"
                     />
@@ -75,7 +75,7 @@ function RegisterStudent() {
                     <Field
                         autoComplete="off"
                         type="password"
-                        id="inputCreateOwner"
+                        id="inputCreateStudent"
                         name="password"
                         placeholder="Ingrese contraseña"
                     />
