@@ -1,8 +1,5 @@
 import React from 'react';
-import { Link, Routes, Route } from 'react-router-dom';
-import RegisterOwner from './register/RegisterOwner';
-import RegisterStudent from './register/RegisterStudent';
-
+import { Link } from 'react-router-dom';
 function Register() {
     return (
         <div className="buttons">
@@ -12,11 +9,6 @@ function Register() {
             <Link to="/register/student">
                 <button> I'm an Student </button>
             </Link>
-
-            <Routes>
-                <Route path="/register/owner" exact element={<RegisterOwner/>}/>
-                <Route path="/register/student" exact element={<RegisterStudent/>}/>
-            </Routes>
         </div>
     )
 }

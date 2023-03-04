@@ -2,10 +2,12 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import ShowOwners from "./pages/owner/ShowOwners";
 import Owner  from './pages/owner/Owner';
-import Login from './pages/Login';
 import Register from './pages/Register';
 import RegisterOwner from './pages/register/RegisterOwner';
 import RegisterStudent from './pages/register/RegisterStudent';
+import Login from './pages/Login';
+import LoginOwner from './pages/login/LoginOwner';
+import LoginStudent from './pages/login/LoginStudent';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
           <Route path="/owner/:id" exact element={<Owner/>}/>
           <Route path="/register/owner" exact element={<RegisterOwner/>}/>
           <Route path="/register/student" exact element={<RegisterStudent/>}/>
+          <Route path="/login/owner" exact element={<LoginOwner/>}/>
+          <Route path="/login/student" exact element={<LoginStudent/>}/>
         </Routes>
       </Router>
     </div>
