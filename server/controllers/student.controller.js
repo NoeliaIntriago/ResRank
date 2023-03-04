@@ -2,26 +2,6 @@ const db = require('../models');
 const Student = db.student;
 const Op = db.Sequelize.Op;
 
-// Crear estudiante
-exports.create = async (req, res) => {
-    if (!req.body.name || !req.body.lastName || !req.body.email 
-        || !req.body.password || !req.body.career) {
-        res.status(400).send({
-            message: "Content can not be empty!"
-        });
-    }
-    var student = { ...req.body };
-    try {
-        var data = await Student.create(student);
-        res.send(data);
-    } catch(err) {
-        res.status(500).send({
-            message:
-                err.message || "Some error occurred while creating the student."
-        });
-    }
-};
-
 // Obtener todos los estudiantes
 exports.findAll = async (req, res) => {
     try {

@@ -1,26 +1,7 @@
 var db = require('../models');
+var bcrypt = require("bcrypt");
 var Owner = db.owner;
 var Op = db.Sequelize.Op;
-
-// Crear dueño
-exports.create = async (req, res) => {
-    if (!req.body.name || !req.body.lastName || !req.body.cellphone || !req.body.email || !req.body.password) {
-        res.status(400).send({
-            message: "Content can not be empty!"
-        });
-    }
-    var owner = { ...req.body };
-    try {
-        console.log(owner);
-        var data = await Owner.create(owner);
-        res.send(data);
-    } catch(err) {
-        res.status(500).send({
-            message:
-                err.message || "Some error occurred while creating the owner."
-        });
-    }
-};
 
 // Obtener todos los dueños
 exports.findAll = async (req, res) => {

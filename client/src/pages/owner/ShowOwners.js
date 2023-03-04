@@ -20,7 +20,6 @@ function Home() {
                         <div className="name"> {value.name} {value.lastName} </div>
                         <div className="cellphone"> {value.cellphone} </div>
                         <div className="email"> {value.email} </div>
-                        <div className="password"> {value.password} </div>
                     </div>
                 );
             })}

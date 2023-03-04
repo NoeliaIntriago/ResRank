@@ -20,12 +20,14 @@ var localRouter = require('./routes/local.route');
 var opinionRouter = require('./routes/opinion.route');
 var ownerRouter = require('./routes/owner.route');
 var studentRouter = require('./routes/student.route');
+var registerRouter = require('./routes/auth.route');
 
 app.use("/food", foodRouter);
 app.use("/local", localRouter);
 app.use("/opinion", opinionRouter);
 app.use("/owner", ownerRouter);
 app.use("/student", studentRouter);
+app.use("/auth", registerRouter);
 
 app.listen(3001, () => {
     console.log("Server running on port 3001");
