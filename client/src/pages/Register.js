@@ -1,89 +1,22 @@
 import React from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, Routes, Route } from 'react-router-dom';
+import RegisterOwner from './register/RegisterOwner';
+import RegisterStudent from './register/RegisterStudent';
 
 function Register() {
-    const initialValues = {
-        name: "",
-        lastName: "",
-        cellphone: "",
-        email: "",
-        password: "",
-        userType: 1
-    };
-
-    const validationSchema = Yup.object().shape({
-        name: Yup.string().required(),
-        lastName: Yup.string().required(),
-        cellphone: Yup.string().required(),
-        email: Yup.string().required(),
-        password: Yup.string().min(4).max(16).required(),
-    });
-
-    const onSubmit = (data) => {
-        axios.post("http://localhost:3001/auth/register/owner", data).then((res) => {
-            console.log(data);
-            navigate(`/owners`);
-        });
-    };
-
-    let navigate = useNavigate();
-
     return (
-        <div className="createOwnerPage">
-            <Formik initialValues={initialValues} onSubmit={onSubmit} validationSchema={validationSchema}>
-                <Form className="formContainer">
-                    <label>Name: </label>
-                    <Field
-                        autoComplete="off"
-                        id="inputCreateOwner"
-                        name="name"
-                        placeholder="Ingrese nombre"
-                    />
-                    <ErrorMessage name="name" component="span"/>
+        <div className="buttons">
+            <Link to="/register/owner">
+                <button> I'm an Owner </button>
+            </Link>
+            <Link to="/register/student">
+                <button> I'm an Student </button>
+            </Link>
 
-                    <label>Lastname: </label>
-                    <Field
-                        autoComplete="off"
-                        id="inputCreateOwner"
-                        name="lastName"
-                        placeholder="Ingrese apellido"
-                    />
-                    <ErrorMessage name="lastName" component="span"/>
-
-                    <label>Cellphone: </label>
-                    <Field
-                        autoComplete="off"
-                        id="inputCreateOwner"
-                        name="cellphone"
-                        placeholder="Ingrese celular"
-                    />
-                    <ErrorMessage name="cellphone" component="span"/>
-
-                    <label>Email: </label>
-                    <Field
-                        autoComplete="off"
-                        id="inputCreateOwner"
-                        name="email"
-                        placeholder="Ingrese correo"
-                    />
-                    <ErrorMessage name="email" component="span"/>
-
-                    <label>Password: </label>
-                    <Field
-                        autoComplete="off"
-                        type="password"
-                        id="inputCreateOwner"
-                        name="password"
-                        placeholder="Ingrese contraseña"
-                    />
-                    <ErrorMessage name="password" component="span"/>
-
-                    <button type="submit"> Create Owner </button>
-                </Form>
-            </Formik>
+            <Routes>
+                <Route path="/register/owner" exact element={<RegisterOwner/>}/>
+                <Route path="/register/student" exact element={<RegisterStudent/>}/>
+            </Routes>
         </div>
     )
 }

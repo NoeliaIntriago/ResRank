@@ -4,6 +4,8 @@ import ShowOwners from "./pages/owner/ShowOwners";
 import Owner  from './pages/owner/Owner';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import RegisterOwner from './pages/register/RegisterOwner';
+import RegisterStudent from './pages/register/RegisterStudent';
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path="/register" exact element={<Register/>}/>
           <Route path="/owners" exact element={<ShowOwners/>}/>
           <Route path="/owner/:id" exact element={<Owner/>}/>
+          <Route path="/register/owner" exact element={<RegisterOwner/>}/>
+          <Route path="/register/student" exact element={<RegisterStudent/>}/>
         </Routes>
       </Router>
     </div>
