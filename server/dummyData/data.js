@@ -1,3 +1,4 @@
+var bcrypt = require("bcrypt");
 module.exports = {
     owner: [
         {
@@ -6,7 +7,7 @@ module.exports = {
             lastName: 'Intriago',
             cellphone: '0939001295',
             email: 'noelia-2345@hotmail.com',
-            password: 'asdas',
+            password: '$2a$12$xVzTkiGzquWl0Qk6lf2qg.QT8.hrmyDM8k3vu2Ft2geGRIf/nqrF.',
             userType: 1
         },
         {
@@ -15,7 +16,7 @@ module.exports = {
             lastName: 'Intriago',
             cellphone: '0915001395',
             email: 'dintriago@hotmail.com',
-            password: 'asdas',
+            password: '$2a$12$xVzTkiGzquWl0Qk6lf2qg.QT8.hrmyDM8k3vu2Ft2geGRIf/nqrF.',
             userType: 1
         },
         {
@@ -24,7 +25,7 @@ module.exports = {
             lastName: 'López',
             cellphone: '0987005695',
             email: 'mlopez@hotmail.com',
-            password: 'asdas',
+            password: '$2a$12$xVzTkiGzquWl0Qk6lf2qg.QT8.hrmyDM8k3vu2Ft2geGRIf/nqrF.',
             userType: 1
         },
         {
@@ -33,7 +34,7 @@ module.exports = {
             lastName: 'Serrani',
             cellphone: '0925148995',
             email: 'dserrani@hotmail.com',
-            password: 'asdas',
+            password: '$2a$12$xVzTkiGzquWl0Qk6lf2qg.QT8.hrmyDM8k3vu2Ft2geGRIf/nqrF.',
             userType: 1
         },
     ],
@@ -43,7 +44,7 @@ module.exports = {
             name: 'Noelia',
             lastName: 'Intriago',
             email: 'noinsanc@espol.edu.ec',
-            password: 'asdas',
+            password: '$2a$12$xVzTkiGzquWl0Qk6lf2qg.QT8.hrmyDM8k3vu2Ft2geGRIf/nqrF.',
             career: 'FIEC',
             userType: 2
         },
@@ -52,7 +53,7 @@ module.exports = {
             name: 'Daniela',
             lastName: 'Landeta',
             email: 'dlandeta@espol.edu.ec',
-            password: 'asdas',
+            password: '$2a$12$xVzTkiGzquWl0Qk6lf2qg.QT8.hrmyDM8k3vu2Ft2geGRIf/nqrF.',
             career: 'FIEC',
             userType: 2
         },
@@ -61,7 +62,7 @@ module.exports = {
             name: 'Yuma',
             lastName: 'Kim',
             email: 'ykim@espol.edu.ec',
-            password: 'asdas',
+            password: '$2a$12$xVzTkiGzquWl0Qk6lf2qg.QT8.hrmyDM8k3vu2Ft2geGRIf/nqrF.',
             career: 'FIMCP',
             userType: 2
         },
@@ -70,7 +71,7 @@ module.exports = {
             name: 'Marco',
             lastName: 'Del Rosario',
             email: 'marsdel@espol.edu.ec',
-            password: 'asdas',
+            password: '$2a$12$xVzTkiGzquWl0Qk6lf2qg.QT8.hrmyDM8k3vu2Ft2geGRIf/nqrF.',
             career: 'FIEC',
             userType: 2
         },
@@ -79,7 +80,7 @@ module.exports = {
             name: 'María',
             lastName: 'Rivera',
             email: 'marrcarr@espol.edu.ec',
-            password: 'asdas',
+            password: '$2a$12$xVzTkiGzquWl0Qk6lf2qg.QT8.hrmyDM8k3vu2Ft2geGRIf/nqrF.',
             career: 'FIEC',
             userType: 2
         },

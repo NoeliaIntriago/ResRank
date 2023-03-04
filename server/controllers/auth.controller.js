@@ -1,5 +1,6 @@
 var db = require('../models');
 var bcrypt = require("bcrypt");
+var { sign } = require('jsonwebtoken');
 var Owner = db.owner;
 var Student = db.student;
 var Op = db.Sequelize.Op;
@@ -11,8 +12,8 @@ exports.registerOwner = async (req, res) => {
             message: "Content can not be empty!"
         });
     }
-    var {name, lastName, cellphone, email, password, userType} = req.body;
-    
+    var { name, lastName, cellphone, email, password, userType } = req.body;
+
     try {
         bcrypt.hash(password, 10).then((hash) => {
             Owner.create({
@@ -25,7 +26,7 @@ exports.registerOwner = async (req, res) => {
             });
             res.send("Success!");
         });
-    } catch(err) {
+    } catch (err) {
         res.status(500).send({
             message:
                 err.message || "Some error occurred while creating the owner."
@@ -35,17 +36,27 @@ exports.registerOwner = async (req, res) => {
 
 // Crear estudiante
 exports.registerStudent = async (req, res) => {
-    if (!req.body.name || !req.body.lastName || !req.body.email 
+    if (!req.body.name || !req.body.lastName || !req.body.email
         || !req.body.password || !req.body.career) {
         res.status(400).send({
             message: "Content can not be empty!"
         });
     }
-    var student = { ...req.body };
+    var { name, lastName, email, password, career, userType } = req.body;
+
     try {
-        var data = await Student.create(student);
-        res.send(data);
-    } catch(err) {
+        bcrypt.hash(password, 10).then((hash) => {
+            Student.create({
+                name: name,
+                lastName: lastName,
+                career: career,
+                email: email,
+                password: hash,
+                userType: userType
+            });
+            res.send("Success!");
+        });
+    } catch (err) {
         res.status(500).send({
             message:
                 err.message || "Some error occurred while creating the student."
@@ -54,49 +65,44 @@ exports.registerStudent = async (req, res) => {
 };
 
 // Login owner
-exports.loginOwner = async(req, res) => {
+exports.loginOwner = async (req, res) => {
     if (!req.body.email || !req.body.password) {
         res.status(400).send({
             message: "Content can not be empty!"
         });
     }
+    console.log(req.body);
+    var { email, password } = req.body;
+    const owner = await Owner.findOne({ where: { email: email } });
 
-    var {email, password} = req.body;
-    const owner = await Owner.findOne({ where: { email: email }});
+    if (!owner) res.json({ error: "Owner doesn't exist" });
 
-    if (!owner){
-        res.send("Owner doesn't exist");
-    } else {
-        bcrypt.compare(password, owner.password).then((match) => {
-            if(!match){
-                res.send("Wrong username or password!");
-            } else {
-                res.send("Success");
-            }
-        });
-    }
+    bcrypt.compare(password, owner.password).then(async (match) => {
+        if (!match) res.json({ error: "Wrong username or password!" });
+        const accessToken = sign(
+            { id: owner.id, email: owner.email, userType: owner.userType }, 
+            "secretToken"
+        );
+        res.json(accessToken);
+    });
 };
 
 // Login student
-exports.loginStudent = async(req, res) => {
+exports.loginStudent = async (req, res) => {
     if (!req.body.email || !req.body.password) {
         res.status(400).send({
             message: "Content can not be empty!"
         });
     }
 
-    var {email, password} = req.body;
-    const student = await Student.findOne({ where: { email: email }});
+    var { email, password } = req.body;
+    const student = await Student.findOne({ where: { email: email } });
 
-    if (!student){
-        res.send("Student doesn't exist");
-    } else {
-        bcrypt.compare(password, student.password).then((match) => {
-            if(!match){
-                res.send("Wrong username or password!");
-            } else {
-                res.send("Success");
-            }
-        });
-    }
+    if (!student) res.json({ error: "Student doesn't exist" });
+
+    bcrypt.compare(password, student.password).then((match) => {
+        if (!match) res.json({ error: "Wrong username or password!" });
+        res.json("Success");
+    });
+
 };

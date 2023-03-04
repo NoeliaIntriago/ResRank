@@ -11,7 +11,7 @@ function LoginStudent() {
         let data = {email: email, password: password}
         axios.post("http://localhost:3001/auth/login/student", data).then((res) => {
             console.log(data);
-            navigate(`/owners`);
+            navigate(`/students`);
         });
     };
 

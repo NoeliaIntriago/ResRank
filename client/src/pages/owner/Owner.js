@@ -28,10 +28,19 @@ function Owner() {
       open_time: moment("2023-02-26T08:30:00").format("YYYY-MM-DD hh:mm:ss"),
       close_time: moment("2023-02-26T16:30:00").format("YYYY-MM-DD hh:mm:ss"),
       ownerId: id
-    }).then((res) => {
-      const localToAdd = { name: newLocal };
-      setLocals([...locals, localToAdd]);
-      setNewLocal("");
+    }, {
+      headers: {
+        accessToken: sessionStorage.getItem("accessToken"),
+      }
+    })
+    .then((res) => {
+      if(res.data.error) {
+        alert(res.data.error);
+      } else {
+        const localToAdd = { name: newLocal };
+        setLocals([...locals, localToAdd]);
+        setNewLocal("");
+      }
     })
   }
 
