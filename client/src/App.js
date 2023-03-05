@@ -10,6 +10,7 @@ import RegisterStudent from './pages/register/RegisterStudent';
 import Login from './pages/Login';
 import LoginOwner from './pages/login/LoginOwner';
 import LoginStudent from './pages/login/LoginStudent';
+import Local from './pages/local/Local';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/register/student" exact element={<RegisterStudent/>}/>
           <Route path="/login/owner" exact element={<LoginOwner/>}/>
           <Route path="/login/student" exact element={<LoginStudent/>}/>
+          <Route path="/local/:id" exact element={<Local/>}/>
         </Routes>
       </Router>
     </div>

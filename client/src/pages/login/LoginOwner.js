@@ -10,7 +10,6 @@ function LoginOwner() {
     const login = () => {
         let data = {email: email, password: password}
         axios.post("http://localhost:3001/auth/login/owner", data).then((res) => {
-            console.log(res)
             if (res.data.error) {
                 alert(res.data.error);
                 return;

@@ -67,15 +67,13 @@ exports.registerStudent = async (req, res) => {
 // Login owner
 exports.loginOwner = async (req, res) => {
     if (!req.body.email || !req.body.password) {
-        res.status(400).send({
-            message: "Content can not be empty!"
-        });
+        return res.json({ error: "Content can't be empty" });
     }
-    console.log(req.body);
+    
     var { email, password } = req.body;
     const owner = await Owner.findOne({ where: { email: email } });
 
-    if (!owner) res.json({ error: "Owner doesn't exist" });
+    if (!owner) return res.json({ error: "Owner doesn't exist" });
 
     bcrypt.compare(password, owner.password).then(async (match) => {
         if (!match) res.json({ error: "Wrong username or password!" });
@@ -90,19 +88,21 @@ exports.loginOwner = async (req, res) => {
 // Login student
 exports.loginStudent = async (req, res) => {
     if (!req.body.email || !req.body.password) {
-        res.status(400).send({
-            message: "Content can not be empty!"
-        });
+        return res.json({ error: "Content can't be empty" });
     }
 
     var { email, password } = req.body;
     const student = await Student.findOne({ where: { email: email } });
 
-    if (!student) res.json({ error: "Student doesn't exist" });
+    if (!student) return res.json({ error: "Student doesn't exist" });
 
-    bcrypt.compare(password, student.password).then((match) => {
+    bcrypt.compare(password, student.password).then(async (match) => {
         if (!match) res.json({ error: "Wrong username or password!" });
-        res.json("Success");
+        const accessToken = sign(
+            { id: student.id, email: student.email, userType: student.userType }, 
+            "secretToken"
+        );
+        res.json(accessToken);
     });
 
 };

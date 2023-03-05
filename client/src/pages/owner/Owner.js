@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Formik, Form, Field, ErrorMessage, useFormikContext } from 'formik';
+import * as Yup from 'yup';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -7,7 +9,27 @@ function Owner() {
   let { id } = useParams();
   const [owner, setOwnerObject] = useState({});
   const [locals, setLocals] = useState([]);
-  const [newLocal, setNewLocal] = useState('');
+  let navigate = useNavigate();
+
+  const initialValues = {
+    name: "",
+    faculty: "",
+    latitude: "",
+    longitude: "",
+    score: 0,
+    open_time: "",
+    close_time: "",
+    ownerId: id
+  };
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required(),
+    faculty: Yup.string().required(),
+    latitude: Yup.number().required(),
+    longitude: Yup.number().required(),
+    open_time: Yup.string().required(),
+    close_time: Yup.string().required()
+  });
 
   useEffect(() => {
     axios.get(`http://localhost:3001/owner/${id}`).then((res) => {
@@ -19,29 +41,26 @@ function Owner() {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const addLocal = () => {
-    axios.post(`http://localhost:3001/local`, {
-      name: newLocal,
-      faculty: "FIEC",
-      latitude: -79.833120,
-      longitude: -2.171288,
-      open_time: moment("2023-02-26T08:30:00").format("YYYY-MM-DD hh:mm:ss"),
-      close_time: moment("2023-02-26T16:30:00").format("YYYY-MM-DD hh:mm:ss"),
-      ownerId: id
-    }, {
+  const resetForm = useFormikContext();
+
+  const handleReset = () => {
+    resetForm.resetForm();
+  }
+
+  const addLocal = (data) => {
+    axios.post(`http://localhost:3001/local`, data, {
       headers: {
         accessToken: sessionStorage.getItem("accessToken"),
       }
     })
-    .then((res) => {
-      if(res.data.error) {
-        alert(res.data.error);
-      } else {
-        const localToAdd = { name: newLocal };
-        setLocals([...locals, localToAdd]);
-        setNewLocal("");
-      }
-    })
+      .then((res) => {
+        if (res.data.error) {
+          alert(res.data.error);
+        } else {
+          console.log(data);
+          setLocals([...locals, data]);
+        }
+      })
   }
 
   return (
@@ -63,18 +82,76 @@ function Owner() {
       </div>
       <div className="rightSide">
         <div className="addLocalContainer">
-          <input 
-            type="text" 
-            placeholder="Local" 
-            autoComplete="off" 
-            value={newLocal}
-            onChange={(event) => { setNewLocal(event.target.value) }} 
-          />
-          <button onClick={addLocal}> Add Local </button>
+          <Formik initialValues={initialValues} onSubmit={addLocal} validationSchema={validationSchema}>
+            <Form className="formContainer">
+              <label>Name: </label>
+              <Field
+                autoComplete="off"
+                id="inputCreateLocal"
+                name="name"
+                placeholder="Ingrese nombre"
+              />
+              <ErrorMessage name="name" component="span" />
+
+              <label>Faculty: </label>
+              <Field
+                autoComplete="off"
+                id="inputCreateLocal"
+                name="faculty"
+                placeholder="Ingrese facultad"
+              />
+              <ErrorMessage name="faculty" component="span" />
+
+              <label>Latitude: </label>
+              <Field
+                autoComplete="off"
+                id="inputCreateLocal"
+                name="latitude"
+                placeholder="Ingrese latitud"
+              />
+              <ErrorMessage name="latitude" component="span" />
+
+              <label>Longitud: </label>
+              <Field
+                autoComplete="off"
+                id="inputCreateLocal"
+                name="longitude"
+                placeholder="Ingrese longitud"
+              />
+              <ErrorMessage name="longitude" component="span" />
+
+              <label>Open Time: </label>
+              <Field
+                autoComplete="off"
+                id="inputCreateLocal"
+                name="open_time"
+                placeholder="Ingrese hora de apertura"
+              />
+              <ErrorMessage name="open_time" component="span" />
+
+              <label>Close Time: </label>
+              <Field
+                autoComplete="off"
+                id="inputCreateLocal"
+                name="close_time"
+                placeholder="Ingrese hora de cierre"
+              />
+              <ErrorMessage name="close_time" component="span" />
+
+              <button type="submit" onClick={handleReset}> Create Local </button>
+            </Form>
+          </Formik>
         </div>
         <div className="localsContainer">
           {locals.map((local, key) => {
-            return <div key={key} className="local"> {local.name} </div>
+            return (
+              <div key={key} className="local" onClick={() => navigate(`/local/${local.id}`)}>
+                <div className="name"> {local.name}</div>
+                <div className="faculty"> {local.faculty} </div>
+                <div className="open_time"> {local.open_time} </div>
+                <div className="close_time"> {local.close_time} </div>
+              </div>
+            );
           })}
         </div>
       </div>

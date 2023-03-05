@@ -10,8 +10,13 @@ function LoginStudent() {
     const login = () => {
         let data = {email: email, password: password}
         axios.post("http://localhost:3001/auth/login/student", data).then((res) => {
-            console.log(data);
-            navigate(`/students`);
+            if (res.data.error) {
+                alert(res.data.error);
+                return;
+            } else {
+                sessionStorage.setItem("accessToken", res.data);
+                navigate(`/students`);
+            }
         });
     };
 
