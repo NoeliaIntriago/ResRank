@@ -1,5 +1,6 @@
 const db = require('../models');
 const Local = db.local;
+const Owner = db.owner;
 const Op = db.Sequelize.Op;
 
 // Crear local
@@ -31,6 +32,28 @@ exports.findAll = async (req, res) => {
         res.status(500).send({
             message:
                 err.message || "Some error occurred while getting all locals."
+        });
+    }
+};
+
+// Obtener local por ID
+exports.find = async (req, res) => {
+    if (!req.params.id) {
+        res.status(400).send({
+            message: "ID not valid"
+        });
+    }
+    var id = req.params.id;
+    try {
+        var local = await Local.findByPk(id);
+        var ownerId = local.dataValues.ownerId;
+        var owner = await Owner.findByPk(ownerId);
+        local["dataValues"]["owner"] = owner["name"] + " " + owner["lastName"];
+        res.json(local);
+    } catch (error) {
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while getting the local."
         });
     }
 };

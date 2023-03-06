@@ -8,7 +8,7 @@ var Op = db.Sequelize.Op;
 // Crear dueño
 exports.registerOwner = async (req, res) => {
     if (!req.body.name || !req.body.lastName || !req.body.cellphone || !req.body.email || !req.body.password) {
-        res.status(400).send({
+        res.status(400).json({
             message: "Content can not be empty!"
         });
     }
@@ -27,7 +27,7 @@ exports.registerOwner = async (req, res) => {
             res.send("Success!");
         });
     } catch (err) {
-        res.status(500).send({
+        res.status(500).json({
             message:
                 err.message || "Some error occurred while creating the owner."
         });
@@ -38,7 +38,7 @@ exports.registerOwner = async (req, res) => {
 exports.registerStudent = async (req, res) => {
     if (!req.body.name || !req.body.lastName || !req.body.email
         || !req.body.password || !req.body.career) {
-        res.status(400).send({
+        res.status(400).json({
             message: "Content can not be empty!"
         });
     }
@@ -57,7 +57,7 @@ exports.registerStudent = async (req, res) => {
             res.send("Success!");
         });
     } catch (err) {
-        res.status(500).send({
+        res.status(500).json({
             message:
                 err.message || "Some error occurred while creating the student."
         });
@@ -67,13 +67,13 @@ exports.registerStudent = async (req, res) => {
 // Login owner
 exports.loginOwner = async (req, res) => {
     if (!req.body.email || !req.body.password) {
-        return res.json({ error: "Content can't be empty" });
+        return res.status(400).json({ error: "Content can't be empty" });
     }
     
     var { email, password } = req.body;
     const owner = await Owner.findOne({ where: { email: email } });
 
-    if (!owner) return res.json({ error: "Owner doesn't exist" });
+    if (!owner) return res.status(400).json({ error: "Owner doesn't exist" });
 
     bcrypt.compare(password, owner.password).then(async (match) => {
         if (!match) res.json({ error: "Wrong username or password!" });

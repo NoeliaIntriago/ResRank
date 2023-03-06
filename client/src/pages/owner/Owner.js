@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Formik, Form, Field, ErrorMessage, useFormikContext } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -36,16 +36,10 @@ function Owner() {
       setOwnerObject(res.data);
     });
 
-    axios.get(`http://localhost:3001/local/${id}`).then((res) => {
+    axios.get(`http://localhost:3001/local/owner/${id}`).then((res) => {
       setLocals(res.data);
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const resetForm = useFormikContext();
-
-  const handleReset = () => {
-    resetForm.resetForm();
-  }
 
   const addLocal = (data) => {
     axios.post(`http://localhost:3001/local`, data, {
@@ -138,7 +132,7 @@ function Owner() {
               />
               <ErrorMessage name="close_time" component="span" />
 
-              <button type="submit" onClick={handleReset}> Create Local </button>
+              <button type="submit"> Create Local </button>
             </Form>
           </Formik>
         </div>
