@@ -1,9 +1,11 @@
 # ResRank
-Proyecto Full-Stack de desarrollo web usando React.js y Node, con base manejada por MySQL.
+Proyecto Full-Stack de desarrollo web usando React.js y Node (Express.js), con base manejada por MySQL.
 
 ## Instalación
-
-## Ejecución
 ### Front-end
 
 ### Back-end
+
+``` npm install ```
+
+``` npm start ```
