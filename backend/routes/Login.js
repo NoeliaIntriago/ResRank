@@ -11,6 +11,20 @@ router.post("/register", async (req, res) => {
   const { nombre, nombre_usuario, correo, contrasena, celular, rol } = req.body;
 
   try {
+    // Verificar si el correo ya existe
+    const correoExistente = await Usuario.findOne({ where: { correo } });
+    if (correoExistente) {
+      return res.status(422).json({ error: "Correo ya registrado" });
+    }
+
+    // Verificar si el usuario ya existe
+    const usuarioExistente = await Usuario.findOne({
+      where: { nombre_usuario },
+    });
+    if (usuarioExistente) {
+      return res.status(422).json({ error: "Usuario ya existe" });
+    }
+
     const hashedPassword = await bcrypt.hash(contrasena, 8);
 
     const nuevoUsuario = await Usuario.create({
@@ -51,7 +65,9 @@ router.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(contrasena, usuario.contrasena);
 
     if (!isMatch) {
-      return res.status(401).json({ error: "Contraseña incorrecta" });
+      return res
+        .status(401)
+        .json({ error: "Contraseña incorrecta", message: error });
     }
 
     // Generar un token JWT
@@ -80,7 +96,7 @@ const authenticateJWT = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(400).json({ error: "Token no válido" });
+    res.status(400).json({ error: "Token no válido", message: err });
   }
 };
 
@@ -92,9 +108,11 @@ router.get("/ruta-protegida", authenticateJWT, async (req, res) => {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    res.json({ message: `Bienvenido ${usuario.nombre}`, usuario });
+    res.json({ usuario });
   } catch (error) {
-    res.status(500).json({ error: "Error al acceder a la ruta protegida" });
+    res
+      .status(500)
+      .json({ error: "Error al acceder a la ruta protegida", message: error });
   }
 });
 
