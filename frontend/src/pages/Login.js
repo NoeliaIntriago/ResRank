@@ -1,51 +1,62 @@
-import React, { useState } from "react";
 import axios from "axios";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import { jwtDecode } from "jwt-decode";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import styles from "../styles/Register.module.css";
+import { showErrorAlert } from "../utils/alert";
+import { Roles } from "../utils/global";
+import { showToast } from "../utils/toast";
 
 function Login() {
-  const [loginData, setLoginData] = useState({
+  const navigate = useNavigate();
+
+  const loginForm = {
     nombre_usuario: "",
     contrasena: "",
-  });
-
-  const [loginMessage, setLoginMessage] = useState("");
-  const [protectedMessage, setProtectedMessage] = useState("");
-
-  const handleLoginChange = (e) => {
-    setLoginData({ ...loginData, [e.target.name]: e.target.value });
   };
 
-  const login = async () => {
+  const LoginSchema = Yup.object().shape({
+    nombre_usuario: Yup.string().required("Campo requerido"),
+    contrasena: Yup.string().required("Campo requerido"),
+  });
+
+  const handleLogin = async (data) => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_URL}:3001/auth/login`,
-        loginData
+        data
       );
-      setLoginMessage(
-        response.data.token ? "Login exitoso" : response.data.error
-      );
-      if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
+
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+
+      const decodedToken = jwtDecode(token);
+      const { rol } = decodedToken;
+
+      showToast(response.message, "success");
+
+      switch (rol) {
+        case Roles.ADMIN:
+          navigate("/home");
+          break;
+        case Roles.DUENO:
+          navigate("/");
+          break;
+        case Roles.ESTUDIANTE:
+          navigate("/");
+          break;
+        default:
+          navigate("/");
+          break;
       }
     } catch (error) {
-      setLoginMessage(error.response?.data?.error || "Error al iniciar sesión");
-    }
-  };
-
-  const accessProtectedRoute = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `${process.env.REACT_APP_URL}:3001/auth/ruta-protegida`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setProtectedMessage(response.data.message || "Acceso exitoso");
-    } catch (error) {
-      setProtectedMessage(
-        error.response?.data?.error || "Error al acceder a la ruta protegida"
+      console.error("Error capturado:", error);
+      console.error("Response:", error.response);
+      showErrorAlert(
+        "Error",
+        error.response?.data?.error || "Error al iniciar sesión"
       );
     }
   };
@@ -54,26 +65,35 @@ function Login() {
     <div className="App">
       <div className="container">
         <h2>Login</h2>
-        <input
-          type="text"
-          name="nombre_usuario"
-          placeholder="Nombre de Usuario"
-          onChange={handleLoginChange}
-        />
-        <input
-          type="password"
-          name="contrasena"
-          placeholder="Contraseña"
-          onChange={handleLoginChange}
-        />
-        <button onClick={login}>Iniciar Sesión</button>
-        <div className="message">{loginMessage}</div>
-      </div>
+        <Formik
+          initialValues={loginForm}
+          validationSchema={LoginSchema}
+          onSubmit={async (values) => {
+            await handleLogin(values);
+          }}
+        >
+          <Form className={styles.formContainer}>
+            <label>Nombre de Usuario:</label>
+            <Field
+              id="inputNombreUsuario"
+              type="text"
+              name="nombre_usuario"
+              placeholder="Nombre de Usuario"
+            />
+            <ErrorMessage name="nombre_usuario" component="span" />
 
-      <div className="container">
-        <h2>Ruta Protegida</h2>
-        <button onClick={accessProtectedRoute}>Acceder</button>
-        <div className="message">{protectedMessage}</div>
+            <label>Contraseña:</label>
+            <Field
+              id="inputContrasena"
+              type="password"
+              name="contrasena"
+              placeholder="Contraseña"
+            />
+            <ErrorMessage name="contrasena" component="span" />
+
+            <button type="submit">Ingresar</button>
+          </Form>
+        </Formik>
       </div>
     </div>
   );
