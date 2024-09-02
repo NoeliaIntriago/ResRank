@@ -1,12 +1,12 @@
-import React from "react";
 import axios from "axios";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { showAlert, showErrorAlert } from "../utils/alert";
-import { showToast } from "../utils/toast";
-import { Roles } from "../utils/global";
+import * as Yup from "yup";
 import styles from "../styles/Register.module.css";
+import { showAlert, showErrorAlert } from "../utils/alert";
+import { Roles } from "../utils/global";
+import { showToast } from "../utils/toast";
 
 function Register() {
   const navigate = useNavigate();
@@ -49,9 +49,6 @@ function Register() {
         navigate("/");
       }
     } catch (error) {
-      console.error("Error capturado:", error);
-      console.error("Response:", error.response);
-
       showToast("Error al registrar", "error");
       showErrorAlert(
         "Error",
