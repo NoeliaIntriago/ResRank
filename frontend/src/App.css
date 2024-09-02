@@ -103,3 +103,28 @@ a:hover {
     padding: 10px 0;
   }
 }
+
+.nav-logout {
+  background-color: #ff4d4f; /* Color de fondo rojo */
+  color: white; /* Color del texto blanco */
+  border: none; /* Sin bordes */
+  padding: 10px 20px; /* Espaciado interno (padding) */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  font-size: 16px; /* Tamaño de fuente */
+  margin-left: 15px; /* Espaciado entre los links y el botón */
+  transition: background-color 0.3s ease; /* Transición suave para el hover */
+}
+
+.nav-logout:hover {
+  background-color: #d9363e; /* Color de fondo al pasar el ratón */
+}
+
+.nav-logout:active {
+  background-color: #b52a2f; /* Color de fondo cuando el botón está activo */
+}
+
+.nav-logout:focus {
+  outline: none; /* Eliminar el borde de enfoque predeterminado del navegador */
+  box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.5); /* Agregar un borde de enfoque personalizado */
+}
