@@ -18,6 +18,12 @@ app.use("/auth", loginRouter);
 const usuarioRouter = require("./routes/Usuario");
 app.use("/usuario", usuarioRouter);
 
+const barRouter = require("./routes/Bar");
+app.use("/bar", barRouter);
+
+const opinionRestauranteRouter = require("./routes/OpinionRestaurante");
+app.use("/opinion-restaurante", opinionRestauranteRouter);
+
 const db = require("./models");
 db.sequelize.sync().then(() => {
   app.listen(3001, () => {
