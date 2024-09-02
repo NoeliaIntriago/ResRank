@@ -1,26 +1,25 @@
 import { jwtDecode } from "jwt-decode";
 import React from "react";
-import { Navigate, Route } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { Roles } from "../utils/global";
 
-const PrivateRoute = ({ element: Component, roles = [], ...rest }) => {
+const PrivateRoute = ({ children, roles = [] }) => {
   const token = localStorage.getItem("token");
-  const user = token ? jwtDecode(token) : null;
 
-  const allowedRoles = roles.push(Roles.ADMIN);
+  if (!token) {
+    return <Navigate to="/" />;
+  }
 
-  return (
-    <Route
-      {...rest}
-      render={(props) =>
-        token && allowedRoles.includes(user.rol) ? (
-          <Component {...props} />
-        ) : (
-          <Navigate to="/login" />
-        )
-      }
-    />
-  );
+  const decodedToken = jwtDecode(token);
+  const userRole = decodedToken.rol;
+
+  const allowedRoles = [...roles, Roles.ADMIN];
+
+  if (!allowedRoles.includes(userRole)) {
+    return <Navigate to="/home" />;
+  }
+
+  return children;
 };
 
 export default PrivateRoute;

@@ -42,10 +42,10 @@ function Login() {
           navigate("/home");
           break;
         case Roles.DUENO:
-          navigate("/");
+          navigate("/dashboard");
           break;
         case Roles.ESTUDIANTE:
-          navigate("/");
+          navigate("/restaurant");
           break;
         default:
           navigate("/");

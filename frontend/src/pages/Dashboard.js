@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-function Restaurant() {
+function Dashboard() {
   const [usuarios, setUsuarios] = useState([]);
 
   useEffect(() => {
@@ -31,4 +31,4 @@ function Restaurant() {
   );
 }
 
-export default Restaurant;
+export default Dashboard;
