@@ -76,6 +76,7 @@ function Register() {
                 type="text"
                 name="nombre"
                 placeholder="Nombre"
+                autoComplete="off"
               />
               <ErrorMessage name="nombre" component="span" />
 
@@ -85,6 +86,7 @@ function Register() {
                 type="text"
                 name="nombre_usuario"
                 placeholder="Nombre de Usuario"
+                autoComplete="off"
               />
               <ErrorMessage name="nombre_usuario" component="span" />
 
@@ -94,6 +96,7 @@ function Register() {
                 type="email"
                 name="correo"
                 placeholder="Correo"
+                autoComplete="off"
               />
               <ErrorMessage name="correo" component="span" />
 
@@ -103,6 +106,7 @@ function Register() {
                 type="password"
                 name="contrasena"
                 placeholder="Contraseña"
+                autoComplete="off"
               />
               <ErrorMessage name="contrasena" component="span" />
 
@@ -112,6 +116,7 @@ function Register() {
                 type="text"
                 name="celular"
                 placeholder="Celular"
+                autoComplete="off"
               />
               <ErrorMessage name="celular" component="span" />
 
@@ -132,6 +137,7 @@ function Register() {
                     type="text"
                     name="matricula"
                     placeholder="Matrícula"
+                    autoComplete="off"
                   />
                   <ErrorMessage name="matricula" component="span" />
                 </>
