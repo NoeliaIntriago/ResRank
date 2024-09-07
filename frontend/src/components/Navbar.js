@@ -30,15 +30,20 @@ function Navbar() {
             ResRank
           </Link>
           <div className="nav-links">
-            <Link to="/home">Home</Link>
-            <Link to="/restaurant">Restaurant</Link>
+            <Link to="/restaurants">Restaurantes</Link>
 
-            {/* Mostrar link para dashboard solo si el usuario es dueño o admin */}
+            {userRole === Roles.ESTUDIANTE && (
+              <Link to="/locations">Ubicaciones</Link>
+            )}
+
             {(userRole === Roles.DUENO || userRole === Roles.ADMIN) && (
               <Link to="/dashboard">Dashboard</Link>
             )}
 
-            {/* Botón de Cerrar sesión */}
+            {userRole === Roles.ADMIN && <Link to="/users">Usuarios</Link>}
+
+            <Link to="/profile">Perfil</Link>
+
             <button onClick={handleLogout} className="nav-logout">
               Cerrar sesión
             </button>

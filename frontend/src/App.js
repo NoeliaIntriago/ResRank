@@ -4,10 +4,15 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import PrivateRoute from "./components/PrivateRoute";
 import Dashboard from "./pages/Dashboard";
+import EditRestaurant from "./pages/EditRestaurantPage";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 import Register from "./pages/Register";
-import RestaurantPage from "./pages/RestaurantPage";
+import RestaurantList from "./pages/RestaurantListPage";
+import Locations from "./pages/RestaurantLocationsPage";
+import Reviews from "./pages/ReviewPage";
+import UserList from "./pages/UserListPage";
 import { Roles } from "./utils/global";
 
 function App() {
@@ -22,7 +27,8 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/restaurant/:id" element={<RestaurantPage />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/restaurants" element={<RestaurantList />} />
 
           {/* Rutas protegidas para dueños y admins */}
           <Route
@@ -34,22 +40,42 @@ function App() {
             }
           />
 
-          {/* Ruta protegida para editar restaurante */}
+          {/* Ruta protegida para editar restaurante (dueños) */}
           <Route
             path="/restaurant/edit/:id"
             element={
               <PrivateRoute roles={[Roles.DUENO]}>
-                <Dashboard />
+                <EditRestaurant />
               </PrivateRoute>
             }
           />
 
-          {/* Ruta para dejar opiniones, protegida para estudiantes */}
+          {/* Ruta protegida para dejar opiniones (estudiantes) */}
           <Route
             path="/restaurant/:id/review"
             element={
               <PrivateRoute roles={[Roles.ESTUDIANTE]}>
-                <Dashboard />
+                <Reviews />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Ruta protegida para visualizar ubicaciones de restaurantes (solo estudiantes) */}
+          <Route
+            path="/locations"
+            element={
+              <PrivateRoute roles={[Roles.ESTUDIANTE]}>
+                <Locations />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Ruta protegida para visualizar la lista de usuarios (solo admins) */}
+          <Route
+            path="/users"
+            element={
+              <PrivateRoute roles={[Roles.ADMIN]}>
+                <UserList />
               </PrivateRoute>
             }
           />

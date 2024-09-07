@@ -12,7 +12,7 @@ function Dashboard() {
 
   return (
     <div className="App">
-      <h1>Usuarios</h1>
+      <h1>Administrativo Restaurantes</h1>
       <ul>
         {usuarios.map((usuario) => {
           return (

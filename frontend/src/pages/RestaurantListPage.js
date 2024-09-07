@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-function Restaurant() {
+function RestaurantList() {
   const [restaurantes, setRestaurantes] = useState([]);
 
   useEffect(() => {
@@ -30,4 +30,4 @@ function Restaurant() {
   );
 }
 
-export default Restaurant;
+export default RestaurantList;
