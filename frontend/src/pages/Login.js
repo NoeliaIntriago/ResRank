@@ -2,7 +2,7 @@ import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { jwtDecode } from "jwt-decode";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import styles from "../styles/Register.module.css";
 import { showErrorAlert } from "../utils/alert";
@@ -39,13 +39,11 @@ function Login() {
 
       switch (rol) {
         case Roles.ADMIN:
-          navigate("/home");
-          break;
         case Roles.DUENO:
           navigate("/dashboard");
           break;
         case Roles.ESTUDIANTE:
-          navigate("/restaurant");
+          navigate("/restaurants");
           break;
         default:
           navigate("/");
@@ -94,6 +92,10 @@ function Login() {
             <button type="submit">Ingresar</button>
           </Form>
         </Formik>
+
+        <p>
+          ¿No estás registrado? <Link to="/register">Regístrate ahora</Link>
+        </p>
       </div>
     </div>
   );
