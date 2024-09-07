@@ -1,0 +1,36 @@
+.no-autorizado-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+  }
+  
+  .no-autorizado-title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #dc3545;
+  }
+  
+  .no-autorizado-message {
+    font-size: 1.5rem;
+    margin: 20px 0;
+    color: #6c757d;
+  }
+  
+  .no-autorizado-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .no-autorizado-button:hover {
+    background-color: #0056b3;
+  }
+  

@@ -1,6 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import React from "react";
 import { Navigate } from "react-router-dom";
+import NotAuthorized from "../pages/NotAuthorized";
 import { Roles } from "../utils/global";
 
 const PrivateRoute = ({ children, roles = [] }) => {
@@ -10,16 +11,29 @@ const PrivateRoute = ({ children, roles = [] }) => {
     return <Navigate to="/" />;
   }
 
-  const decodedToken = jwtDecode(token);
-  const userRole = decodedToken.rol;
+  try {
+    const decodedToken = jwtDecode(token);
+    const userRole = decodedToken.rol;
+    const currentTime = Date.now() / 1000; // Tiempo actual en segundos
 
-  const allowedRoles = [...roles, Roles.ADMIN];
+    // Verifica si el token ha expirado
+    if (decodedToken.exp < currentTime) {
+      localStorage.removeItem("token"); // Elimina el token expirado
+      return <Navigate to="/" />;
+    }
 
-  if (!allowedRoles.includes(userRole)) {
-    return <Navigate to="/home" />;
+    // Agregar el rol de ADMIN como rol permitido adicionalmente
+    const allowedRoles = [...roles, Roles.ADMIN];
+
+    if (!allowedRoles.includes(userRole)) {
+      return <NotAuthorized />; // Mostrar pantalla de "No Autorizado"
+    }
+
+    return children;
+  } catch (error) {
+    console.error("Error al decodificar el token:", error);
+    return <Navigate to="/" />;
   }
-
-  return children;
 };
 
 export default PrivateRoute;
