@@ -1,11 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, Tab, Table, Tabs } from "react-bootstrap";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { Button, ButtonGroup, Tab, Table, Tabs } from "react-bootstrap";
+import { FaBan, FaCheck, FaEdit } from "react-icons/fa";
 import FacultadForm from "../components/forms/FacultadForm";
 import UsuarioForm from "../components/forms/UsuarioForm";
 import ModalWrapper from "../components/wrappers/ModalWrapper";
-import "../styles/AdminDashboard.css";
 import { Roles } from "../utils/global";
 
 function AdminDashboard() {
@@ -262,20 +261,24 @@ function UsuariosTable({ usuarios, onEdit, onChangeStatus }) {
                 : "N/A"}
             </td>
             <td>
-              <Button
-                variant="warning"
-                onClick={() => onEdit("usuario", usuario)} // Pasamos los datos de la fila
-              >
-                <FaEdit /> Editar
-              </Button>
-
-              <Button
-                variant="danger"
-                className="ml-2"
-                onClick={() => onChangeStatus("usuario", usuario)}
-              >
-                <FaTrash /> Eliminar
-              </Button>
+              <ButtonGroup>
+                <Button
+                  variant="warning"
+                  onClick={() => onEdit("usuario", usuario)} // Pasamos los datos de la fila
+                >
+                  <FaEdit /> Editar
+                </Button>
+                <Button
+                  variant={usuario.activo ? "danger" : "success"} // Elimina las comillas alrededor de la expresión
+                  className="ml-2"
+                  onClick={() => onChangeStatus("usuario", usuario)}
+                >
+                  {usuario.activo ? <FaBan /> : <FaCheck />}{" "}
+                  <span className="d-none d-md-inline">
+                    {usuario.activo ? "Desactivar" : "Activar"}
+                  </span>
+                </Button>
+              </ButtonGroup>
             </td>
           </tr>
         ))}
@@ -317,20 +320,24 @@ function FacultadesTable({ facultades, onEdit, onChangeStatus }) {
             <td>{facultad.longitud}</td>
             <td>{facultad.activo ? "Sí" : "No"}</td>
             <td>
-              <Button
-                variant="warning"
-                onClick={() => onEdit("facultad", facultad)} // Pasamos los datos de la fila
-              >
-                <FaEdit /> Editar
-              </Button>
-
-              <Button
-                variant="danger"
-                className="ml-2"
-                onClick={() => onChangeStatus("facultad", facultad)}
-              >
-                <FaTrash /> Eliminar
-              </Button>
+              <ButtonGroup>
+                <Button
+                  variant="warning"
+                  onClick={() => onEdit("facultad", facultad)} // Pasamos los datos de la fila
+                >
+                  <FaEdit /> Editar
+                </Button>
+                <Button
+                  variant={facultad.activo ? "danger" : "success"} // Elimina las comillas alrededor de la expresión
+                  className="ml-2"
+                  onClick={() => onChangeStatus("facultad", facultad)}
+                >
+                  {facultad.activo ? <FaBan /> : <FaCheck />}{" "}
+                  <span className="d-none d-md-inline">
+                    {facultad.activo ? "Desactivar" : "Activar"}
+                  </span>
+                </Button>
+              </ButtonGroup>
             </td>
           </tr>
         ))}
