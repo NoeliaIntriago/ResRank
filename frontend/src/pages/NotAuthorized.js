@@ -1,4 +1,5 @@
 import React from "react";
+import { Button, Col, Container, Row } from "react-bootstrap"; // Importa los componentes de react-bootstrap
 import { useNavigate } from "react-router-dom";
 import "../styles/NotAuthorized.css"; // Archivo de estilos CSS para personalizar
 import { getUserRole } from "../utils/auth";
@@ -15,7 +16,7 @@ const NotAuthorized = () => {
       case Roles.DUENO:
         navigate("/dashboard");
         break;
-      case "ESTUDIANTE":
+      case Roles.ESTUDIANTE:
         navigate("/restaurants");
         break;
       default:
@@ -25,15 +26,19 @@ const NotAuthorized = () => {
   };
 
   return (
-    <div className="no-autorizado-container">
-      <h1 className="no-autorizado-title">403 - No Autorizado</h1>
-      <p className="no-autorizado-message">
-        Lo sentimos, no tienes acceso para ver esta página.
-      </p>
-      <button className="no-autorizado-button" onClick={() => handleRedirect}>
-        Volver al Inicio
-      </button>
-    </div>
+    <Container className="text-center mt-5">
+      <Row className="justify-content-center">
+        <Col md={8}>
+          <h1 className="no-autorizado-title">403 - No Autorizado</h1>
+          <p className="no-autorizado-message">
+            Lo sentimos, no tienes acceso para ver esta página.
+          </p>
+          <Button variant="primary" onClick={handleRedirect}>
+            Volver al Inicio
+          </Button>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

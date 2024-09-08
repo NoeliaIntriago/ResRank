@@ -1,10 +1,10 @@
 import React from "react";
+import { Button, Container, Nav, Navbar } from "react-bootstrap"; // Importa los componentes de react-bootstrap
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import "../styles/Navbar.css";
-import { getUserRole } from "../utils/auth"; // Importamos la función para obtener el rol del usuario
+import { getUserRole } from "../utils/auth";
 import { Roles } from "../utils/global";
 
-function Navbar() {
+function CustomNavbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -24,34 +24,52 @@ function Navbar() {
 
   return (
     shouldShowNavbar && (
-      <nav className="custom-navbar">
-        <div className="custom-nav-container">
-          <Link to="/home" className="nav-logo">
+      <Navbar bg="dark" variant="dark" expand="lg" className="custom-navbar">
+        <Container>
+          <Navbar.Brand as={Link} to="/home">
             ResRank
-          </Link>
-          <div className="custom-nav-links">
-            <Link to="/restaurants">Restaurantes</Link>
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              <Nav.Link as={Link} to="/restaurants">
+                Restaurantes
+              </Nav.Link>
 
-            {userRole === Roles.ESTUDIANTE && (
-              <Link to="/locations">Ubicaciones</Link>
-            )}
+              {userRole === Roles.ESTUDIANTE && (
+                <Nav.Link as={Link} to="/locations">
+                  Ubicaciones
+                </Nav.Link>
+              )}
 
-            {(userRole === Roles.DUENO || userRole === Roles.ADMIN) && (
-              <Link to="/dashboard">Dashboard</Link>
-            )}
+              {(userRole === Roles.DUENO || userRole === Roles.ADMIN) && (
+                <Nav.Link as={Link} to="/dashboard">
+                  Dashboard
+                </Nav.Link>
+              )}
 
-            {userRole === Roles.ADMIN && <Link to="/users">Usuarios</Link>}
+              {userRole === Roles.ADMIN && (
+                <Nav.Link as={Link} to="/users">
+                  Usuarios
+                </Nav.Link>
+              )}
 
-            <Link to="/profile">Perfil</Link>
-
-            <button onClick={handleLogout} className="custom-nav-logout">
+              <Nav.Link as={Link} to="/profile">
+                Perfil
+              </Nav.Link>
+            </Nav>
+            <Button
+              variant="outline-light"
+              onClick={handleLogout}
+              className="custom-nav-logout"
+            >
               Cerrar sesión
-            </button>
-          </div>
-        </div>
-      </nav>
+            </Button>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
     )
   );
 }
 
-export default Navbar;
+export default CustomNavbar;
