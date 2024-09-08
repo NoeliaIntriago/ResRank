@@ -4,8 +4,31 @@ const router = express.Router();
 const { Bar } = require("../models");
 
 router.get("/", async (req, res) => {
+  const { id_usuario, nombre, tipo_menu, id_facultad } = req.query;
+
   try {
-    const bares = await Bares.findAll();
+    const condition = {};
+    if (id_usuario) {
+      condition.id_dueno = id_usuario;
+    }
+
+    if (nombre) {
+      condition.nombre = {
+        [Op.like]: `%${nombre}%`,
+      };
+    }
+
+    if (tipo_menu) {
+      condition.tipo_menu = tipo_menu;
+    }
+
+    if (id_facultad) {
+      condition.id_facultad = id_facultad;
+    }
+
+    const bares = await Bar.findAll({
+      where: condition,
+    });
     res.json(bares);
   } catch (error) {
     console.error(error);

@@ -3,3 +3,9 @@ export const Roles = {
   DUENO: "dueno_restaurante",
   ESTUDIANTE: "estudiante",
 };
+
+export const TipoMenu = {
+  PIQUEO: "piqueo",
+  DESAYUNO: "desayuno",
+  ALMUERZO: "almuerzo",
+};

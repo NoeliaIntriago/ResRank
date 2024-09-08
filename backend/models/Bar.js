@@ -67,5 +67,21 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
+  Bar.associate = (models) => {
+    Bar.belongsTo(models.Usuario, {
+      foreignKey: "id_dueno",
+      as: "dueno",
+    });
+    Bar.belongsTo(models.Facultad, {
+      foreignKey: "id_facultad",
+      as: "facultad",
+    });
+    Bar.hasMany(models.Menu, {
+      foreignKey: "id_bar",
+      as: "menus",
+      onDelete: "CASCADE",
+    });
+  }
+
   return Bar;
 };
