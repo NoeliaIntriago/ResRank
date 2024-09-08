@@ -24,12 +24,12 @@ function Navbar() {
 
   return (
     shouldShowNavbar && (
-      <nav className="navbar">
-        <div className="nav-container">
+      <nav className="custom-navbar">
+        <div className="custom-nav-container">
           <Link to="/home" className="nav-logo">
             ResRank
           </Link>
-          <div className="nav-links">
+          <div className="custom-nav-links">
             <Link to="/restaurants">Restaurantes</Link>
 
             {userRole === Roles.ESTUDIANTE && (
@@ -44,7 +44,7 @@ function Navbar() {
 
             <Link to="/profile">Perfil</Link>
 
-            <button onClick={handleLogout} className="nav-logout">
+            <button onClick={handleLogout} className="custom-nav-logout">
               Cerrar sesión
             </button>
           </div>
