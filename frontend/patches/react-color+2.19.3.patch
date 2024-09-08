@@ -1,0 +1,125 @@
+diff --git a/node_modules/react-color/lib/components/block/Block.js b/node_modules/react-color/lib/components/block/Block.js
+index c4e04f3..1386e22 100644
+--- a/node_modules/react-color/lib/components/block/Block.js
++++ b/node_modules/react-color/lib/components/block/Block.js
+@@ -31,31 +31,45 @@ var _BlockSwatches = require('./BlockSwatches');
+ 
+ var _BlockSwatches2 = _interopRequireDefault(_BlockSwatches);
+ 
+-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
++function _interopRequireWildcard(obj) { 
++  if (obj && obj.__esModule) { 
++    return obj; 
++  } else { 
++    var newObj = {}; 
++    if (obj != null) { 
++      for (var key in obj) { 
++        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; 
++      } 
++    } 
++    newObj.default = obj; 
++    return newObj; 
++  } 
++}
+ 
+ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+ 
+-var Block = exports.Block = function Block(_ref) {
+-  var onChange = _ref.onChange,
+-      onSwatchHover = _ref.onSwatchHover,
+-      hex = _ref.hex,
+-      colors = _ref.colors,
+-      width = _ref.width,
+-      triangle = _ref.triangle,
+-      _ref$styles = _ref.styles,
+-      passedStyles = _ref$styles === undefined ? {} : _ref$styles,
+-      _ref$className = _ref.className,
+-      className = _ref$className === undefined ? '' : _ref$className;
+-
++var Block = exports.Block = function Block({
++  onChange,
++  onSwatchHover,
++  hex,
++  colors = ['#D9E3F0', '#F47373', '#697689', '#37D67A', '#2CCCE4', '#555555', '#dce775', '#ff8a65', '#ba68c8'],
++  width = 170,
++  triangle = 'top',
++  styles = {},
++  className = ''
++}) {
+   var transparent = hex === 'transparent';
++
+   var handleChange = function handleChange(hexCode, e) {
+-    color.isValidHex(hexCode) && onChange({
+-      hex: hexCode,
+-      source: 'hex'
+-    }, e);
++    if (color.isValidHex(hexCode)) {
++      onChange({
++        hex: hexCode,
++        source: 'hex'
++      }, e);
++    }
+   };
+ 
+-  var styles = (0, _reactcss2.default)((0, _merge2.default)({
++  var style = (0, _reactcss2.default)((0, _merge2.default)({
+     'default': {
+       card: {
+         width: width,
+@@ -86,7 +100,7 @@ var Block = exports.Block = function Block(_ref) {
+         height: '0px',
+         borderStyle: 'solid',
+         borderWidth: '0 10px 10px 10px',
+-        borderColor: 'transparent transparent ' + hex + ' transparent',
++        borderColor: `transparent transparent ${hex} transparent`,
+         position: 'absolute',
+         top: '-10px',
+         left: '50%',
+@@ -110,28 +124,28 @@ var Block = exports.Block = function Block(_ref) {
+         display: 'none'
+       }
+     }
+-  }, passedStyles), { 'hide-triangle': triangle === 'hide' });
++  }, styles), { 'hide-triangle': triangle === 'hide' });
+ 
+   return _react2.default.createElement(
+     'div',
+-    { style: styles.card, className: 'block-picker ' + className },
+-    _react2.default.createElement('div', { style: styles.triangle }),
++    { style: style.card, className: `block-picker ${className}` },
++    _react2.default.createElement('div', { style: style.triangle }),
+     _react2.default.createElement(
+       'div',
+-      { style: styles.head },
++      { style: style.head },
+       transparent && _react2.default.createElement(_common.Checkboard, { borderRadius: '6px 6px 0 0' }),
+       _react2.default.createElement(
+         'div',
+-        { style: styles.label },
++        { style: style.label },
+         hex
+       )
+     ),
+     _react2.default.createElement(
+       'div',
+-      { style: styles.body },
++      { style: style.body },
+       _react2.default.createElement(_BlockSwatches2.default, { colors: colors, onClick: handleChange, onSwatchHover: onSwatchHover }),
+       _react2.default.createElement(_common.EditableInput, {
+-        style: { input: styles.input },
++        style: { input: style.input },
+         value: hex,
+         onChange: handleChange
+       })
+@@ -146,11 +160,4 @@ Block.propTypes = {
+   styles: _propTypes2.default.object
+ };
+ 
+-Block.defaultProps = {
+-  width: 170,
+-  colors: ['#D9E3F0', '#F47373', '#697689', '#37D67A', '#2CCCE4', '#555555', '#dce775', '#ff8a65', '#ba68c8'],
+-  triangle: 'top',
+-  styles: {}
+-};
+-
+ exports.default = (0, _common.ColorWrap)(Block);
