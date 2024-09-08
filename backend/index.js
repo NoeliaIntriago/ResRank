@@ -18,6 +18,9 @@ app.use("/auth", loginRouter);
 const usuarioRouter = require("./routes/Usuario");
 app.use("/usuario", usuarioRouter);
 
+const facultadRouter = require("./routes/Facultad");
+app.use("/facultad", facultadRouter);
+
 const barRouter = require("./routes/Bar");
 app.use("/bar", barRouter);
 

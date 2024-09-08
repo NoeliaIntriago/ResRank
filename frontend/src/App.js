@@ -1,18 +1,19 @@
+import "bootstrap/dist/css/bootstrap.min.css";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import PrivateRoute from "./components/PrivateRoute";
-import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboardPage";
 import EditRestaurant from "./pages/EditRestaurantPage";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import OwnerDashboard from "./pages/OwnerDashboardPage";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import RestaurantList from "./pages/RestaurantListPage";
 import Locations from "./pages/RestaurantLocationsPage";
 import Reviews from "./pages/ReviewPage";
-import UserList from "./pages/UserListPage";
 import { Roles } from "./utils/global";
 
 function App() {
@@ -35,7 +36,7 @@ function App() {
             path="/dashboard"
             element={
               <PrivateRoute roles={[Roles.DUENO]}>
-                <Dashboard />
+                <OwnerDashboard />
               </PrivateRoute>
             }
           />
@@ -75,7 +76,7 @@ function App() {
             path="/users"
             element={
               <PrivateRoute roles={[Roles.ADMIN]}>
-                <UserList />
+                <AdminDashboard />
               </PrivateRoute>
             }
           />
