@@ -54,32 +54,36 @@ router.post("/login", async (req, res) => {
   const { nombre_usuario, contrasena } = req.body;
 
   try {
-    // Buscar al usuario por nombre de usuario
     const usuario = await Usuario.findOne({ where: { nombre_usuario } });
 
     if (!usuario) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // Comparar contraseñas
+    // Verificar la contraseña (suponiendo que la estás comparando con bcrypt)
     const isMatch = await bcrypt.compare(contrasena, usuario.contrasena);
 
     if (!isMatch) {
-      return res
-        .status(401)
-        .json({ error: "Contraseña incorrecta", message: error });
+      return res.status(401).json({ message: "Contraseña incorrecta" });
     }
 
-    // Generar un token JWT
+    // Crear el token JWT con el nombre de usuario y otros detalles
     const token = jwt.sign(
-      { id_usuario: usuario.id_usuario, rol: usuario.rol },
-      SECRET_KEY,
-      { expiresIn: "8h" }
+      {
+        id_usuario: usuario.id_usuario,
+        nombre_usuario: usuario.nombre_usuario, // Asegúrate de incluir nombre_usuario aquí
+        rol: usuario.rol,
+      },
+      process.env.SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
     );
 
     res.json({ token });
   } catch (error) {
-    res.status(500).json({ error: "Error al iniciar sesión" });
+    console.error(error);
+    res.status(500).json({ message: "Error en el servidor" });
   }
 });
 
