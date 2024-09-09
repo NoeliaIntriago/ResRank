@@ -13,6 +13,15 @@ export const getUserRole = () => {
   return null;
 };
 
+export const getUserName = () => {
+  const token = getToken();
+  if (token) {
+    const decodedToken = jwtDecode(token);
+    return decodedToken.nombre_usuario || null;
+  }
+  return null;
+};
+
 export const isAuthenticated = () => {
   return !!getToken();
 };
