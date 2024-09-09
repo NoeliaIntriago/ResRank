@@ -5,7 +5,9 @@ import { FaBan, FaCheck, FaEdit } from "react-icons/fa";
 import FacultadForm from "../components/forms/FacultadForm";
 import UsuarioForm from "../components/forms/UsuarioForm";
 import ModalWrapper from "../components/wrappers/ModalWrapper";
+import { showErrorAlert } from "../utils/alert";
 import { Roles } from "../utils/global";
+import { showToast } from "../utils/toast";
 
 function AdminDashboard() {
   const [usuarios, setUsuarios] = useState([]);
@@ -14,8 +16,7 @@ function AdminDashboard() {
   const [key, setKey] = useState("usuarios"); // Pestaña activa
 
   const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState("");
-  const [editData, setEditData] = useState(null);
+  const [modalInfo, setModalInfo] = useState({ type: "", data: null });
 
   const initialUsuarioValues = {
     id_usuario: null,
@@ -37,12 +38,31 @@ function AdminDashboard() {
     activo: true,
   };
 
+  const setRoleText = (rol) => {
+    switch (rol) {
+      case Roles.ADMIN:
+        return "Administrador";
+      case Roles.DUENO:
+        return "Dueño de restaurante";
+      case Roles.ESTUDIANTE:
+        return "Estudiante";
+      default:
+        return "Desconocido";
+    }
+  };
+
   const fetchData = async () => {
     try {
       const usuariosResponse = await axios.get(
         `${process.env.REACT_APP_URL}:3001/usuario`
       );
-      setUsuarios(usuariosResponse.data);
+      setUsuarios(
+        usuariosResponse.data.map((usuario) => ({
+          ...usuario,
+          contrasena: "", // No mostrar la contraseña en la tabla
+          matricula: usuario.estudiante?.matricula || null,
+        }))
+      );
 
       const facultadesResponse = await axios.get(
         `${process.env.REACT_APP_URL}:3001/facultad`
@@ -58,55 +78,56 @@ function AdminDashboard() {
   }, []);
 
   const handleShowModal = (type, data = null) => {
-    setModalType(type);
-    setEditData(data);
+    setModalInfo({ type, data });
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setEditData(null);
+    setModalInfo({ type: "", data: null });
   };
 
   const handleSubmit = async (values) => {
     try {
       let response;
 
-      if (modalType === "usuario") {
+      if (modalInfo.type === "usuario") {
+        // Si la contraseña está vacía, no la envíes al backend
+        const { contrasena, ...usuarioData } = values;
+        const dataToSend = contrasena ? values : usuarioData;
+
         // Si estamos editando un usuario
-        if (editData) {
-          // Hacer PUT para editar el usuario
+        if (modalInfo.data) {
           response = await axios.put(
-            `${process.env.REACT_APP_URL}:3001/usuario/${editData.id_usuario}`,
-            values, // Los datos que envías
+            `${process.env.REACT_APP_URL}:3001/usuario/${modalInfo.data.id_usuario}`,
+            dataToSend,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`, // Obtener el token desde el almacenamiento local
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
             }
           );
         } else {
-          // Hacer POST para crear un nuevo usuario
+          // Crear nuevo usuario
           response = await axios.post(
             `${process.env.REACT_APP_URL}:3001/usuario`,
             values
           );
         }
-      } else if (modalType === "facultad") {
-        // Si estamos editando una facultad
-        if (editData) {
-          // Hacer PUT para editar la facultad
+      } else if (modalInfo.type === "facultad") {
+        if (modalInfo.data) {
+          // Editar facultad
           response = await axios.put(
-            `${process.env.REACT_APP_URL}:3001/facultad/${editData.id_facultad}`,
+            `${process.env.REACT_APP_URL}:3001/facultad/${modalInfo.data.id_facultad}`,
             values,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`, // Obtener el token desde el almacenamiento local
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
             }
           );
         } else {
-          // Hacer POST para crear una nueva facultad
+          // Crear nueva facultad
           response = await axios.post(
             `${process.env.REACT_APP_URL}:3001/facultad`,
             values
@@ -114,17 +135,14 @@ function AdminDashboard() {
         }
       }
 
-      // Muestra el mensaje de éxito o haz algo con la respuesta
-      console.log("Respuesta de la API:", response.data);
-
-      // Recargar los datos después de la operación
+      showToast(response.message, "success");
       fetchData();
-
-      // Cerrar el modal después de guardar los datos
       handleCloseModal();
     } catch (error) {
-      console.error("Error al guardar los datos:", error);
-      // Mostrar un mensaje de error si falla
+      showErrorAlert(
+        "Error",
+        error.response?.data?.message || "Error al guardar los datos"
+      );
     }
   };
 
@@ -154,11 +172,16 @@ function AdminDashboard() {
         );
       }
 
-      console.log("Respuesta de la API:", response.data);
+      console.log("Respuesta de la API:", response.message);
+      showToast(response.message, "success");
 
       fetchData();
     } catch (error) {
       console.error("Error al cambiar el estado:", error);
+      showErrorAlert(
+        "Error",
+        error.response?.data?.message || "Error al cambiar el estado"
+      );
     }
   };
 
@@ -185,6 +208,7 @@ function AdminDashboard() {
               usuarios={usuarios}
               onEdit={handleShowModal}
               onChangeStatus={handleStatus}
+              setRoleText={setRoleText}
             />
           </Tab>
           <Tab eventKey="facultades" title="Facultades">
@@ -206,17 +230,21 @@ function AdminDashboard() {
         <ModalWrapper
           show={showModal}
           onHide={handleCloseModal}
-          title={editData ? `Editar ${modalType}` : `Agregar ${modalType}`}
+          title={
+            modalInfo.data
+              ? `Editar ${modalInfo.type}`
+              : `Agregar ${modalInfo.type}`
+          }
         >
-          {modalType === "usuario" && (
+          {modalInfo.type === "usuario" && (
             <UsuarioForm
-              initialValues={editData || initialUsuarioValues}
+              initialValues={modalInfo.data || initialUsuarioValues}
               onSubmit={handleSubmit}
             />
           )}
-          {modalType === "facultad" && (
+          {modalInfo.type === "facultad" && (
             <FacultadForm
-              initialValues={editData || initialFacultadValues}
+              initialValues={modalInfo.data || initialFacultadValues}
               onSubmit={handleSubmit}
             />
           )}
@@ -227,7 +255,7 @@ function AdminDashboard() {
 }
 
 // Componente para mostrar la tabla de usuarios
-function UsuariosTable({ usuarios, onEdit, onChangeStatus }) {
+function UsuariosTable({ usuarios, onEdit, onChangeStatus, setRoleText }) {
   return (
     <Table striped bordered hover responsive>
       <thead>
@@ -236,7 +264,6 @@ function UsuariosTable({ usuarios, onEdit, onChangeStatus }) {
           <th>Nombre</th>
           <th>Username</th>
           <th>Correo</th>
-          <th>Contraseña</th>
           <th>Rol</th>
           <th>Activo</th>
           <th>Fecha Creación</th>
@@ -251,13 +278,12 @@ function UsuariosTable({ usuarios, onEdit, onChangeStatus }) {
             <td>{usuario.nombre}</td>
             <td>{usuario.nombre_usuario}</td>
             <td>{usuario.correo}</td>
-            <td>{usuario.contrasena}</td>
-            <td>{usuario.rol}</td>
+            <td>{setRoleText(usuario.rol)}</td>
             <td>{usuario.activo ? "Sí" : "No"}</td>
-            <td>{new Date(usuario.fecha_creacion).toLocaleDateString()}</td>
+            <td>{new Date(usuario.fecha_creacion).toLocaleString()}</td>
             <td>
               {usuario.fecha_modificacion
-                ? new Date(usuario.fecha_modificacion).toLocaleDateString()
+                ? new Date(usuario.fecha_modificacion).toLocaleString()
                 : "N/A"}
             </td>
             <td>
