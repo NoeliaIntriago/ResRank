@@ -1,5 +1,5 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { Button } from "react-bootstrap";
+import { ErrorMessage, Field, Formik, Form as FormikForm } from "formik";
+import { Button, Col, Form } from "react-bootstrap";
 import * as Yup from "yup";
 import { Roles } from "../../utils/global";
 
@@ -7,7 +7,9 @@ const UserSchema = Yup.object().shape({
   nombre: Yup.string().required("Campo requerido"),
   nombre_usuario: Yup.string().min(3).max(15).required("Campo requerido"),
   correo: Yup.string().email("Correo inválido").required("Campo requerido"),
-  contrasena: Yup.string().min(6).required("Campo requerido"),
+  contrasena: Yup.string()
+    .min(6, "Mínimo 6 caracteres")
+    .max(16, "Máximo 16 caracteres"),
   celular: Yup.string().max(10).required("Campo requerido"),
   rol: Yup.mixed()
     .oneOf(Object.values(Roles), "Rol inválido")
@@ -26,92 +28,127 @@ function UsuarioForm({ initialValues, onSubmit }) {
       onSubmit={onSubmit}
     >
       {({ handleSubmit, values }) => (
-        <Form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Nombre:</label>
+        <FormikForm onSubmit={handleSubmit}>
+          <Form.Group as={Col} controlId="formNombre" className="mb-3">
+            <Form.Label>Nombre</Form.Label>
             <Field
-              id="inputNombre"
-              type="text"
               name="nombre"
+              as={Form.Control}
+              type="text"
               placeholder="Nombre"
               autoComplete="off"
+              isInvalid={!!ErrorMessage.nombre}
             />
-            <ErrorMessage name="nombre" component="span" />
-          </div>
-          <div className="form-group">
-            <label>Nombre de Usuario:</label>
+            <ErrorMessage
+              name="nombre"
+              component="div"
+              className="text-danger"
+            />
+          </Form.Group>
+
+          <Form.Group as={Col} controlId="formNombreUsuario" className="mb-3">
+            <Form.Label>Nombre de Usuario</Form.Label>
             <Field
-              id="inputNombreUsuario"
-              type="text"
               name="nombre_usuario"
+              as={Form.Control}
+              type="text"
               placeholder="Nombre de Usuario"
               autoComplete="off"
+              isInvalid={!!ErrorMessage.nombre_usuario}
             />
-            <ErrorMessage name="nombre_usuario" component="span" />
-          </div>
-          <div className="form-group">
-            <label>Correo:</label>
+            <ErrorMessage
+              name="nombre_usuario"
+              component="div"
+              className="text-danger"
+            />
+          </Form.Group>
+
+          <Form.Group as={Col} controlId="formCorreo" className="mb-3">
+            <Form.Label>Correo</Form.Label>
             <Field
-              id="inputCorreo"
-              type="email"
               name="correo"
+              as={Form.Control}
+              type="email"
               placeholder="Correo"
               autoComplete="off"
+              isInvalid={!!ErrorMessage.correo}
             />
-            <ErrorMessage name="correo" component="span" />
-          </div>
-          <div className="form-group">
-            <label>Contraseña:</label>
+            <ErrorMessage
+              name="correo"
+              component="div"
+              className="text-danger"
+            />
+          </Form.Group>
+
+          {/* Contraseña opcional */}
+          <Form.Group as={Col} controlId="formContrasena" className="mb-3">
+            <Form.Label>Nueva Contraseña (opcional)</Form.Label>
             <Field
-              id="inputContrasena"
-              type="password"
               name="contrasena"
-              placeholder="Contraseña"
+              as={Form.Control}
+              type="password"
+              placeholder="Dejar en blanco para no cambiar"
               autoComplete="off"
+              isInvalid={!!ErrorMessage.contrasena}
             />
-            <ErrorMessage name="contrasena" component="span" />
-          </div>
-          <div className="form-group">
-            <label>Celular:</label>
+            <ErrorMessage
+              name="contrasena"
+              component="div"
+              className="text-danger"
+            />
+          </Form.Group>
+
+          <Form.Group as={Col} controlId="formCelular" className="mb-3">
+            <Form.Label>Celular</Form.Label>
             <Field
-              id="inputCelular"
-              type="text"
               name="celular"
+              as={Form.Control}
+              type="text"
               placeholder="Celular"
               autoComplete="off"
+              isInvalid={!!ErrorMessage.celular}
             />
-            <ErrorMessage name="celular" component="span" />
-          </div>
-          <div className="form-group">
-            <label>Rol:</label>
-            <Field id="selectRol" name="rol" component="select">
+            <ErrorMessage
+              name="celular"
+              component="div"
+              className="text-danger"
+            />
+          </Form.Group>
+
+          <Form.Group as={Col} controlId="formRol" className="mb-3">
+            <Form.Label>Rol</Form.Label>
+            <Field name="rol" as="select" className="form-control">
               <option value={Roles.ADMIN}>Administrador</option>
               <option value={Roles.DUENO}>Dueño Restaurante</option>
               <option value={Roles.ESTUDIANTE}>Estudiante</option>
             </Field>
-            <ErrorMessage name="rol" component="span" />
-          </div>
+            <ErrorMessage name="rol" component="div" className="text-danger" />
+          </Form.Group>
+
           {/* Mostrar campo de matrícula solo si el rol es "estudiante" */}
           {values.rol === Roles.ESTUDIANTE && (
-            <>
-              <div className="form-group">
-                <label>Matrícula:</label>
-                <Field
-                  id="inputMatricula"
-                  type="text"
-                  name="matricula"
-                  placeholder="Matrícula"
-                  autoComplete="off"
-                />
-                <ErrorMessage name="matricula" component="span" />
-              </div>
-            </>
+            <Form.Group as={Col} controlId="formMatricula" className="mb-3">
+              <Form.Label>Matrícula</Form.Label>
+              <Field
+                name="matricula"
+                as={Form.Control}
+                type="text"
+                placeholder="Matrícula"
+                autoComplete="off"
+                isInvalid={!!ErrorMessage.matricula}
+              />
+              <ErrorMessage
+                name="matricula"
+                component="div"
+                className="text-danger"
+              />
+            </Form.Group>
           )}
 
           <Button variant="primary" type="submit">
             Guardar
           </Button>
-        </Form>
+        </FormikForm>
       )}
     </Formik>
   );

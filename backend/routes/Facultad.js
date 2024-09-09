@@ -20,10 +20,23 @@ router.post("/", async (req, res) => {
 
   try {
     const facultad = await Facultad.create(body);
-    res.json(facultad);
+    res.json(facultad, { message: "Facultad creada" });
   } catch (error) {
     console.error(error);
-    res.status(400).json(error);
+    res.status(400).json(error, { message: "Error al crear la facultad" });
+  }
+});
+
+router.put("/:id_facultad", async (req, res) => {
+  const { id_facultad } = req.params;
+  const body = req.body;
+
+  try {
+    await Facultad.update(body, { where: { id_facultad } });
+    res.json({ message: "Facultad actualizada" });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json(error, { message: "Error al actualizar la facultad" });
   }
 });
 
