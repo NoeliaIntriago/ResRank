@@ -1,7 +1,7 @@
 import React from "react";
-import { Button, Container, Nav, Navbar } from "react-bootstrap"; // Importa los componentes de react-bootstrap
+import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { getUserRole } from "../utils/auth";
+import { getUserName, getUserRole } from "../utils/auth"; // Supongamos que también tenemos una función getUserName
 import { Roles } from "../utils/global";
 
 function CustomNavbar() {
@@ -19,8 +19,9 @@ function CustomNavbar() {
     navigate("/");
   };
 
-  // Obtener el rol del usuario
+  // Obtener el rol y el nombre del usuario
   const userRole = getUserRole();
+  const userName = getUserName(); // Supongamos que esta función devuelve el nombre de usuario
 
   return (
     shouldShowNavbar && (
@@ -58,6 +59,12 @@ function CustomNavbar() {
                 Perfil
               </Nav.Link>
             </Nav>
+
+            {/* Mostrar el nombre de usuario si está disponible */}
+            {userName && (
+              <Navbar.Text className="me-3">Bienvenido, {userName}</Navbar.Text>
+            )}
+
             <Button
               variant="outline-light"
               onClick={handleLogout}
