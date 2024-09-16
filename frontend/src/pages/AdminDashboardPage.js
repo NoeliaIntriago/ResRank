@@ -187,7 +187,7 @@ function AdminDashboard() {
 
   return (
     <div className="App">
-      <div className="table-container">
+      <div className="app-container">
         <h1>Gestión del Administrador</h1>
 
         {/* Pestañas para cambiar entre secciones */}
