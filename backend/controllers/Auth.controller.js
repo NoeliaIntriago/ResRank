@@ -1,13 +1,11 @@
-const express = require("express");
-const router = express.Router();
+// controllers/Auth.controller.js
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { Usuario } = require("../models");
 const SECRET_KEY = process.env.SECRET_KEY;
 
-// REGISTER
-router.post("/register", async (req, res) => {
+exports.signup = async (req, res) => {
   const { nombre, nombre_usuario, correo, contrasena, celular, rol } = req.body;
 
   try {
@@ -47,10 +45,9 @@ router.post("/register", async (req, res) => {
       .status(500)
       .json({ error: "Error al registrar el usuario", message: error });
   }
-});
+};
 
-// LOGIN
-router.post("/login", async (req, res) => {
+exports.signin = async (req, res) => {
   const { nombre_usuario, contrasena } = req.body;
 
   try {
@@ -60,21 +57,21 @@ router.post("/login", async (req, res) => {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
-    // Verificar la contraseña (suponiendo que la estás comparando con bcrypt)
+    // Verificar la contraseña
     const isMatch = await bcrypt.compare(contrasena, usuario.contrasena);
 
     if (!isMatch) {
       return res.status(401).json({ message: "Contraseña incorrecta" });
     }
 
-    // Crear el token JWT con el nombre de usuario y otros detalles
+    // Crear el token JWT
     const token = jwt.sign(
       {
         id_usuario: usuario.id_usuario,
-        nombre_usuario: usuario.nombre_usuario, // Asegúrate de incluir nombre_usuario aquí
+        nombre_usuario: usuario.nombre_usuario,
         rol: usuario.rol,
       },
-      process.env.SECRET_KEY,
+      SECRET_KEY,
       {
         expiresIn: "8h",
       }
@@ -85,10 +82,9 @@ router.post("/login", async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Error en el servidor" });
   }
-});
+};
 
-// Middleware de autenticación
-const authenticateJWT = (req, res, next) => {
+exports.authenticateJWT = (req, res, next) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
@@ -104,8 +100,7 @@ const authenticateJWT = (req, res, next) => {
   }
 };
 
-// Ruta protegida
-router.get("/ruta-protegida", authenticateJWT, async (req, res) => {
+exports.protectedRoute = async (req, res) => {
   try {
     const usuario = await Usuario.findByPk(req.user.id_usuario);
     if (!usuario) {
@@ -118,6 +113,4 @@ router.get("/ruta-protegida", authenticateJWT, async (req, res) => {
       .status(500)
       .json({ error: "Error al acceder a la ruta protegida", message: error });
   }
-});
-
-module.exports = router;
+};

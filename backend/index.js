@@ -11,20 +11,20 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const port = process.env.PORT || 3001;
 
 // ROUTERS
-const loginRouter = require("./routes/Login");
+const authRouter = require("./routes/Auth.routes");
 app.use(bodyParser.json());
-app.use("/auth", loginRouter);
+app.use("/auth", authRouter);
 
-const usuarioRouter = require("./routes/Usuario");
+const usuarioRouter = require("./routes/Usuario.routes");
 app.use("/usuario", usuarioRouter);
 
-const facultadRouter = require("./routes/Facultad");
+const facultadRouter = require("./routes/Facultad.routes");
 app.use("/facultad", facultadRouter);
 
-const barRouter = require("./routes/Bar");
+const barRouter = require("./routes/Bar.routes");
 app.use("/bar", barRouter);
 
-const opinionRestauranteRouter = require("./routes/OpinionRestaurante");
+const opinionRestauranteRouter = require("./routes/OpinionRestaurante.routes");
 app.use("/opinion-restaurante", opinionRestauranteRouter);
 
 const db = require("./models");
