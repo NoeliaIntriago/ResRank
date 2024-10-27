@@ -1,20 +1,28 @@
-// routes/Auth.js
+// routes/Auth.routes.js
 
 const express = require("express");
+const { verifySignUp } = require("../middlewares");
+const controller = require("../controllers/Auth.controller");
+
 const router = express.Router();
-const AuthController = require("../controllers/Auth.controller");
 
-// REGISTER
-router.post("/signup", AuthController.signup);
+// Middleware for setting CORS headers
+router.use(function (req, res, next) {
+  res.header(
+    "Access-Control-Allow-Headers",
+    "x-access-token, Origin, Content-Type, Accept"
+  );
+  next();
+});
 
-// LOGIN
-router.post("/signin", AuthController.signin);
-
-// Ruta protegida
-router.get(
-  "/ruta-protegida",
-  AuthController.authenticateJWT,
-  AuthController.protectedRoute
+// Signup route with middlewares
+router.post(
+  "/signup",
+  [verifySignUp.checkDuplicateUsernameOrEmail, verifySignUp.checkRolesExisted],
+  controller.signup
 );
+
+// Signin route
+router.post("/signin", controller.signin);
 
 module.exports = router;

@@ -23,7 +23,7 @@ exports.signup = async (req, res) => {
       return res.status(422).json({ error: "Usuario ya existe" });
     }
 
-    const hashedPassword = await bcrypt.hash(contrasena, 8);
+    const hashedPassword = await bcrypt.hashSync(contrasena, 8);
 
     const nuevoUsuario = await Usuario.create({
       nombre,
@@ -58,10 +58,12 @@ exports.signin = async (req, res) => {
     }
 
     // Verificar la contraseña
-    const isMatch = await bcrypt.compare(contrasena, usuario.contrasena);
+    const isMatch = bcrypt.compareSync(contrasena, usuario.contrasena);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Contraseña incorrecta" });
+      return res
+        .status(401)
+        .json({ accessToken: null, message: "Contraseña incorrecta" });
     }
 
     // Crear el token JWT
@@ -73,11 +75,19 @@ exports.signin = async (req, res) => {
       },
       SECRET_KEY,
       {
+        algorithm: "HS256",
+        allowInsecureKeySizes: true,
         expiresIn: "8h",
       }
     );
 
-    res.json({ token });
+    res.status(200).json({
+      id_usuario: usuario.id_usuario,
+      nombre_usuario: usuario.nombre_usuario,
+      correo: usuario.correo,
+      rol: usuario.rol,
+      accessToken: token,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el servidor" });

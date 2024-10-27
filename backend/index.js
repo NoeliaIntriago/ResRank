@@ -1,3 +1,5 @@
+// index.js
+
 const express = require("express");
 const bodyParser = require("body-parser");
 
@@ -13,7 +15,7 @@ const port = process.env.PORT || 3001;
 // ROUTERS
 const authRouter = require("./routes/Auth.routes");
 app.use(bodyParser.json());
-app.use("/auth", authRouter);
+app.use("/api/auth", authRouter);
 
 const usuarioRouter = require("./routes/Usuario.routes");
 app.use("/usuario", usuarioRouter);
