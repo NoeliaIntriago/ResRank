@@ -1,15 +1,16 @@
 import React from "react";
 import { Button, Col, Container, Row } from "react-bootstrap"; // Importa los componentes de react-bootstrap
 import { useNavigate } from "react-router-dom";
+import AuthService from "../services/auth.service";
 import "../styles/NotAuthorized.css"; // Archivo de estilos CSS para personalizar
-import { getUserRole } from "../utils/auth";
 import { Roles } from "../utils/global";
 
 const NotAuthorized = () => {
   const navigate = useNavigate();
+  const currentUser = AuthService.getCurrentUser();
 
   const handleRedirect = () => {
-    const userRole = getUserRole();
+    const userRole = currentUser?.rol;
 
     switch (userRole) {
       case Roles.ADMIN:
