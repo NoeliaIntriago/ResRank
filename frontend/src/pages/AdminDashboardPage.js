@@ -6,11 +6,14 @@ import FacultadForm from "../components/forms/FacultadForm";
 import UsuarioForm from "../components/forms/UsuarioForm";
 import ModalWrapper from "../components/wrappers/ModalWrapper";
 import authHeader from "../services/auth-header";
+import AuthService from "../services/auth.service";
 import { showErrorAlert } from "../utils/alert";
 import { Roles } from "../utils/global";
 import { showToast } from "../utils/toast";
 
 function AdminDashboard() {
+  const currentUser = AuthService.getCurrentUser();
+
   const [usuarios, setUsuarios] = useState([]);
   const [facultades, setFacultades] = useState([]);
 
@@ -109,7 +112,10 @@ function AdminDashboard() {
             `${process.env.REACT_APP_URL}:3001/api/usuario/${modalInfo.data.id_usuario}`,
             dataToSend,
             {
-              headers: authHeader(),
+              headers: {
+                ...authHeader(),
+                usuario_modificacion: currentUser.nombre_usuario,
+              },
             }
           );
         } else {
@@ -118,7 +124,10 @@ function AdminDashboard() {
             `${process.env.REACT_APP_URL}:3001/api/usuario`,
             values,
             {
-              headers: authHeader(),
+              headers: {
+                ...authHeader(),
+                usuario_creacion: currentUser.nombre_usuario,
+              },
             }
           );
         }
@@ -129,7 +138,10 @@ function AdminDashboard() {
             `${process.env.REACT_APP_URL}:3001/api/facultad/${modalInfo.data.id_facultad}`,
             values,
             {
-              headers: authHeader(),
+              headers: {
+                ...authHeader(),
+                usuario_modificacion: currentUser.nombre_usuario,
+              },
             }
           );
         } else {
@@ -138,7 +150,10 @@ function AdminDashboard() {
             `${process.env.REACT_APP_URL}:3001/api/facultad`,
             values,
             {
-              headers: authHeader(),
+              headers: {
+                ...authHeader(),
+                usuario_creacion: currentUser.nombre_usuario,
+              },
             }
           );
         }
@@ -164,7 +179,10 @@ function AdminDashboard() {
           `${process.env.REACT_APP_URL}:3001/api/usuario/${data.id_usuario}`,
           { activo: !data.activo },
           {
-            headers: authHeader(),
+            headers: {
+              ...authHeader(),
+              usuario_modificacion: currentUser.nombre_usuario,
+            },
           }
         );
       } else if (type === "facultad") {
@@ -172,7 +190,10 @@ function AdminDashboard() {
           `${process.env.REACT_APP_URL}:3001/api/facultad/${data.id_facultad}`,
           { activo: !data.activo },
           {
-            headers: authHeader(),
+            headers: {
+              ...authHeader(),
+              usuario_modificacion: currentUser.nombre_usuario,
+            },
           }
         );
       }

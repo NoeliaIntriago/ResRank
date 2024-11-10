@@ -19,7 +19,13 @@ exports.createUsuario = async (req, res) => {
   const body = req.body;
 
   try {
-    const usuario = await Usuario.create(body);
+    const { usuario_creacion } = req.headers;
+
+    const usuario = await Usuario.create({
+      ...body,
+      usuario_creacion,
+      fecha_creacion: new Date(),
+    });
 
     if (body.rol === "estudiante") {
       await Estudiante.create({
@@ -50,7 +56,7 @@ exports.updateUsuario = async (req, res) => {
     if (body.contrasena) {
       body.contrasena = await bcrypt.hash(body.contrasena, 8);
     }
-    body.usuario_modificacion = req.user.nombre_usuario;
+    body.usuario_modificacion = req.headers.usuario_modificacion;
     body.fecha_modificacion = new Date();
 
     await Usuario.update(body, { where: { id_usuario } });
