@@ -5,6 +5,7 @@ import { FaBan, FaCheck, FaEdit } from "react-icons/fa";
 import FacultadForm from "../components/forms/FacultadForm";
 import UsuarioForm from "../components/forms/UsuarioForm";
 import ModalWrapper from "../components/wrappers/ModalWrapper";
+import authHeader from "../services/auth-header";
 import { showErrorAlert } from "../utils/alert";
 import { Roles } from "../utils/global";
 import { showToast } from "../utils/toast";
@@ -54,7 +55,10 @@ function AdminDashboard() {
   const fetchData = async () => {
     try {
       const usuariosResponse = await axios.get(
-        `${process.env.REACT_APP_URL}:3001/usuario`
+        `${process.env.REACT_APP_URL}:3001/api/usuario`,
+        {
+          headers: authHeader(),
+        }
       );
       setUsuarios(
         usuariosResponse.data.map((usuario) => ({
@@ -65,7 +69,10 @@ function AdminDashboard() {
       );
 
       const facultadesResponse = await axios.get(
-        `${process.env.REACT_APP_URL}:3001/facultad`
+        `${process.env.REACT_APP_URL}:3001/api/facultad`,
+        {
+          headers: authHeader(),
+        }
       );
       setFacultades(facultadesResponse.data);
     } catch (error) {
@@ -99,38 +106,40 @@ function AdminDashboard() {
         // Si estamos editando un usuario
         if (modalInfo.data) {
           response = await axios.put(
-            `${process.env.REACT_APP_URL}:3001/usuario/${modalInfo.data.id_usuario}`,
+            `${process.env.REACT_APP_URL}:3001/api/usuario/${modalInfo.data.id_usuario}`,
             dataToSend,
             {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
+              headers: authHeader(),
             }
           );
         } else {
           // Crear nuevo usuario
           response = await axios.post(
-            `${process.env.REACT_APP_URL}:3001/usuario`,
-            values
+            `${process.env.REACT_APP_URL}:3001/api/usuario`,
+            values,
+            {
+              headers: authHeader(),
+            }
           );
         }
       } else if (modalInfo.type === "facultad") {
         if (modalInfo.data) {
           // Editar facultad
           response = await axios.put(
-            `${process.env.REACT_APP_URL}:3001/facultad/${modalInfo.data.id_facultad}`,
+            `${process.env.REACT_APP_URL}:3001/api/facultad/${modalInfo.data.id_facultad}`,
             values,
             {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
+              headers: authHeader(),
             }
           );
         } else {
           // Crear nueva facultad
           response = await axios.post(
-            `${process.env.REACT_APP_URL}:3001/facultad`,
-            values
+            `${process.env.REACT_APP_URL}:3001/api/facultad`,
+            values,
+            {
+              headers: authHeader(),
+            }
           );
         }
       }
@@ -152,22 +161,18 @@ function AdminDashboard() {
 
       if (type === "usuario") {
         response = await axios.put(
-          `${process.env.REACT_APP_URL}:3001/usuario/${data.id_usuario}`,
+          `${process.env.REACT_APP_URL}:3001/api/usuario/${data.id_usuario}`,
           { activo: !data.activo },
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+            headers: authHeader(),
           }
         );
       } else if (type === "facultad") {
         response = await axios.put(
-          `${process.env.REACT_APP_URL}:3001/facultad/${data.id_facultad}`,
+          `${process.env.REACT_APP_URL}:3001/api/facultad/${data.id_facultad}`,
           { activo: !data.activo },
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+            headers: authHeader(),
           }
         );
       }
