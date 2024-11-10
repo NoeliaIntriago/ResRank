@@ -48,8 +48,8 @@ function CustomNavbar() {
               )}
 
               {(userRole === Roles.DUENO || userRole === Roles.ADMIN) && (
-                <Nav.Link as={Link} to="/dashboard">
-                  Dashboard
+                <Nav.Link as={Link} to="/restaurant-management">
+                  Gestión Restaurantes
                 </Nav.Link>
               )}
 

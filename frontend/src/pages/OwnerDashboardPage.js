@@ -13,6 +13,7 @@ import {
 import { FaBan, FaCheck, FaEdit, FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import FacultadSelect from "../components/selects/FacultadSelect";
+import authHeader from "../services/auth-header";
 import AuthService from "../services/auth.service";
 import { Roles, TipoMenu } from "../utils/global";
 
@@ -73,6 +74,27 @@ function OwnerDashboard() {
       pagination.perPage,
     ]
   );
+
+  const handleStatus = async (data) => {
+    try {
+      const response = await axios.put(
+        `${process.env.REACT_APP_URL}:3001/api/bar/${data.id_bar}/change-status`,
+        { activo: !data.activo },
+        {
+          headers: {
+            ...authHeader(),
+            usuario_modificacion: currentUser.nombre_usuario,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        makeRequest(pagination.currentPage);
+      }
+    } catch (error) {
+      console.error("Error updating restaurant status", error);
+    }
+  };
 
   useEffect(() => {
     makeRequest(pagination.currentPage);
@@ -178,15 +200,20 @@ function OwnerDashboard() {
                 <td>{restaurant.activo ? "Sí" : "No"}</td>
                 <td>
                   <ButtonGroup>
+                    {restaurant.activo && (
+                      <Button
+                        variant="warning"
+                        onClick={() => {
+                          navigate(`/restaurant/edit/${restaurant.id_bar}`);
+                        }}
+                      >
+                        <FaEdit /> Editar
+                      </Button>
+                    )}
                     <Button
-                      variant="warning"
-                      onClick={() => {
-                        navigate(`/restaurant/edit/${restaurant.id_bar}`);
-                      }}
+                      variant={restaurant.activo ? "danger" : "success"}
+                      onClick={() => handleStatus(restaurant)}
                     >
-                      <FaEdit /> Editar
-                    </Button>
-                    <Button variant={restaurant.activo ? "danger" : "success"}>
                       {restaurant.activo ? <FaBan /> : <FaCheck />}{" "}
                       <span className="d-none d-md-inline">
                         {restaurant.activo ? "Desactivar" : "Activar"}

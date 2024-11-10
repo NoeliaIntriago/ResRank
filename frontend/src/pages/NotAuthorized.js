@@ -15,7 +15,7 @@ const NotAuthorized = () => {
     switch (userRole) {
       case Roles.ADMIN:
       case Roles.DUENO:
-        navigate("/dashboard");
+        navigate("/restaurant-management");
         break;
       case Roles.ESTUDIANTE:
         navigate("/restaurants");

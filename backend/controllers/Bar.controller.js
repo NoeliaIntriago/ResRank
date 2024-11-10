@@ -81,10 +81,11 @@ exports.createBar = async (req, res) => {
   const { body } = req;
 
   try {
+    const { usuario_creacion } = req.headers;
+
     const bar = await Bar.create({
       ...body,
-      id_dueno: req.user.id_usuario,
-      usuario_creacion: req.user.nombre_usuario,
+      usuario_creacion,
       fecha_creacion: new Date(),
     });
 
@@ -92,7 +93,7 @@ exports.createBar = async (req, res) => {
       await Menu.create({
         ...item,
         id_bar: bar.id_bar,
-        usuario_creacion: req.user.nombre_usuario,
+        usuario_creacion,
         fecha_creacion: new Date(),
       });
     }
@@ -100,6 +101,55 @@ exports.createBar = async (req, res) => {
     res.status(201).json(bar);
   } catch (error) {
     console.error(error);
-    res.status(400).json(error);
+    res.status(400).json({ message: "Error creating bar", error });
+  }
+};
+
+exports.updateBar = async (req, res) => {
+  const { id } = req.params;
+  const { body } = req;
+
+  try {
+    const { usuario_modificacion } = req.headers;
+
+    await Bar.update(
+      { ...body, usuario_modificacion, fecha_modificacion: new Date() },
+      { where: { id_bar: id } }
+    );
+
+    await Menu.destroy({ where: { id_bar: id } });
+
+    for (const item of body.menu) {
+      await Menu.create({
+        ...item,
+        id_bar: id,
+        usuario_creacion: usuario_modificacion,
+        fecha_creacion: new Date(),
+      });
+    }
+
+    res.json({ message: "Bar updated" });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Error updating bar", error });
+  }
+};
+
+exports.changeStatus = async (req, res) => {
+  const { id } = req.params;
+  const { activo } = req.body;
+
+  try {
+    const { usuario_modificacion } = req.headers;
+
+    await Bar.update(
+      { activo, usuario_modificacion, fecha_modificacion: new Date() },
+      { where: { id_bar: id } }
+    );
+
+    res.json({ message: "Bar status updated" });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Error updating bar status", error });
   }
 };

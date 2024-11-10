@@ -21,7 +21,7 @@ const AppRoutes = () => (
     <Route path="/restaurants" element={<RestaurantList />} />
 
     <Route
-      path="/dashboard"
+      path="/restaurant-management"
       element={
         <PrivateRoute roles={[Roles.DUENO]}>
           <OwnerDashboard />

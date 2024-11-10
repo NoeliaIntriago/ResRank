@@ -13,12 +13,16 @@ import {
 import TimePicker from "react-bootstrap-time-picker";
 import { useNavigate, useParams } from "react-router-dom";
 import FacultadSelect from "../components/selects/FacultadSelect";
+import authHeader from "../services/auth-header";
+import AuthService from "../services/auth.service";
+import { showAlert, showErrorAlert } from "../utils/alert";
 import { TipoMenu } from "../utils/global";
-import { secondsToTimeFormat } from "../utils/times";
+import { secondsToTimeFormat, timeFormatToSeconds } from "../utils/times";
 import { showToast } from "../utils/toast";
 
 function EditRestaurant() {
   const navigate = useNavigate();
+  const currentUser = AuthService.getCurrentUser();
 
   const { id } = useParams();
   const isEdit = !!id; // Si existe id, entonces es edición; si no, es creación.
@@ -29,8 +33,8 @@ function EditRestaurant() {
     nombre: "",
     tipo_menu: "",
     id_facultad: "",
-    horario_inicio: "",
-    horario_fin: "",
+    horario_inicio: timeFormatToSeconds("06:00"),
+    horario_fin: timeFormatToSeconds("18:00"),
   });
 
   // Estado para el menú
@@ -48,9 +52,10 @@ function EditRestaurant() {
         .then((response) => {
           const { data } = response;
 
-          console.log("Datos del restaurante:", data);
-
           setRestaurantInfo(data);
+          handleStartTimeChange(timeFormatToSeconds(data.horario_inicio));
+          handleEndTimeChange(timeFormatToSeconds(data.horario_fin));
+
           setMenu(data.menu);
         });
     }
@@ -159,27 +164,61 @@ function EditRestaurant() {
 
     const payload = {
       ...restaurantInfo,
+      id_dueno: currentUser.id_usuario,
       horario_inicio: secondsToTimeFormat(restaurantInfo.horario_inicio),
       horario_fin: secondsToTimeFormat(restaurantInfo.horario_fin),
-      menu, // Aquí se agregaría el menú
+      menu,
     };
 
-    axios
-      .post(`${process.env.REACT_APP_URL}:3001/api/bar`, payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      .then((response) => {
-        console.log("Restaurante guardado:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error al guardar restaurante:", error);
-      });
+    if (isEdit) {
+      axios
+        .put(`${process.env.REACT_APP_URL}:3001/api/bar/${id}`, payload, {
+          headers: {
+            ...authHeader(),
+            usuario_modificacion: currentUser.nombre_usuario,
+          },
+        })
+        .then(async () => {
+          await showAlert(
+            "Guardado",
+            "Datos guardados correctamente",
+            "success"
+          );
+          navigate("/restaurant/edit/" + id);
+        })
+        .catch((error) => {
+          showErrorAlert(
+            "Error",
+            error.response?.data?.message || "Error al guardar los datos"
+          );
+        });
+    } else {
+      axios
+        .post(`${process.env.REACT_APP_URL}:3001/api/bar`, payload, {
+          headers: {
+            ...authHeader(),
+            usuario_creacion: currentUser.nombre_usuario,
+          },
+        })
+        .then(async (response) => {
+          await showAlert(
+            "Guardado",
+            "Datos guardados correctamente",
+            "success"
+          );
+          navigate("/restaurant/edit/" + response.data.id_bar);
+        })
+        .catch((error) => {
+          showErrorAlert(
+            "Error",
+            error.response?.data?.message || "Error al guardar los datos"
+          );
+        });
+    }
   };
 
   const goBack = () => {
-    navigate("/dashboard");
+    navigate("/restaurant-management");
   };
 
   return (
