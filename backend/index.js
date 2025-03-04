@@ -3,6 +3,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const logger = require("./services/logger");
+
 const app = express();
 const cors = require("cors");
 app.use(express.json());
@@ -30,8 +32,13 @@ const opinionRestauranteRouter = require("./routes/OpinionRestaurante.routes");
 app.use("/api/opinion-restaurante", opinionRestauranteRouter);
 
 const db = require("./models");
-db.sequelize.sync().then(() => {
-  app.listen(3001, () => {
-    console.log(`Server is running on port ${port}`);
+db.sequelize
+  .sync()
+  .then(() => {
+    app.listen(3001, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  })
+  .catch((error) => {
+    logger.error(error);
   });
-});
