@@ -139,7 +139,10 @@ function OwnerDashboard() {
               <Col sm={12} md={6} lg={4}>
                 <Form.Group>
                   <Form.Label>Facultad</Form.Label>
-                  <FacultadSelect onSelectFacultad={handleFacultadChange} />
+                  <FacultadSelect
+                    selectedValue={filter.id_facultad}
+                    onSelectFacultad={handleFacultadChange}
+                  />
                 </Form.Group>
               </Col>
               <Col sm={12} md={6} lg={4}>
@@ -180,8 +183,8 @@ function OwnerDashboard() {
         <Table striped bordered hover responsive>
           <thead>
             <tr>
-              <th>Facultad</th>
               <th>Nombre</th>
+              <th>Facultad</th>
               <th>Horario Inicio</th>
               <th>Horario Fin</th>
               <th>Tipo de Menú</th>
@@ -192,8 +195,8 @@ function OwnerDashboard() {
           <tbody>
             {bares.map((restaurant) => (
               <tr key={restaurant.id_bar}>
-                <td>{restaurant.facultad.nombre}</td>
                 <td>{restaurant.nombre}</td>
+                <td>{restaurant.facultad.nombre}</td>
                 <td>{restaurant.horario_inicio}</td>
                 <td>{restaurant.horario_fin}</td>
                 <td>{restaurant.tipo_menu}</td>

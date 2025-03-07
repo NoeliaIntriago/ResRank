@@ -55,7 +55,7 @@ function CustomNavbar() {
 
               {userRole === Roles.ADMIN && (
                 <Nav.Link as={Link} to="/users">
-                  Usuarios
+                  Gestión Administrador
                 </Nav.Link>
               )}
 

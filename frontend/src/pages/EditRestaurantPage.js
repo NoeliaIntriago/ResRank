@@ -35,6 +35,9 @@ function EditRestaurant() {
     id_facultad: "",
     horario_inicio: timeFormatToSeconds("06:00"),
     horario_fin: timeFormatToSeconds("18:00"),
+    dueno: {
+      nombre: currentUser.nombre,
+    },
   });
 
   // Estado para el menú
@@ -240,7 +243,7 @@ function EditRestaurant() {
                 <h2>Información del Bar</h2>
                 <Form>
                   <Row>
-                    <Col md={6} lg={7}>
+                    <Col md={6}>
                       <Form.Group
                         as={Col}
                         controlId="formNombre"
@@ -276,12 +279,21 @@ function EditRestaurant() {
                         </Form.Select>
                       </Form.Group>
                     </Col>
-                    <Col md={6} lg={3}>
+                    <Col md={6} lg={2}>
                       <Form.Group as={Col} className="mb-3">
                         <Form.Label>Facultad</Form.Label>
                         <FacultadSelect
                           selectedValue={restaurantInfo.id_facultad}
                           onSelectFacultad={handleFacultadChange}
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col md={6} lg={2}>
+                      <Form.Group as={Col} className="mb-3">
+                        <Form.Label>Dueño</Form.Label>
+                        <Form.Control
+                          readOnly
+                          value={restaurantInfo.dueno.nombre}
                         />
                       </Form.Group>
                     </Col>

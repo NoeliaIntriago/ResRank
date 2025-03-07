@@ -1,6 +1,6 @@
 // controllers/Bar.controller.js
 
-const { Bar, Facultad, Menu } = require("../models");
+const { Bar, Facultad, Menu, Usuario } = require("../models");
 const { Op } = require("sequelize");
 
 exports.getAllBars = async (req, res) => {
@@ -63,6 +63,7 @@ exports.getBarById = async (req, res) => {
       include: [
         { model: Facultad, as: "facultad" },
         { model: Menu, as: "menu" },
+        { model: Usuario, as: "dueno" },
       ],
     });
 
