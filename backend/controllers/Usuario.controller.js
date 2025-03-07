@@ -2,6 +2,7 @@
 
 const bcrypt = require("bcryptjs");
 const { Usuario, Estudiante } = require("../models");
+const logger = require("../services/logger");
 
 exports.getAllUsuarios = async (req, res) => {
   try {
@@ -37,6 +38,7 @@ exports.createUsuario = async (req, res) => {
     res.status(201).json({ usuario, message: "Usuario creado" });
   } catch (error) {
     console.error(error);
+    logger.error(error);
     res.status(400).json({ message: "Error al crear el usuario", error });
   }
 };
@@ -71,6 +73,7 @@ exports.updateUsuario = async (req, res) => {
     res.json({ message: "Usuario actualizado" });
   } catch (error) {
     console.error(error);
+    logger.error(error);
     res.status(400).json({ message: "Error al actualizar el usuario", error });
   }
 };

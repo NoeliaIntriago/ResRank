@@ -3,6 +3,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { Usuario } = require("../models");
+const logger = require("../services/logger");
 const SECRET_KEY = process.env.SECRET_KEY;
 
 exports.signup = async (req, res) => {
@@ -41,6 +42,7 @@ exports.signup = async (req, res) => {
       usuario: nuevoUsuario,
     });
   } catch (error) {
+    logger.error(error);
     res
       .status(500)
       .json({ error: "Error al registrar el usuario", message: error });
@@ -90,6 +92,7 @@ exports.signin = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    logger.error(error);
     res.status(500).json({ message: "Error en el servidor" });
   }
 };
@@ -106,6 +109,7 @@ exports.authenticateJWT = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
+    logger.error(err);
     res.status(400).json({ error: "Token no válido", message: err });
   }
 };
@@ -119,6 +123,7 @@ exports.protectedRoute = async (req, res) => {
 
     res.json({ usuario });
   } catch (error) {
+    logger.error(error);
     res
       .status(500)
       .json({ error: "Error al acceder a la ruta protegida", message: error });

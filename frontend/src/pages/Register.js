@@ -43,6 +43,7 @@ function Register() {
         navigate("/");
       },
       (error) => {
+        console.error(error);
         showErrorAlert(
           "Error",
           error.response?.data?.error || "Error al registrar usuario"
