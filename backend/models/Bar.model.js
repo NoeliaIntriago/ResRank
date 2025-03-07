@@ -78,10 +78,10 @@ module.exports = (sequelize, DataTypes) => {
     });
     Bar.hasMany(models.Menu, {
       foreignKey: "id_bar",
-      as: "menus",
+      as: "menu",
       onDelete: "CASCADE",
     });
-  }
+  };
 
   return Bar;
 };

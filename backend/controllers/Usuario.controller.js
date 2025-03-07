@@ -1,11 +1,10 @@
-const express = require("express");
-const router = express.Router();
+// controllers/UsuarioController.js
+
 const bcrypt = require("bcryptjs");
-
 const { Usuario, Estudiante } = require("../models");
-const verifyToken = require("../middlewares/verifyToken");
+const logger = require("../services/logger");
 
-router.get("/", async (req, res) => {
+exports.getAllUsuarios = async (req, res) => {
   try {
     const usuarios = await Usuario.findAll({
       include: [{ model: Estudiante, as: "estudiante" }],
@@ -13,15 +12,21 @@ router.get("/", async (req, res) => {
     res.json(usuarios);
   } catch (error) {
     console.error(error);
-    res.status(400).json(error);
+    res.status(400).json({ message: "Error retrieving users", error });
   }
-});
+};
 
-router.post("/", async (req, res) => {
+exports.createUsuario = async (req, res) => {
   const body = req.body;
 
   try {
-    const usuario = await Usuario.create(body);
+    const { usuario_creacion } = req.headers;
+
+    const usuario = await Usuario.create({
+      ...body,
+      usuario_creacion,
+      fecha_creacion: new Date(),
+    });
 
     if (body.rol === "estudiante") {
       await Estudiante.create({
@@ -30,14 +35,15 @@ router.post("/", async (req, res) => {
       });
     }
 
-    res.json(usuario, { message: "Usuario creado" });
+    res.status(201).json({ usuario, message: "Usuario creado" });
   } catch (error) {
     console.error(error);
-    res.status(400).json(error, { message: "Error al crear el usuario" });
+    logger.error(error);
+    res.status(400).json({ message: "Error al crear el usuario", error });
   }
-});
+};
 
-router.put("/:id_usuario", verifyToken, async (req, res) => {
+exports.updateUsuario = async (req, res) => {
   const { id_usuario } = req.params;
   const body = req.body;
 
@@ -49,9 +55,10 @@ router.put("/:id_usuario", verifyToken, async (req, res) => {
       });
     }
 
-    if (body.contrasena)
+    if (body.contrasena) {
       body.contrasena = await bcrypt.hash(body.contrasena, 8);
-    body.usuario_modificacion = req.user.nombre_usuario;
+    }
+    body.usuario_modificacion = req.headers.usuario_modificacion;
     body.fecha_modificacion = new Date();
 
     await Usuario.update(body, { where: { id_usuario } });
@@ -66,8 +73,7 @@ router.put("/:id_usuario", verifyToken, async (req, res) => {
     res.json({ message: "Usuario actualizado" });
   } catch (error) {
     console.error(error);
-    res.status(400).json(error, { message: "Error al actualizar el usuario" });
+    logger.error(error);
+    res.status(400).json({ message: "Error al actualizar el usuario", error });
   }
-});
-
-module.exports = router;
+};

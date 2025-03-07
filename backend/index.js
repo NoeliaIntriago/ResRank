@@ -1,3 +1,5 @@
+// index.js
+
 const express = require("express");
 const bodyParser = require("body-parser");
 
@@ -13,21 +15,21 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const port = process.env.PORT || 3001;
 
 // ROUTERS
-const loginRouter = require("./routes/Login");
+const authRouter = require("./routes/Auth.routes");
 app.use(bodyParser.json());
-app.use("/auth", loginRouter);
+app.use("/api/auth", authRouter);
 
-const usuarioRouter = require("./routes/Usuario");
-app.use("/usuario", usuarioRouter);
+const usuarioRouter = require("./routes/Usuario.routes");
+app.use("/api/usuario", usuarioRouter);
 
-const facultadRouter = require("./routes/Facultad");
-app.use("/facultad", facultadRouter);
+const facultadRouter = require("./routes/Facultad.routes");
+app.use("/api/facultad", facultadRouter);
 
-const barRouter = require("./routes/Bar");
-app.use("/bar", barRouter);
+const barRouter = require("./routes/Bar.routes");
+app.use("/api/bar", barRouter);
 
-const opinionRestauranteRouter = require("./routes/OpinionRestaurante");
-app.use("/opinion-restaurante", opinionRestauranteRouter);
+const opinionRestauranteRouter = require("./routes/OpinionRestaurante.routes");
+app.use("/api/opinion-restaurante", opinionRestauranteRouter);
 
 const db = require("./models");
 db.sequelize

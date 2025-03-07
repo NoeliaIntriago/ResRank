@@ -1,10 +1,10 @@
-import axios from "axios";
 import { ErrorMessage, Field, Formik, Form as FormikForm } from "formik";
 import React from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap"; // Importa componentes de react-bootstrap
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { showAlert, showErrorAlert } from "../utils/alert";
+import AuthService from "../services/auth.service";
+import { showErrorAlert } from "../utils/alert";
 import { Roles } from "../utils/global";
 import { showToast } from "../utils/toast";
 
@@ -36,25 +36,20 @@ function Register() {
     }),
   });
 
-  const handleRegister = async (data) => {
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_URL}:3001/auth/register`,
-        data
-      );
-
-      showToast(response.message, "success");
-      const result = await showAlert("Registro Exitoso!", response.message);
-      if (result.isConfirmed) {
+  const handleRegister = (data) => {
+    AuthService.register(data).then(
+      () => {
+        showToast("Registro exitoso", "success");
         navigate("/");
+      },
+      (error) => {
+        console.error(error);
+        showErrorAlert(
+          "Error",
+          error.response?.data?.error || "Error al registrar usuario"
+        );
       }
-    } catch (error) {
-      showToast("Error al registrar", "error");
-      showErrorAlert(
-        "Error",
-        error.response?.data?.error || "Error al registrar"
-      );
-    }
+    );
   };
 
   return (
@@ -66,7 +61,7 @@ function Register() {
             initialValues={registerForm}
             validationSchema={RegisterSchema}
             onSubmit={async (values) => {
-              await handleRegister(values);
+              handleRegister(values);
             }}
           >
             {({ values }) => (

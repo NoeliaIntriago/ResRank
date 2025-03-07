@@ -1,27 +1,31 @@
 import React from "react";
 import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { getUserName, getUserRole } from "../utils/auth"; // Supongamos que también tenemos una función getUserName
+import AuthService from "../services/auth.service";
 import { Roles } from "../utils/global";
 
 function CustomNavbar() {
   const location = useLocation();
+
   const navigate = useNavigate();
 
   // Decidir si se muestra el Navbar o no
-  const shouldShowNavbar = !["/", "/register"].includes(location.pathname);
+  const shouldShowNavbar = !["/", "/signup", "/signin"].includes(
+    location.pathname
+  );
 
   const handleLogout = () => {
     // Eliminar el token del localStorage
-    localStorage.removeItem("token");
+    AuthService.logout();
 
     // Redirigir al usuario a la página de inicio de sesión
     navigate("/");
   };
 
   // Obtener el rol y el nombre del usuario
-  const userRole = getUserRole();
-  const userName = getUserName(); // Supongamos que esta función devuelve el nombre de usuario
+  const currentUser = AuthService.getCurrentUser();
+  const userRole = currentUser?.rol;
+  const userName = currentUser?.nombre_usuario;
 
   return (
     shouldShowNavbar && (
@@ -44,14 +48,14 @@ function CustomNavbar() {
               )}
 
               {(userRole === Roles.DUENO || userRole === Roles.ADMIN) && (
-                <Nav.Link as={Link} to="/dashboard">
-                  Dashboard
+                <Nav.Link as={Link} to="/restaurant-management">
+                  Gestión Restaurantes
                 </Nav.Link>
               )}
 
               {userRole === Roles.ADMIN && (
                 <Nav.Link as={Link} to="/users">
-                  Usuarios
+                  Gestión Administrador
                 </Nav.Link>
               )}
 

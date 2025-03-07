@@ -129,15 +129,15 @@ a:hover {
   box-shadow: 0 0 0 3px rgba(255, 77, 79, 0.5); /* Agregar un borde de enfoque personalizado */
 }
 
-.table-container {
+.app-container {
   margin: 20px; /* Añade un margen alrededor de todo el contenido */
 }
 
-.table-container h1 {
+.app-container h1 {
   margin-bottom: 20px; /* Añade espacio entre el título y la tabla */
 }
 
-.table-container .table {
+.app-container .table {
   margin-top: 20px;
   border-radius: 5px; /* Opcional: Añade bordes redondeados a la tabla */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Opcional: Añade una sombra ligera para mejor visualización */
