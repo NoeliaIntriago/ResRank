@@ -1,36 +1,42 @@
 const { Usuario } = require("../models");
+const logger = require("../services/logger");
 const ROLES = ["estudiante", "dueno_restaurante", "admin"];
 
 checkDuplicateUsernameOrEmail = (req, res, next) => {
   // Username
   Usuario.findOne({
     where: {
-      username: req.body.username,
+      nombre_usuario: req.body.nombre_usuario,
     },
-  }).then((user) => {
-    if (user) {
-      res.status(400).send({
-        message: "Failed! Username is already in use!",
-      });
-      return;
-    }
-
-    // Email
-    Usuario.findOne({
-      where: {
-        email: req.body.email,
-      },
-    }).then((user) => {
+  })
+    .then((user) => {
       if (user) {
         res.status(400).send({
-          message: "Failed! Email is already in use!",
+          message: "Failed! Username is already in use!",
         });
         return;
       }
 
-      next();
+      // Email
+      Usuario.findOne({
+        where: {
+          correo: req.body.correo,
+        },
+      }).then((user) => {
+        if (user) {
+          res.status(400).send({
+            message: "Failed! Email is already in use!",
+          });
+          return;
+        }
+
+        next();
+      });
+    })
+    .catch((error) => {
+      logger.error(error);
+      res.status(500).json({ message: "Error en el servidor" });
     });
-  });
 };
 
 checkRolesExisted = (req, res, next) => {
