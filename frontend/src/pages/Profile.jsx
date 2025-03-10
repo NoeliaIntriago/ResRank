@@ -23,7 +23,7 @@ function Profile() {
   const fetchData = useCallback(async () => {
     try {
       const { data: response } = await axios.get(
-        `${process.env.REACT_APP_URL}:3001/api/usuario/${currentUser.id_usuario}`,
+        `${import.meta.env.VITE_APP_URL}:3001/api/usuario/${currentUser.id_usuario}`,
         {
           headers: authHeader(),
         }
