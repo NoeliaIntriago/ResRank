@@ -5,7 +5,7 @@ function Locations() {
   const [restaurantes, setRestaurantes] = useState([]);
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_APP_URL}:3001/bar`).then((response) => {
+    axios.get(`${import.meta.env.VITE_APP_URL}:3001/api/bar`).then((response) => {
       setRestaurantes(response.data);
     });
   }, []);

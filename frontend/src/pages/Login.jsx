@@ -1,12 +1,10 @@
-import axios from "axios";
 import { ErrorMessage, Field, Formik, Form as FormikForm } from "formik"; // Asegúrate de usar FormikForm
-import { jwtDecode } from "jwt-decode"; // Corrige la importación de jwtDecode
 import React from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap"; // Usa los componentes necesarios de react-bootstrap
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import AuthService from "../services/auth.service";
 import { showErrorAlert } from "../utils/alert";
-import { Roles } from "../utils/global";
 import { showToast } from "../utils/toast";
 
 function Login() {
@@ -22,42 +20,19 @@ function Login() {
     contrasena: Yup.string().required("Campo requerido"),
   });
 
-  const handleLogin = async (data) => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_APP_URL}:3001/auth/login`,
-        data
-      );
-
-      const token = response.data.token;
-      localStorage.setItem("token", token);
-
-      const decodedToken = jwtDecode(token);
-      const { rol } = decodedToken;
-
-      showToast("Inicio de sesión exitoso", "success");
-
-      // Redirigir según el rol del usuario
-      switch (rol) {
-        case Roles.ADMIN:
-        case Roles.DUENO:
-          navigate("/dashboard");
-          break;
-        case Roles.ESTUDIANTE:
-          navigate("/restaurants");
-          break;
-        default:
-          navigate("/");
-          break;
+  const handleLogin = (data) => {
+    AuthService.login(data.nombre_usuario, data.contrasena).then(
+      () => {
+        showToast("Inicio de sesión exitoso", "success");
+        navigate("/profile");
+      },
+      (error) => {
+        showErrorAlert(
+          "Error",
+          error.response?.data?.error || "Error al iniciar sesión"
+        );
       }
-    } catch (error) {
-      console.error("Error capturado:", error);
-
-      // Verifica si hay respuesta desde el servidor
-      const errorMessage =
-        error.response?.data?.error || "Error al iniciar sesión";
-      showErrorAlert("Error", errorMessage);
-    }
+    );
   };
 
   return (
@@ -69,7 +44,7 @@ function Login() {
             initialValues={loginForm}
             validationSchema={LoginSchema}
             onSubmit={async (values, { setSubmitting }) => {
-              await handleLogin(values);
+              handleLogin(values);
               setSubmitting(false); // Asegúrate de deshabilitar la opción de "submit" al finalizar
             }}
           >
@@ -118,7 +93,7 @@ function Login() {
           </Formik>
 
           <p className="mt-3">
-            ¿No estás registrado? <Link to="/register">Regístrate ahora</Link>
+            ¿No estás registrado? <Link to="/signup">Regístrate ahora</Link>
           </p>
         </Col>
       </Row>

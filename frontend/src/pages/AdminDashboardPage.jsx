@@ -5,11 +5,15 @@ import { FaBan, FaCheck, FaEdit } from "react-icons/fa";
 import FacultadForm from "../components/forms/FacultadForm";
 import UsuarioForm from "../components/forms/UsuarioForm";
 import ModalWrapper from "../components/wrappers/ModalWrapper";
+import authHeader from "../services/auth-header";
+import AuthService from "../services/auth.service";
 import { showErrorAlert } from "../utils/alert";
 import { Roles } from "../utils/global";
 import { showToast } from "../utils/toast";
 
 function AdminDashboard() {
+  const currentUser = AuthService.getCurrentUser();
+
   const [usuarios, setUsuarios] = useState([]);
   const [facultades, setFacultades] = useState([]);
 
@@ -54,7 +58,10 @@ function AdminDashboard() {
   const fetchData = async () => {
     try {
       const usuariosResponse = await axios.get(
-        `${import.meta.env.VITE_APP_URL}:3001/usuario`
+        `${import.meta.env.VITE_APP_URL}:3001/api/usuario`,
+        {
+          headers: authHeader(),
+        }
       );
       setUsuarios(
         usuariosResponse.data.map((usuario) => ({
@@ -65,7 +72,10 @@ function AdminDashboard() {
       );
 
       const facultadesResponse = await axios.get(
-        `${import.meta.env.VITE_APP_URL}:3001/facultad`
+        `${import.meta.env.VITE_APP_URL}:3001/api/facultad`,
+        {
+          headers: authHeader(),
+        }
       );
       setFacultades(facultadesResponse.data);
     } catch (error) {
@@ -99,38 +109,52 @@ function AdminDashboard() {
         // Si estamos editando un usuario
         if (modalInfo.data) {
           response = await axios.put(
-            `${import.meta.env.VITE_APP_URL}:3001/usuario/${modalInfo.data.id_usuario}`,
+            `${import.meta.env.VITE_APP_URL}:3001/api/usuario/${modalInfo.data.id_usuario}`,
             dataToSend,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                ...authHeader(),
+                usuario_modificacion: currentUser.nombre_usuario,
               },
             }
           );
         } else {
           // Crear nuevo usuario
           response = await axios.post(
-            `${import.meta.env.VITE_APP_URL}:3001/usuario`,
-            values
+            `${import.meta.env.VITE_APP_URL}:3001/api/usuario`,
+            values,
+            {
+              headers: {
+                ...authHeader(),
+                usuario_creacion: currentUser.nombre_usuario,
+              },
+            }
           );
         }
       } else if (modalInfo.type === "facultad") {
         if (modalInfo.data) {
           // Editar facultad
           response = await axios.put(
-            `${import.meta.env.VITE_APP_URL}:3001/facultad/${modalInfo.data.id_facultad}`,
+            `${import.meta.env.VITE_APP_URL}:3001/api/facultad/${modalInfo.data.id_facultad}`,
             values,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                ...authHeader(),
+                usuario_modificacion: currentUser.nombre_usuario,
               },
             }
           );
         } else {
           // Crear nueva facultad
           response = await axios.post(
-            `${import.meta.env.VITE_APP_URL}:3001/facultad`,
-            values
+            `${import.meta.env.VITE_APP_URL}:3001/api/facultad`,
+            values,
+            {
+              headers: {
+                ...authHeader(),
+                usuario_creacion: currentUser.nombre_usuario,
+              },
+            }
           );
         }
       }
@@ -152,21 +176,23 @@ function AdminDashboard() {
 
       if (type === "usuario") {
         response = await axios.put(
-          `${import.meta.env.VITE_APP_URL}:3001/usuario/${data.id_usuario}`,
+          `${import.meta.env.VITE_APP_URL}:3001/api/usuario/${data.id_usuario}`,
           { activo: !data.activo },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              ...authHeader(),
+              usuario_modificacion: currentUser.nombre_usuario,
             },
           }
         );
       } else if (type === "facultad") {
         response = await axios.put(
-          `${import.meta.env.VITE_APP_URL}:3001/facultad/${data.id_facultad}`,
+          `${import.meta.env.VITE_APP_URL}:3001/api/facultad/${data.id_facultad}`,
           { activo: !data.activo },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              ...authHeader(),
+              usuario_modificacion: currentUser.nombre_usuario,
             },
           }
         );
@@ -187,7 +213,7 @@ function AdminDashboard() {
 
   return (
     <div className="App">
-      <div className="table-container">
+      <div className="app-container">
         <h1>Gestión del Administrador</h1>
 
         {/* Pestañas para cambiar entre secciones */}

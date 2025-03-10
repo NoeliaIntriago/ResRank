@@ -15,13 +15,13 @@ import { Roles } from "./utils/global";
 const AppRoutes = () => (
   <Routes>
     <Route path="/" element={<Login />} />
-    <Route path="/register" element={<Register />} />
+    <Route path="/signup" element={<Register />} />
     <Route path="/home" element={<Home />} />
     <Route path="/profile" element={<Profile />} />
     <Route path="/restaurants" element={<RestaurantList />} />
 
     <Route
-      path="/dashboard"
+      path="/restaurant-management"
       element={
         <PrivateRoute roles={[Roles.DUENO]}>
           <OwnerDashboard />
@@ -30,6 +30,14 @@ const AppRoutes = () => (
     />
     <Route
       path="/restaurant/edit/:id"
+      element={
+        <PrivateRoute roles={[Roles.DUENO]}>
+          <EditRestaurant />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/restaurant/new"
       element={
         <PrivateRoute roles={[Roles.DUENO]}>
           <EditRestaurant />
