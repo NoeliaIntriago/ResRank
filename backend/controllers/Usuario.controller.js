@@ -16,6 +16,20 @@ exports.getAllUsuarios = async (req, res) => {
   }
 };
 
+exports.getUsuarioById = async (req, res) => {
+  const { id_usuario } = req.params;
+
+  try {
+    const usuario = await Usuario.findByPk(id_usuario, {
+      include: [{ model: Estudiante, as: "estudiante" }],
+    });
+    res.json(usuario);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Error retrieving user", error });
+  }
+};
+
 exports.createUsuario = async (req, res) => {
   const body = req.body;
 
