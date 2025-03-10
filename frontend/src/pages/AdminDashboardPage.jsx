@@ -58,7 +58,7 @@ function AdminDashboard() {
   const fetchData = async () => {
     try {
       const usuariosResponse = await axios.get(
-        `${process.env.REACT_APP_URL}:3001/api/usuario`,
+        `${import.meta.env.VITE_APP_URL}:3001/api/usuario`,
         {
           headers: authHeader(),
         }
@@ -72,7 +72,7 @@ function AdminDashboard() {
       );
 
       const facultadesResponse = await axios.get(
-        `${process.env.REACT_APP_URL}:3001/api/facultad`,
+        `${import.meta.env.VITE_APP_URL}:3001/api/facultad`,
         {
           headers: authHeader(),
         }
@@ -109,7 +109,7 @@ function AdminDashboard() {
         // Si estamos editando un usuario
         if (modalInfo.data) {
           response = await axios.put(
-            `${process.env.REACT_APP_URL}:3001/api/usuario/${modalInfo.data.id_usuario}`,
+            `${import.meta.env.VITE_APP_URL}:3001/api/usuario/${modalInfo.data.id_usuario}`,
             dataToSend,
             {
               headers: {
@@ -121,7 +121,7 @@ function AdminDashboard() {
         } else {
           // Crear nuevo usuario
           response = await axios.post(
-            `${process.env.REACT_APP_URL}:3001/api/usuario`,
+            `${import.meta.env.VITE_APP_URL}:3001/api/usuario`,
             values,
             {
               headers: {
@@ -135,7 +135,7 @@ function AdminDashboard() {
         if (modalInfo.data) {
           // Editar facultad
           response = await axios.put(
-            `${process.env.REACT_APP_URL}:3001/api/facultad/${modalInfo.data.id_facultad}`,
+            `${import.meta.env.VITE_APP_URL}:3001/api/facultad/${modalInfo.data.id_facultad}`,
             values,
             {
               headers: {
@@ -147,7 +147,7 @@ function AdminDashboard() {
         } else {
           // Crear nueva facultad
           response = await axios.post(
-            `${process.env.REACT_APP_URL}:3001/api/facultad`,
+            `${import.meta.env.VITE_APP_URL}:3001/api/facultad`,
             values,
             {
               headers: {
@@ -176,7 +176,7 @@ function AdminDashboard() {
 
       if (type === "usuario") {
         response = await axios.put(
-          `${process.env.REACT_APP_URL}:3001/api/usuario/${data.id_usuario}`,
+          `${import.meta.env.VITE_APP_URL}:3001/api/usuario/${data.id_usuario}`,
           { activo: !data.activo },
           {
             headers: {
@@ -187,7 +187,7 @@ function AdminDashboard() {
         );
       } else if (type === "facultad") {
         response = await axios.put(
-          `${process.env.REACT_APP_URL}:3001/api/facultad/${data.id_facultad}`,
+          `${import.meta.env.VITE_APP_URL}:3001/api/facultad/${data.id_facultad}`,
           { activo: !data.activo },
           {
             headers: {

@@ -51,7 +51,7 @@ function EditRestaurant() {
     if (isEdit) {
       // Cargar datos del restaurante existente
       axios
-        .get(`${process.env.REACT_APP_URL}:3001/api/bar/${id}`)
+        .get(`${import.meta.env.VITE_APP_URL}:3001/api/bar/${id}`)
         .then((response) => {
           const { data } = response;
 
@@ -175,7 +175,7 @@ function EditRestaurant() {
 
     if (isEdit) {
       axios
-        .put(`${process.env.REACT_APP_URL}:3001/api/bar/${id}`, payload, {
+        .put(`${import.meta.env.VITE_APP_URL}:3001/api/bar/${id}`, payload, {
           headers: {
             ...authHeader(),
             usuario_modificacion: currentUser.nombre_usuario,
@@ -197,7 +197,7 @@ function EditRestaurant() {
         });
     } else {
       axios
-        .post(`${process.env.REACT_APP_URL}:3001/api/bar`, payload, {
+        .post(`${import.meta.env.VITE_APP_URL}:3001/api/bar`, payload, {
           headers: {
             ...authHeader(),
             usuario_creacion: currentUser.nombre_usuario,

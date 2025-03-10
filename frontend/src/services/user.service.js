@@ -1,7 +1,7 @@
 import axios from "axios";
 import authHeader from "./auth-header";
 
-const API_URL = `${process.env.REACT_APP_URL}:3001/api/auth/`;
+const API_URL = `${import.meta.env.VITE_APP_URL}:3001/api/auth/`;
 
 const getPublicContent = () => {
   return axios.get(API_URL + "all");

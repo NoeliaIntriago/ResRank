@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = `${process.env.REACT_APP_URL}:3001/api/auth/`;
+const API_URL = `${import.meta.env.VITE_APP_URL}:3001/api/auth/`;
 
 const register = (payload) => {
   return axios.post(API_URL + "signup", {
