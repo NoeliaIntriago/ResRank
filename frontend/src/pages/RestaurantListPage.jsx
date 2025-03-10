@@ -5,8 +5,7 @@ function RestaurantList() {
   const [restaurantes, setRestaurantes] = useState([]);
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_URL}:3001/api/bar`).then((response) => {
-      console.log(response.data);
+    axios.get(`${import.meta.env.VITE_APP_URL}:3001/api/bar`).then((response) => {
       setRestaurantes(response.data.bares);
     });
   }, []);

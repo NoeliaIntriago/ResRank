@@ -42,7 +42,7 @@ function OwnerDashboard() {
         const rol = currentUser?.rol;
 
         const response = await axios.get(
-          `${process.env.REACT_APP_URL}:3001/api/bar`,
+          `${import.meta.env.VITE_APP_URL}:3001/api/bar`,
           {
             params: {
               id_usuario: rol === Roles.DUENO ? uid : null,
@@ -78,7 +78,7 @@ function OwnerDashboard() {
   const handleStatus = async (data) => {
     try {
       const response = await axios.put(
-        `${process.env.REACT_APP_URL}:3001/api/bar/${data.id_bar}/change-status`,
+        `${import.meta.env.VITE_APP_URL}:3001/api/bar/${data.id_bar}/change-status`,
         { activo: !data.activo },
         {
           headers: {

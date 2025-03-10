@@ -10,7 +10,7 @@ const FacultadSelect = ({ onSelectFacultad, selectedValue }) => {
   const fetchFacultades = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_URL}:3001/api/facultad`,
+        `${import.meta.env.VITE_APP_URL}:3001/api/facultad`,
         {
           headers: authHeader(),
         }
