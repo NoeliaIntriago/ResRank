@@ -25,7 +25,7 @@ function Login() {
   const handleLogin = async (data) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_URL}:3001/auth/login`,
+        `${import.meta.env.VITE_APP_URL}:3001/auth/login`,
         data
       );
 

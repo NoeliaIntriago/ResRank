@@ -1,18 +1,18 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-function Locations() {
+function RestaurantList() {
   const [restaurantes, setRestaurantes] = useState([]);
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_URL}:3001/bar`).then((response) => {
+    axios.get(`${import.meta.env.VITE_APP_URL}:3001/bar`).then((response) => {
       setRestaurantes(response.data);
     });
   }, []);
 
   return (
     <div className="App">
-      <h1>Ubicaciones</h1>
+      <h1>Restaurantes</h1>
       <ul>
         {restaurantes.map((restaurant) => {
           return (
@@ -30,4 +30,4 @@ function Locations() {
   );
 }
 
-export default Locations;
+export default RestaurantList;

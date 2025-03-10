@@ -10,7 +10,7 @@ function OwnerDashboard() {
   useEffect(() => {
     if (userId) {
       axios
-        .get(`${process.env.REACT_APP_URL}:3001/bar`, {
+        .get(`${import.meta.env.VITE_APP_URL}:3001/bar`, {
           params: { id_usuario: userId }, // Pasar el id del usuario como parámetro
         })
         .then((response) => {

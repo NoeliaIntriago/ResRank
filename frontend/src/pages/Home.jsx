@@ -5,7 +5,7 @@ function Home() {
   const [usuarios, setUsuarios] = useState([]);
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_URL}:3001/usuario`).then((response) => {
+    axios.get(`${import.meta.env.VITE_APP_URL}:3001/usuario`).then((response) => {
       setUsuarios(response.data);
     });
   }, []);
