@@ -1,7 +1,6 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
-import authHeader from "../../services/auth-header";
+import facultadService from "../../services/facultad.service";
 
 const FacultadSelect = ({ onSelectFacultad, selectedValue }) => {
   const [facultades, setFacultades] = useState([]);
@@ -9,12 +8,7 @@ const FacultadSelect = ({ onSelectFacultad, selectedValue }) => {
 
   const fetchFacultades = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_APP_URL}:3001/api/facultad`,
-        {
-          headers: authHeader(),
-        }
-      );
+      const response = await facultadService.getAll();
       setFacultades(response.data);
       setLoading(false);
     } catch (error) {

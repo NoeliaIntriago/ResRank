@@ -2,6 +2,8 @@
 
 const { Bar, Facultad, Menu, Usuario } = require("../models");
 const { Op } = require("sequelize");
+const { getPagingData, getPagination } = require("./utils/pagination");
+const logger = require("../services/logger");
 
 exports.getAllBars = async (req, res) => {
   const {
@@ -12,44 +14,26 @@ exports.getAllBars = async (req, res) => {
     page = 1,
     perPage,
   } = req.query;
-  const limit = perPage ? Number(perPage) : 10;
-  const offset = (page - 1) * limit;
+  const { limit, offset } = getPagination(page, perPage);
 
   try {
     const condition = {};
-    if (id_usuario) {
-      condition.id_dueno = id_usuario;
-    }
+    if (id_usuario) condition.id_dueno = id_usuario;
+    if (nombre) condition.nombre = { [Op.like]: `%${nombre}%` };
+    if (tipo_menu) condition.tipo_menu = tipo_menu;
+    if (id_facultad) condition.id_facultad = id_facultad;
 
-    if (nombre) {
-      condition.nombre = {
-        [Op.like]: `%${nombre}%`,
-      };
-    }
-
-    if (tipo_menu) {
-      condition.tipo_menu = tipo_menu;
-    }
-
-    if (id_facultad) {
-      condition.id_facultad = id_facultad;
-    }
-
-    const { count, rows: bares } = await Bar.findAndCountAll({
+    const data = await Bar.findAndCountAll({
       where: condition,
-      order: [["nombre", "ASC"]],
       limit,
       offset,
+      order: [["nombre", "ASC"]],
       include: [{ model: Facultad, as: "facultad" }],
     });
 
-    res.json({
-      bares,
-      currentPage: page,
-      perPage: limit,
-      total: Math.ceil(count / limit),
-    });
+    res.json(getPagingData(data, page, limit));
   } catch (error) {
+    logger.error(error);
     console.error(error);
     res.status(400).json(error);
   }

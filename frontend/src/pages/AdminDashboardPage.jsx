@@ -1,12 +1,13 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup, Tab, Table, Tabs } from "react-bootstrap";
-import { FaBan, FaCheck, FaEdit } from "react-icons/fa";
+import { Button, Tab, Tabs } from "react-bootstrap";
 import FacultadForm from "../components/forms/FacultadForm";
 import UsuarioForm from "../components/forms/UsuarioForm";
+import FacultadesTable from "../components/tables/FacultadesTable";
+import UsuariosTable from "../components/tables/UsuariosTable";
 import ModalWrapper from "../components/wrappers/ModalWrapper";
-import authHeader from "../services/auth-header";
 import AuthService from "../services/auth.service";
+import facultadService from "../services/facultad.service";
+import userService from "../services/user.service";
 import { showErrorAlert } from "../utils/alert";
 import { Roles } from "../utils/global";
 import { showToast } from "../utils/toast";
@@ -57,12 +58,7 @@ function AdminDashboard() {
 
   const fetchData = async () => {
     try {
-      const usuariosResponse = await axios.get(
-        `${import.meta.env.VITE_APP_URL}:3001/api/usuario`,
-        {
-          headers: authHeader(),
-        }
-      );
+      const usuariosResponse = await userService.getAll();
       setUsuarios(
         usuariosResponse.data.map((usuario) => ({
           ...usuario,
@@ -71,12 +67,7 @@ function AdminDashboard() {
         }))
       );
 
-      const facultadesResponse = await axios.get(
-        `${import.meta.env.VITE_APP_URL}:3001/api/facultad`,
-        {
-          headers: authHeader(),
-        }
-      );
+      const facultadesResponse = await facultadService.getAll();
       setFacultades(facultadesResponse.data);
     } catch (error) {
       console.error("Error al cargar datos:", error);
@@ -108,53 +99,31 @@ function AdminDashboard() {
 
         // Si estamos editando un usuario
         if (modalInfo.data) {
-          response = await axios.put(
-            `${import.meta.env.VITE_APP_URL}:3001/api/usuario/${modalInfo.data.id_usuario}`,
+          response = await userService.update(
+            modalInfo.data.id_usuario,
             dataToSend,
-            {
-              headers: {
-                ...authHeader(),
-                usuario_modificacion: currentUser.nombre_usuario,
-              },
-            }
+            currentUser.nombre_usuario
           );
         } else {
           // Crear nuevo usuario
-          response = await axios.post(
-            `${import.meta.env.VITE_APP_URL}:3001/api/usuario`,
-            values,
-            {
-              headers: {
-                ...authHeader(),
-                usuario_creacion: currentUser.nombre_usuario,
-              },
-            }
+          response = await userService.create(
+            dataToSend,
+            currentUser.nombre_usuario
           );
         }
       } else if (modalInfo.type === "facultad") {
         if (modalInfo.data) {
           // Editar facultad
-          response = await axios.put(
-            `${import.meta.env.VITE_APP_URL}:3001/api/facultad/${modalInfo.data.id_facultad}`,
+          response = await facultadService.update(
+            modalInfo.data.id_facultad,
             values,
-            {
-              headers: {
-                ...authHeader(),
-                usuario_modificacion: currentUser.nombre_usuario,
-              },
-            }
+            currentUser.nombre_usuario
           );
         } else {
           // Crear nueva facultad
-          response = await axios.post(
-            `${import.meta.env.VITE_APP_URL}:3001/api/facultad`,
+          response = await facultadService.create(
             values,
-            {
-              headers: {
-                ...authHeader(),
-                usuario_creacion: currentUser.nombre_usuario,
-              },
-            }
+            currentUser.nombre_usuario
           );
         }
       }
@@ -175,26 +144,16 @@ function AdminDashboard() {
       let response;
 
       if (type === "usuario") {
-        response = await axios.put(
-          `${import.meta.env.VITE_APP_URL}:3001/api/usuario/${data.id_usuario}`,
-          { activo: !data.activo },
-          {
-            headers: {
-              ...authHeader(),
-              usuario_modificacion: currentUser.nombre_usuario,
-            },
-          }
+        response = await userService.toggleStatus(
+          data.id_usuario,
+          !data.activo,
+          currentUser.nombre_usuario
         );
       } else if (type === "facultad") {
-        response = await axios.put(
-          `${import.meta.env.VITE_APP_URL}:3001/api/facultad/${data.id_facultad}`,
-          { activo: !data.activo },
-          {
-            headers: {
-              ...authHeader(),
-              usuario_modificacion: currentUser.nombre_usuario,
-            },
-          }
+        response = await facultadService.toggleStatus(
+          data.id_facultad,
+          !data.activo,
+          currentUser.nombre_usuario
         );
       }
 
@@ -277,124 +236,6 @@ function AdminDashboard() {
         </ModalWrapper>
       </div>
     </div>
-  );
-}
-
-// Componente para mostrar la tabla de usuarios
-function UsuariosTable({ usuarios, onEdit, onChangeStatus, setRoleText }) {
-  return (
-    <Table striped bordered hover responsive>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Username</th>
-          <th>Correo</th>
-          <th>Rol</th>
-          <th>Activo</th>
-          <th>Fecha Creación</th>
-          <th>Fecha Modificación</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {usuarios.map((usuario) => (
-          <tr key={usuario.id_usuario}>
-            <td>{usuario.id_usuario}</td>
-            <td>{usuario.nombre}</td>
-            <td>{usuario.nombre_usuario}</td>
-            <td>{usuario.correo}</td>
-            <td>{setRoleText(usuario.rol)}</td>
-            <td>{usuario.activo ? "Sí" : "No"}</td>
-            <td>{new Date(usuario.fecha_creacion).toLocaleString()}</td>
-            <td>
-              {usuario.fecha_modificacion
-                ? new Date(usuario.fecha_modificacion).toLocaleString()
-                : "N/A"}
-            </td>
-            <td>
-              <ButtonGroup>
-                <Button
-                  variant="warning"
-                  onClick={() => onEdit("usuario", usuario)} // Pasamos los datos de la fila
-                >
-                  <FaEdit /> Editar
-                </Button>
-                <Button
-                  variant={usuario.activo ? "danger" : "success"} // Elimina las comillas alrededor de la expresión
-                  className="ml-2"
-                  onClick={() => onChangeStatus("usuario", usuario)}
-                >
-                  {usuario.activo ? <FaBan /> : <FaCheck />}{" "}
-                  <span className="d-none d-md-inline">
-                    {usuario.activo ? "Desactivar" : "Activar"}
-                  </span>
-                </Button>
-              </ButtonGroup>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
-  );
-}
-
-// Componente para mostrar la tabla de facultades
-function FacultadesTable({ facultades, onEdit, onChangeStatus }) {
-  return (
-    <Table striped bordered hover responsive>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Color</th>
-          <th>Latitud</th>
-          <th>Longitud</th>
-          <th>Activo</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {facultades.map((facultad) => (
-          <tr key={facultad.id_facultad}>
-            <td>{facultad.nombre}</td>
-            <td>
-              <div
-                style={{
-                  width: "20px",
-                  height: "20px",
-                  backgroundColor: facultad.color,
-                  borderRadius: "50%",
-                  border: "1px solid #000",
-                }}
-              />
-            </td>
-            <td>{facultad.latitud}</td>
-            <td>{facultad.longitud}</td>
-            <td>{facultad.activo ? "Sí" : "No"}</td>
-            <td>
-              <ButtonGroup>
-                <Button
-                  variant="warning"
-                  onClick={() => onEdit("facultad", facultad)} // Pasamos los datos de la fila
-                >
-                  <FaEdit /> Editar
-                </Button>
-                <Button
-                  variant={facultad.activo ? "danger" : "success"} // Elimina las comillas alrededor de la expresión
-                  className="ml-2"
-                  onClick={() => onChangeStatus("facultad", facultad)}
-                >
-                  {facultad.activo ? <FaBan /> : <FaCheck />}{" "}
-                  <span className="d-none d-md-inline">
-                    {facultad.activo ? "Desactivar" : "Activar"}
-                  </span>
-                </Button>
-              </ButtonGroup>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
   );
 }
 

@@ -1,21 +1,12 @@
-import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Button,
-  ButtonGroup,
-  Card,
-  Col,
-  Form,
-  Pagination,
-  Row,
-  Table,
-} from "react-bootstrap";
-import { FaBan, FaCheck, FaEdit, FaSearch } from "react-icons/fa";
+import { Button, ButtonGroup, Card, Table } from "react-bootstrap";
+import { FaBan, FaCheck, FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import FacultadSelect from "../components/selects/FacultadSelect";
-import authHeader from "../services/auth-header";
+import RestaurantFilterForm from "../components/forms/RestaurantFilterForm";
+import CustomPagination from "../components/ui/Pagination";
 import AuthService from "../services/auth.service";
-import { Roles, TipoMenu } from "../utils/global";
+import restaurantService from "../services/restaurant.service";
+import { Roles } from "../utils/global";
 
 function OwnerDashboard() {
   const currentUser = AuthService.getCurrentUser();
@@ -32,7 +23,7 @@ function OwnerDashboard() {
   const [pagination, setPagination] = useState({
     currentPage: 1,
     perPage: 10,
-    total: 0,
+    totalPages: 0,
   });
 
   const makeRequest = useCallback(
@@ -41,51 +32,36 @@ function OwnerDashboard() {
         const uid = currentUser?.id_usuario;
         const rol = currentUser?.rol;
 
-        const response = await axios.get(
-          `${import.meta.env.VITE_APP_URL}:3001/api/bar`,
-          {
-            params: {
-              id_usuario: rol === Roles.DUENO ? uid : null,
-              nombre: filter.nombre,
-              tipo_menu: filter.tipo_menu,
-              id_facultad: filter.id_facultad,
-              page: page,
-              perPage: pagination.perPage,
-            },
-          }
-        );
-
-        setBares(response.data.bares); // Asigna los bares
-        setPagination({
-          currentPage: response.data.currentPage,
+        const filters = {
+          id_usuario: rol === Roles.DUENO ? uid : null,
+          nombre: filter.nombre,
+          tipo_menu: filter.tipo_menu,
+          id_facultad: filter.id_facultad,
+          page,
           perPage: pagination.perPage,
-          total: response.data.total,
+        };
+
+        const { data } = await restaurantService.getAll(filters);
+
+        setBares(data.results);
+        setPagination({
+          currentPage: data.currentPage,
+          perPage: data.perPage,
+          totalPages: data.totalPages,
         });
       } catch (error) {
         console.error("Error fetching restaurants", error);
       }
     },
-    [
-      currentUser?.id_usuario,
-      currentUser?.rol,
-      filter.id_facultad,
-      filter.nombre,
-      filter.tipo_menu,
-      pagination.perPage,
-    ]
+    [currentUser, filter, pagination.perPage]
   );
 
   const handleStatus = async (data) => {
     try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_APP_URL}:3001/api/bar/${data.id_bar}/change-status`,
-        { activo: !data.activo },
-        {
-          headers: {
-            ...authHeader(),
-            usuario_modificacion: currentUser.nombre_usuario,
-          },
-        }
+      const response = await restaurantService.changeStatus(
+        data.id_bar,
+        !data.activo,
+        currentUser.nombre_usuario
       );
 
       if (response.status === 200) {
@@ -105,13 +81,6 @@ function OwnerDashboard() {
     makeRequest(1);
   };
 
-  const handleFacultadChange = (selectedOption) => {
-    setFilter({
-      ...filter,
-      id_facultad: selectedOption ? selectedOption.value : "",
-    });
-  };
-
   const redirectTo = () => {
     navigate("/restaurant/new");
   };
@@ -123,54 +92,11 @@ function OwnerDashboard() {
         <Card>
           <Card.Body>
             <Card.Title>Filtros</Card.Title>
-            <Row className="mt-1 mb-1">
-              <Col sm={12} md={6} lg={4}>
-                <Form.Group>
-                  <Form.Label>Nombre</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={filter.nombre}
-                    onChange={(e) =>
-                      setFilter({ ...filter, nombre: e.target.value })
-                    }
-                  />
-                </Form.Group>
-              </Col>
-              <Col sm={12} md={6} lg={4}>
-                <Form.Group>
-                  <Form.Label>Facultad</Form.Label>
-                  <FacultadSelect
-                    selectedValue={filter.id_facultad}
-                    onSelectFacultad={handleFacultadChange}
-                  />
-                </Form.Group>
-              </Col>
-              <Col sm={12} md={6} lg={4}>
-                <Form.Group>
-                  <Form.Label>Tipo de Menú</Form.Label>
-                  <Form.Control
-                    as="select"
-                    value={filter.tipo_menu}
-                    onChange={(e) =>
-                      setFilter({ ...filter, tipo_menu: e.target.value })
-                    }
-                  >
-                    <option value="">Selecciona un tipo de menú</option>
-                    <option value={TipoMenu.PIQUEO}>Piqueo</option>"
-                    <option value={TipoMenu.DESAYUNO}>Desayuno</option>"
-                    <option value={TipoMenu.ALMUERZO}>Almuerzo</option>"
-                  </Form.Control>
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row className="justify-content-end mt-1 mb-1">
-              <Col sm={12} lg={4} className="d-grid">
-                <Button variant="primary" onClick={handleSearch}>
-                  <FaSearch />
-                  <span className="d-none d-md-inline">Buscar</span>
-                </Button>
-              </Col>
-            </Row>
+            <RestaurantFilterForm
+              filter={filter}
+              setFilter={setFilter}
+              onSearch={handleSearch}
+            />
           </Card.Body>
         </Card>
         <Button
@@ -228,20 +154,11 @@ function OwnerDashboard() {
             ))}
           </tbody>
         </Table>
-        <Pagination>
-          {[...Array(pagination.total).keys()].map((page) => (
-            <Pagination.Item
-              key={page}
-              active={page + 1 === pagination.currentPage}
-              onClick={() => {
-                setPagination({ ...pagination, currentPage: page + 1 });
-                makeRequest(page + 1);
-              }}
-            >
-              {page + 1}
-            </Pagination.Item>
-          ))}
-        </Pagination>
+        <CustomPagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          onPageChange={makeRequest}
+        />
       </div>
     </div>
   );
