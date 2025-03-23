@@ -4,19 +4,16 @@ import {
   Button,
   Card,
   Col,
-  Form,
   Row,
   Tab,
-  Table,
-  Tabs,
+  Tabs
 } from "react-bootstrap";
-import TimePicker from "react-bootstrap-time-picker";
 import { useNavigate, useParams } from "react-router-dom";
-import FacultadSelect from "../components/selects/FacultadSelect";
+import MenuForm from "../components/forms/MenuForm";
+import RestaurantInfoForm from "../components/forms/RestaurantInfoForm";
 import authHeader from "../services/auth-header";
 import AuthService from "../services/auth.service";
 import { showAlert, showErrorAlert } from "../utils/alert";
-import { TipoMenu } from "../utils/global";
 import { secondsToTimeFormat, timeFormatToSeconds } from "../utils/times";
 import { showToast } from "../utils/toast";
 
@@ -241,154 +238,22 @@ function EditRestaurant() {
             >
               <Tab eventKey="info" title="Información" className="p-2">
                 <h2>Información del Bar</h2>
-                <Form>
-                  <Row>
-                    <Col md={6}>
-                      <Form.Group
-                        as={Col}
-                        controlId="formNombre"
-                        className="mb-3"
-                      >
-                        <Form.Label>Nombre</Form.Label>
-                        <Form.Control
-                          name="nombre"
-                          type="text"
-                          value={restaurantInfo.nombre}
-                          onChange={handleChange}
-                          placeholder="Nombre"
-                          autoComplete="off"
-                        />
-                      </Form.Group>
-                    </Col>
-                    <Col md={6} lg={2}>
-                      <Form.Group
-                        as={Col}
-                        className="mb-3"
-                        controlId="selectPiqueo"
-                      >
-                        <Form.Label>Tipo Piqueo</Form.Label>
-                        <Form.Select
-                          name="tipo_menu"
-                          value={restaurantInfo.tipo_menu}
-                          onChange={handleChange}
-                        >
-                          <option value="">Selecciona un tipo de menú</option>
-                          <option value={TipoMenu.PIQUEO}>Piqueo</option>
-                          <option value={TipoMenu.DESAYUNO}>Desayuno</option>
-                          <option value={TipoMenu.ALMUERZO}>Almuerzo</option>
-                        </Form.Select>
-                      </Form.Group>
-                    </Col>
-                    <Col md={6} lg={2}>
-                      <Form.Group as={Col} className="mb-3">
-                        <Form.Label>Facultad</Form.Label>
-                        <FacultadSelect
-                          selectedValue={restaurantInfo.id_facultad}
-                          onSelectFacultad={handleFacultadChange}
-                        />
-                      </Form.Group>
-                    </Col>
-                    <Col md={6} lg={2}>
-                      <Form.Group as={Col} className="mb-3">
-                        <Form.Label>Dueño</Form.Label>
-                        <Form.Control
-                          readOnly
-                          value={restaurantInfo.dueno.nombre}
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-
-                  <Row>
-                    <Col md={6}>
-                      <Form.Group
-                        as={Col}
-                        controlId="formHoraInicio"
-                        className="mb-3"
-                      >
-                        <Form.Label>Horario Inicio</Form.Label>
-                        <TimePicker
-                          name="horario_inicio"
-                          value={restaurantInfo.horario_inicio}
-                          onChange={handleStartTimeChange}
-                          start="06:00"
-                          end="18:00"
-                          step={30}
-                        />
-                      </Form.Group>
-                    </Col>
-                    <Col md={6}>
-                      <Form.Group
-                        as={Col}
-                        controlId="formHoraFin"
-                        className="mb-3"
-                      >
-                        <Form.Label>Horario Fin</Form.Label>
-                        <TimePicker
-                          name="horario_fin"
-                          value={restaurantInfo.horario_fin}
-                          onChange={handleEndTimeChange}
-                          start="06:00"
-                          end="18:00"
-                          step={30}
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                </Form>
+                <RestaurantInfoForm
+                  restaurantInfo={restaurantInfo}
+                  handleChange={handleChange}
+                  handleFacultadChange={handleFacultadChange}
+                  handleStartTimeChange={handleStartTimeChange}
+                  handleEndTimeChange={handleEndTimeChange}
+                />
               </Tab>
 
               <Tab eventKey="menu" title="Menú" className="p-2">
-                <h2>Agregar Plato al Menú</h2>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group controlId="descripcionPlato" className="mb-3">
-                      <Form.Label>Descripción</Form.Label>
-                      <Form.Control
-                        name="descripcion"
-                        type="text"
-                        value={newMenuItem.descripcion}
-                        onChange={handleNewMenuItemChange}
-                        placeholder="Descripción del Plato"
-                      />
-                    </Form.Group>
-                  </Col>
-
-                  <Col md={6}>
-                    <Form.Group controlId="precioPlato" className="mb-3">
-                      <Form.Label>Precio</Form.Label>
-                      <Form.Control
-                        name="precio"
-                        type="number"
-                        value={newMenuItem.precio}
-                        onChange={handleNewMenuItemChange}
-                        placeholder="Precio"
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-
-                <Button onClick={addMenuItem}>Agregar Plato</Button>
-
-                <h3 className="mt-4">Menú Actual</h3>
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Descripción</th>
-                      <th>Precio</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {menu.map((menuItem, index) => (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{menuItem.descripcion}</td>
-                        <td>{menuItem.precio}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+                <MenuForm
+                  newMenuItem={newMenuItem}
+                  menu={menu}
+                  setNewMenuItem={handleNewMenuItemChange}
+                  addMenuItem={addMenuItem}
+                />
               </Tab>
             </Tabs>
             <Button className="mt-3" onClick={handleSubmit}>
