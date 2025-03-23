@@ -1,9 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup, Tab, Table, Tabs } from "react-bootstrap";
-import { FaBan, FaCheck, FaEdit } from "react-icons/fa";
+import { Button, Tab, Tabs } from "react-bootstrap";
 import FacultadForm from "../components/forms/FacultadForm";
 import UsuarioForm from "../components/forms/UsuarioForm";
+import FacultadesTable from "../components/tables/FacultadesTable";
+import UsuariosTable from "../components/tables/UsuariosTable";
 import ModalWrapper from "../components/wrappers/ModalWrapper";
 import authHeader from "../services/auth-header";
 import AuthService from "../services/auth.service";
@@ -277,124 +278,6 @@ function AdminDashboard() {
         </ModalWrapper>
       </div>
     </div>
-  );
-}
-
-// Componente para mostrar la tabla de usuarios
-function UsuariosTable({ usuarios, onEdit, onChangeStatus, setRoleText }) {
-  return (
-    <Table striped bordered hover responsive>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Username</th>
-          <th>Correo</th>
-          <th>Rol</th>
-          <th>Activo</th>
-          <th>Fecha Creación</th>
-          <th>Fecha Modificación</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {usuarios.map((usuario) => (
-          <tr key={usuario.id_usuario}>
-            <td>{usuario.id_usuario}</td>
-            <td>{usuario.nombre}</td>
-            <td>{usuario.nombre_usuario}</td>
-            <td>{usuario.correo}</td>
-            <td>{setRoleText(usuario.rol)}</td>
-            <td>{usuario.activo ? "Sí" : "No"}</td>
-            <td>{new Date(usuario.fecha_creacion).toLocaleString()}</td>
-            <td>
-              {usuario.fecha_modificacion
-                ? new Date(usuario.fecha_modificacion).toLocaleString()
-                : "N/A"}
-            </td>
-            <td>
-              <ButtonGroup>
-                <Button
-                  variant="warning"
-                  onClick={() => onEdit("usuario", usuario)} // Pasamos los datos de la fila
-                >
-                  <FaEdit /> Editar
-                </Button>
-                <Button
-                  variant={usuario.activo ? "danger" : "success"} // Elimina las comillas alrededor de la expresión
-                  className="ml-2"
-                  onClick={() => onChangeStatus("usuario", usuario)}
-                >
-                  {usuario.activo ? <FaBan /> : <FaCheck />}{" "}
-                  <span className="d-none d-md-inline">
-                    {usuario.activo ? "Desactivar" : "Activar"}
-                  </span>
-                </Button>
-              </ButtonGroup>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
-  );
-}
-
-// Componente para mostrar la tabla de facultades
-function FacultadesTable({ facultades, onEdit, onChangeStatus }) {
-  return (
-    <Table striped bordered hover responsive>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Color</th>
-          <th>Latitud</th>
-          <th>Longitud</th>
-          <th>Activo</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {facultades.map((facultad) => (
-          <tr key={facultad.id_facultad}>
-            <td>{facultad.nombre}</td>
-            <td>
-              <div
-                style={{
-                  width: "20px",
-                  height: "20px",
-                  backgroundColor: facultad.color,
-                  borderRadius: "50%",
-                  border: "1px solid #000",
-                }}
-              />
-            </td>
-            <td>{facultad.latitud}</td>
-            <td>{facultad.longitud}</td>
-            <td>{facultad.activo ? "Sí" : "No"}</td>
-            <td>
-              <ButtonGroup>
-                <Button
-                  variant="warning"
-                  onClick={() => onEdit("facultad", facultad)} // Pasamos los datos de la fila
-                >
-                  <FaEdit /> Editar
-                </Button>
-                <Button
-                  variant={facultad.activo ? "danger" : "success"} // Elimina las comillas alrededor de la expresión
-                  className="ml-2"
-                  onClick={() => onChangeStatus("facultad", facultad)}
-                >
-                  {facultad.activo ? <FaBan /> : <FaCheck />}{" "}
-                  <span className="d-none d-md-inline">
-                    {facultad.activo ? "Desactivar" : "Activar"}
-                  </span>
-                </Button>
-              </ButtonGroup>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
   );
 }
 
