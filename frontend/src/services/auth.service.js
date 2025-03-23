@@ -1,16 +1,15 @@
 import axios from "axios";
-
-const API_URL = `${import.meta.env.VITE_APP_URL}:3001/api/auth/`;
+import { API_ROUTES } from "./api.routes";
 
 const register = (payload) => {
-  return axios.post(API_URL + "signup", {
+  return axios.post(API_ROUTES.AUTH.SIGNUP, {
     ...payload,
   });
 };
 
 const login = (username, password) => {
   return axios
-    .post(API_URL + "signin", {
+    .post(API_ROUTES.AUTH.LOGIN, {
       nombre_usuario: username,
       contrasena: password,
     })

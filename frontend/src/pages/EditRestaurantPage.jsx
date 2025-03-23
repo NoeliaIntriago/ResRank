@@ -1,18 +1,10 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Row,
-  Tab,
-  Tabs
-} from "react-bootstrap";
+import { Button, Card, Col, Row, Tab, Tabs } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import MenuForm from "../components/forms/MenuForm";
 import RestaurantInfoForm from "../components/forms/RestaurantInfoForm";
-import authHeader from "../services/auth-header";
 import AuthService from "../services/auth.service";
+import restaurantService from "../services/restaurant.service";
 import { showAlert, showErrorAlert } from "../utils/alert";
 import { secondsToTimeFormat, timeFormatToSeconds } from "../utils/times";
 import { showToast } from "../utils/toast";
@@ -46,18 +38,15 @@ function EditRestaurant() {
 
   useEffect(() => {
     if (isEdit) {
-      // Cargar datos del restaurante existente
-      axios
-        .get(`${import.meta.env.VITE_APP_URL}:3001/api/bar/${id}`)
-        .then((response) => {
-          const { data } = response;
+      restaurantService.getById(id).then((response) => {
+        const { data } = response;
 
-          setRestaurantInfo(data);
-          handleStartTimeChange(timeFormatToSeconds(data.horario_inicio));
-          handleEndTimeChange(timeFormatToSeconds(data.horario_fin));
+        setRestaurantInfo(data);
+        handleStartTimeChange(timeFormatToSeconds(data.horario_inicio));
+        handleEndTimeChange(timeFormatToSeconds(data.horario_fin));
 
-          setMenu(data.menu);
-        });
+        setMenu(data.menu);
+      });
     }
   }, [isEdit, id]);
 
@@ -171,13 +160,8 @@ function EditRestaurant() {
     };
 
     if (isEdit) {
-      axios
-        .put(`${import.meta.env.VITE_APP_URL}:3001/api/bar/${id}`, payload, {
-          headers: {
-            ...authHeader(),
-            usuario_modificacion: currentUser.nombre_usuario,
-          },
-        })
+      restaurantService
+        .update(id, payload, currentUser.nombre_usuario)
         .then(async () => {
           await showAlert(
             "Guardado",
@@ -193,13 +177,8 @@ function EditRestaurant() {
           );
         });
     } else {
-      axios
-        .post(`${import.meta.env.VITE_APP_URL}:3001/api/bar`, payload, {
-          headers: {
-            ...authHeader(),
-            usuario_creacion: currentUser.nombre_usuario,
-          },
-        })
+      restaurantService
+        .create(payload, currentUser.nombre_usuario)
         .then(async (response) => {
           await showAlert(
             "Guardado",

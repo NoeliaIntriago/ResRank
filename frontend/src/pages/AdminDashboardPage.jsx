@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button, Tab, Tabs } from "react-bootstrap";
 import FacultadForm from "../components/forms/FacultadForm";
@@ -6,8 +5,9 @@ import UsuarioForm from "../components/forms/UsuarioForm";
 import FacultadesTable from "../components/tables/FacultadesTable";
 import UsuariosTable from "../components/tables/UsuariosTable";
 import ModalWrapper from "../components/wrappers/ModalWrapper";
-import authHeader from "../services/auth-header";
 import AuthService from "../services/auth.service";
+import facultadService from "../services/facultad.service";
+import userService from "../services/user.service";
 import { showErrorAlert } from "../utils/alert";
 import { Roles } from "../utils/global";
 import { showToast } from "../utils/toast";
@@ -58,12 +58,7 @@ function AdminDashboard() {
 
   const fetchData = async () => {
     try {
-      const usuariosResponse = await axios.get(
-        `${import.meta.env.VITE_APP_URL}:3001/api/usuario`,
-        {
-          headers: authHeader(),
-        }
-      );
+      const usuariosResponse = await userService.getAll();
       setUsuarios(
         usuariosResponse.data.map((usuario) => ({
           ...usuario,
@@ -72,12 +67,7 @@ function AdminDashboard() {
         }))
       );
 
-      const facultadesResponse = await axios.get(
-        `${import.meta.env.VITE_APP_URL}:3001/api/facultad`,
-        {
-          headers: authHeader(),
-        }
-      );
+      const facultadesResponse = await facultadService.getAll();
       setFacultades(facultadesResponse.data);
     } catch (error) {
       console.error("Error al cargar datos:", error);
@@ -109,53 +99,31 @@ function AdminDashboard() {
 
         // Si estamos editando un usuario
         if (modalInfo.data) {
-          response = await axios.put(
-            `${import.meta.env.VITE_APP_URL}:3001/api/usuario/${modalInfo.data.id_usuario}`,
+          response = await userService.update(
+            modalInfo.data.id_usuario,
             dataToSend,
-            {
-              headers: {
-                ...authHeader(),
-                usuario_modificacion: currentUser.nombre_usuario,
-              },
-            }
+            currentUser.nombre_usuario
           );
         } else {
           // Crear nuevo usuario
-          response = await axios.post(
-            `${import.meta.env.VITE_APP_URL}:3001/api/usuario`,
-            values,
-            {
-              headers: {
-                ...authHeader(),
-                usuario_creacion: currentUser.nombre_usuario,
-              },
-            }
+          response = await userService.create(
+            dataToSend,
+            currentUser.nombre_usuario
           );
         }
       } else if (modalInfo.type === "facultad") {
         if (modalInfo.data) {
           // Editar facultad
-          response = await axios.put(
-            `${import.meta.env.VITE_APP_URL}:3001/api/facultad/${modalInfo.data.id_facultad}`,
+          response = await facultadService.update(
+            modalInfo.data.id_facultad,
             values,
-            {
-              headers: {
-                ...authHeader(),
-                usuario_modificacion: currentUser.nombre_usuario,
-              },
-            }
+            currentUser.nombre_usuario
           );
         } else {
           // Crear nueva facultad
-          response = await axios.post(
-            `${import.meta.env.VITE_APP_URL}:3001/api/facultad`,
+          response = await facultadService.create(
             values,
-            {
-              headers: {
-                ...authHeader(),
-                usuario_creacion: currentUser.nombre_usuario,
-              },
-            }
+            currentUser.nombre_usuario
           );
         }
       }
@@ -176,26 +144,16 @@ function AdminDashboard() {
       let response;
 
       if (type === "usuario") {
-        response = await axios.put(
-          `${import.meta.env.VITE_APP_URL}:3001/api/usuario/${data.id_usuario}`,
-          { activo: !data.activo },
-          {
-            headers: {
-              ...authHeader(),
-              usuario_modificacion: currentUser.nombre_usuario,
-            },
-          }
+        response = await userService.toggleStatus(
+          data.id_usuario,
+          !data.activo,
+          currentUser.nombre_usuario
         );
       } else if (type === "facultad") {
-        response = await axios.put(
-          `${import.meta.env.VITE_APP_URL}:3001/api/facultad/${data.id_facultad}`,
-          { activo: !data.activo },
-          {
-            headers: {
-              ...authHeader(),
-              usuario_modificacion: currentUser.nombre_usuario,
-            },
-          }
+        response = await facultadService.toggleStatus(
+          data.id_facultad,
+          !data.activo,
+          currentUser.nombre_usuario
         );
       }
 

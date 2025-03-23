@@ -1,12 +1,11 @@
-import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, ButtonGroup, Card, Table } from "react-bootstrap";
 import { FaBan, FaCheck, FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import RestaurantFilterForm from "../components/forms/RestaurantFilterForm";
 import CustomPagination from "../components/ui/Pagination";
-import authHeader from "../services/auth-header";
 import AuthService from "../services/auth.service";
+import restaurantService from "../services/restaurant.service";
 import { Roles } from "../utils/global";
 
 function OwnerDashboard() {
@@ -33,53 +32,36 @@ function OwnerDashboard() {
         const uid = currentUser?.id_usuario;
         const rol = currentUser?.rol;
 
-        const response = await axios.get(
-          `${import.meta.env.VITE_APP_URL}:3001/api/bar`,
-          {
-            params: {
-              id_usuario: rol === Roles.DUENO ? uid : null,
-              nombre: filter.nombre,
-              tipo_menu: filter.tipo_menu,
-              id_facultad: filter.id_facultad,
-              page: page,
-              perPage: pagination.perPage,
-            },
-          }
-        );
-
-        setBares(response.data.results); // Asigna los bares
-        setPagination({
-          currentPage: response.data.currentPage,
+        const filters = {
+          id_usuario: rol === Roles.DUENO ? uid : null,
+          nombre: filter.nombre,
+          tipo_menu: filter.tipo_menu,
+          id_facultad: filter.id_facultad,
+          page,
           perPage: pagination.perPage,
-          totalPages: response.data.totalPages,
+        };
+
+        const { data } = await restaurantService.getAll(filters);
+
+        setBares(data.results);
+        setPagination({
+          currentPage: data.currentPage,
+          perPage: data.perPage,
+          totalPages: data.totalPages,
         });
       } catch (error) {
         console.error("Error fetching restaurants", error);
       }
     },
-    [
-      currentUser?.id_usuario,
-      currentUser?.rol,
-      filter.id_facultad,
-      filter.nombre,
-      filter.tipo_menu,
-      pagination.perPage,
-    ]
+    [currentUser, filter, pagination.perPage]
   );
 
   const handleStatus = async (data) => {
     try {
-      const response = await axios.put(
-        `${import.meta.env.VITE_APP_URL}:3001/api/bar/${
-          data.id_bar
-        }/change-status`,
-        { activo: !data.activo },
-        {
-          headers: {
-            ...authHeader(),
-            usuario_modificacion: currentUser.nombre_usuario,
-          },
-        }
+      const response = await restaurantService.changeStatus(
+        data.id_bar,
+        !data.activo,
+        currentUser.nombre_usuario
       );
 
       if (response.status === 200) {

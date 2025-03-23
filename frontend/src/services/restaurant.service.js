@@ -2,16 +2,21 @@ import axios from "axios";
 import { API_ROUTES } from "./api.routes";
 import authHeader from "./auth-header";
 
-const getAll = () => {
-  return axios.get(`${API_ROUTES.USUARIO}`, { headers: authHeader() });
+const getAll = (filters = {}) => {
+  return axios.get(API_ROUTES.BAR, {
+    params: filters,
+    headers: authHeader(),
+  });
 };
 
 const getById = (id) => {
-  return axios.get(`${API_ROUTES.USUARIO}/${id}`, { headers: authHeader() });
+  return axios.get(`${API_ROUTES.BAR}/${id}`, {
+    headers: authHeader(),
+  });
 };
 
 const create = (data, usuario_creacion) => {
-  return axios.post(`${API_ROUTES.USUARIO}`, data, {
+  return axios.post(API_ROUTES.BAR, data, {
     headers: {
       ...authHeader(),
       usuario_creacion,
@@ -20,7 +25,7 @@ const create = (data, usuario_creacion) => {
 };
 
 const update = (id, data, usuario_modificacion) => {
-  return axios.put(`${API_ROUTES.USUARIO}/${id}`, data, {
+  return axios.put(`${API_ROUTES.BAR}/${id}`, data, {
     headers: {
       ...authHeader(),
       usuario_modificacion,
@@ -28,9 +33,9 @@ const update = (id, data, usuario_modificacion) => {
   });
 };
 
-const toggleStatus = (id, activo, usuario_modificacion) => {
+const changeStatus = (id, activo, usuario_modificacion) => {
   return axios.put(
-    `${API_ROUTES.USUARIO}/${id}`,
+    `${API_ROUTES.BAR}/${id}/change-status`,
     { activo },
     {
       headers: {
@@ -41,12 +46,12 @@ const toggleStatus = (id, activo, usuario_modificacion) => {
   );
 };
 
-const userService = {
+const restaurantService = {
   getAll,
   getById,
   create,
   update,
-  toggleStatus,
+  changeStatus,
 };
 
-export default userService;
+export default restaurantService;
