@@ -83,15 +83,6 @@ function EditRestaurant() {
     }));
   };
 
-  // Manejar cambios en los inputs de un nuevo plato
-  const handleNewMenuItemChange = (e) => {
-    const { name, value } = e.target;
-    setNewMenuItem((prevItem) => ({
-      ...prevItem,
-      [name]: value,
-    }));
-  };
-
   // Agregar un nuevo plato al menú
   const addMenuItem = () => {
     if (newMenuItem.descripcion && newMenuItem.precio) {
@@ -216,7 +207,6 @@ function EditRestaurant() {
               onSelect={setActiveTab}
             >
               <Tab eventKey="info" title="Información" className="p-2">
-                <h2>Información del Bar</h2>
                 <RestaurantInfoForm
                   restaurantInfo={restaurantInfo}
                   handleChange={handleChange}
@@ -230,7 +220,7 @@ function EditRestaurant() {
                 <MenuForm
                   newMenuItem={newMenuItem}
                   menu={menu}
-                  setNewMenuItem={handleNewMenuItemChange}
+                  setNewMenuItem={setNewMenuItem}
                   addMenuItem={addMenuItem}
                 />
               </Tab>
