@@ -19,10 +19,11 @@ function ProfileForm({ initialValues, onSubmit }) {
   return (
     <Formik
       initialValues={initialValues}
+      enableReinitialize
       validationSchema={validationSchema}
       onSubmit={(values) => onSubmit(values)}
     >
-      {({ values }) => (
+      {({ values, dirty, isValid }) => (
         <FormikForm>
           <Row>
             <Col md={6}>
@@ -140,7 +141,7 @@ function ProfileForm({ initialValues, onSubmit }) {
             )}
           </Row>
 
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" disabled={!dirty || !isValid}>
             Guardar Cambios
           </Button>
         </FormikForm>

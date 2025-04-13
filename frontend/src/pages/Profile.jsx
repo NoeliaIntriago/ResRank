@@ -1,13 +1,11 @@
-import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
-import UsuarioForm from "../components/forms/UsuarioForm";
-import authHeader from "../services/auth-header";
+import ProfileForm from "../components/forms/ProfileForm";
 import AuthService from "../services/auth.service";
+import userService from "../services/user.service";
 import { Roles } from "../utils/global";
 
 function Profile() {
   const currentUser = AuthService.getCurrentUser();
-  console.log(currentUser);
 
   const [usuario, setUsuario] = useState({
     id_usuario: null,
@@ -22,11 +20,8 @@ function Profile() {
 
   const fetchData = useCallback(async () => {
     try {
-      const { data: response } = await axios.get(
-        `${import.meta.env.VITE_APP_URL}:3001/api/usuario/${currentUser.id_usuario}`,
-        {
-          headers: authHeader(),
-        }
+      const { data: response } = await userService.getById(
+        currentUser.id_usuario
       );
       setUsuario({
         id_usuario: response.id_usuario,
@@ -51,14 +46,7 @@ function Profile() {
     <div className="App">
       <div className="app-container">
         <h1>Perfil</h1>
-        <p>
-          <strong>Nombre:</strong> {usuario.nombre}
-        </p>
-        <UsuarioForm
-          key={usuario.id_usuario}
-          initialValues={usuario}
-          onSubmit={() => {}}
-        />
+        <ProfileForm initialValues={usuario} />
       </div>
     </div>
   );
