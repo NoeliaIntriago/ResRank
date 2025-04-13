@@ -19,6 +19,6 @@ router.use(function (req, res, next) {
 router.get("/", [authJwt.verifyToken], controller.getAllUsuarios);
 router.get("/:id_usuario", [authJwt.verifyToken], controller.getUsuarioById);
 router.post("/", [authJwt.verifyToken], controller.createUsuario);
-router.put("/:id_usuario", [authJwt.verifyToken], controller.updateUsuario);
+router.put("/:id", [authJwt.verifyToken], controller.updateUsuario);
 
 module.exports = router;
