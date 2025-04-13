@@ -11,6 +11,7 @@ exports.getAllBars = async (req, res) => {
     nombre,
     tipo_menu,
     id_facultad,
+    activo,
     page = 1,
     perPage,
   } = req.query;
@@ -22,6 +23,7 @@ exports.getAllBars = async (req, res) => {
     if (nombre) condition.nombre = { [Op.like]: `%${nombre}%` };
     if (tipo_menu) condition.tipo_menu = tipo_menu;
     if (id_facultad) condition.id_facultad = id_facultad;
+    if (activo) condition.activo = activo;
 
     const data = await Bar.findAndCountAll({
       where: condition,
