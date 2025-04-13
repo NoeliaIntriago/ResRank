@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import ProfileForm from "../components/forms/ProfileForm";
+import ProfileTabs from "../components/tabs/ProfileTabs";
 import AuthService from "../services/auth.service";
 import userService from "../services/user.service";
 import { Roles } from "../utils/global";
@@ -46,7 +46,11 @@ function Profile() {
     <div className="App">
       <div className="app-container">
         <h1>Perfil</h1>
-        <ProfileForm initialValues={usuario} />
+        <ProfileTabs
+          initialProfile={usuario}
+          onSubmitProfile={(data) => console.log("Actualizar perfil:", data)}
+          onSubmitPassword={(data) => console.log("Cambiar contraseña:", data)}
+        />
       </div>
     </div>
   );
