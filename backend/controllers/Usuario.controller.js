@@ -44,12 +44,15 @@ exports.createUsuario = async (req, res) => {
 };
 
 exports.updateUsuario = async (req, res) => {
-  const { id_usuario } = req.params;
+  const params = req.params;
   const body = req.body;
+  const { usuario_modificacion } = req.headers;
 
   try {
+    const usuario = await Usuario.findByPk(params.id);
+
     // Validar que no se esté desactivando a sí mismo
-    if (Number(id_usuario) === Number(req.user.id_usuario) && !body.activo) {
+    if (usuario.nombre_usuario === usuario_modificacion && !body.activo) {
       return res.status(400).json({
         message: "No puedes desactivar tu propia cuenta",
       });
@@ -58,15 +61,15 @@ exports.updateUsuario = async (req, res) => {
     if (body.contrasena) {
       body.contrasena = await bcrypt.hash(body.contrasena, 8);
     }
-    body.usuario_modificacion = req.headers.usuario_modificacion;
+    body.usuario_modificacion = usuario_modificacion;
     body.fecha_modificacion = new Date();
 
-    await Usuario.update(body, { where: { id_usuario } });
+    await Usuario.update({ ...body }, { where: { id_usuario: params.id } });
 
     if (body.rol === "estudiante") {
       await Estudiante.update(
         { matricula: body.matricula },
-        { where: { id_usuario } }
+        { where: { id_usuario: params.id } }
       );
     }
 

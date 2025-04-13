@@ -1,13 +1,14 @@
 // src/components/tables/UsuariosTable.jsx
 import React from "react";
-import { Button, ButtonGroup, Table } from "react-bootstrap";
+import { ButtonGroup, Table } from "react-bootstrap";
 import { FaBan, FaCheck, FaEdit } from "react-icons/fa";
+import ActionButton from "../ActionButton";
 
 function UsuariosTable({ usuarios, onEdit, onChangeStatus, setRoleText }) {
   return (
     <Table striped bordered hover responsive>
       <thead>
-        <tr>
+        <tr className="align-middle text-center">
           <th>ID</th>
           <th>Nombre</th>
           <th>Username</th>
@@ -21,7 +22,7 @@ function UsuariosTable({ usuarios, onEdit, onChangeStatus, setRoleText }) {
       </thead>
       <tbody>
         {usuarios.map((usuario) => (
-          <tr key={usuario.id_usuario}>
+          <tr key={usuario.id_usuario} className="align-middle text-center">
             <td>{usuario.id_usuario}</td>
             <td>{usuario.nombre}</td>
             <td>{usuario.nombre_usuario}</td>
@@ -36,22 +37,20 @@ function UsuariosTable({ usuarios, onEdit, onChangeStatus, setRoleText }) {
             </td>
             <td>
               <ButtonGroup>
-                <Button
-                  variant="warning"
+                <ActionButton
+                  type="edit"
+                  iconLeft={<FaEdit />}
                   onClick={() => onEdit("usuario", usuario)}
                 >
-                  <FaEdit /> Editar
-                </Button>
-                <Button
-                  variant={usuario.activo ? "danger" : "success"}
-                  className="ml-2"
+                  Editar
+                </ActionButton>
+                <ActionButton
+                  type={usuario.activo ? "delete" : "primary"}
+                  iconLeft={usuario.activo ? <FaBan /> : <FaCheck />}
                   onClick={() => onChangeStatus("usuario", usuario)}
                 >
-                  {usuario.activo ? <FaBan /> : <FaCheck />}{" "}
-                  <span className="d-none d-md-inline">
-                    {usuario.activo ? "Desactivar" : "Activar"}
-                  </span>
-                </Button>
+                  {usuario.activo ? "Desactivar" : "Activar"}
+                </ActionButton>
               </ButtonGroup>
             </td>
           </tr>

@@ -157,8 +157,8 @@ function AdminDashboard() {
         );
       }
 
-      console.log("Respuesta de la API:", response.message);
-      showToast(response.message, "success");
+      const message = response.data.message;
+      showToast(message, "success");
 
       fetchData();
     } catch (error) {

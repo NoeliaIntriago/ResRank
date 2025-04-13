@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Button, ButtonGroup, Card, Table } from "react-bootstrap";
-import { FaBan, FaCheck, FaEdit } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { Badge, ButtonGroup, Card, Table } from "react-bootstrap";
+import { FaBan, FaCheck, FaEdit, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import ActionButton from "../components/ActionButton";
 import RestaurantFilterForm from "../components/forms/RestaurantFilterForm";
 import CustomPagination from "../components/ui/Pagination";
 import AuthService from "../services/auth.service";
@@ -10,11 +11,9 @@ import { Roles } from "../utils/global";
 
 function OwnerDashboard() {
   const currentUser = AuthService.getCurrentUser();
-
   const navigate = useNavigate();
 
   const [bares, setBares] = useState([]);
-
   const [filter, setFilter] = useState({
     nombre: "",
     id_facultad: "",
@@ -26,35 +25,32 @@ function OwnerDashboard() {
     totalPages: 0,
   });
 
-  const makeRequest = useCallback(
-    async (page = 1) => {
-      try {
-        const uid = currentUser?.id_usuario;
-        const rol = currentUser?.rol;
+  const makeRequest = async (page = 1) => {
+    try {
+      const uid = currentUser?.id_usuario;
+      const rol = currentUser?.rol;
 
-        const filters = {
-          id_usuario: rol === Roles.DUENO ? uid : null,
-          nombre: filter.nombre,
-          tipo_menu: filter.tipo_menu,
-          id_facultad: filter.id_facultad,
-          page,
-          perPage: pagination.perPage,
-        };
+      const filters = {
+        id_usuario: rol === Roles.DUENO ? uid : null,
+        nombre: filter.nombre,
+        tipo_menu: filter.tipo_menu,
+        id_facultad: filter.id_facultad,
+        page,
+        perPage: pagination.perPage,
+      };
 
-        const { data } = await restaurantService.getAll(filters);
+      const { data } = await restaurantService.getAll(filters);
 
-        setBares(data.results);
-        setPagination({
-          currentPage: data.currentPage,
-          perPage: data.perPage,
-          totalPages: data.totalPages,
-        });
-      } catch (error) {
-        console.error("Error fetching restaurants", error);
-      }
-    },
-    [currentUser, filter, pagination.perPage]
-  );
+      setBares(data.results);
+      setPagination((prev) => ({
+        ...prev,
+        currentPage: data.currentPage,
+        totalPages: data.totalPages,
+      }));
+    } catch (error) {
+      console.error("Error fetching restaurants", error);
+    }
+  };
 
   const handleStatus = async (data) => {
     try {
@@ -72,10 +68,6 @@ function OwnerDashboard() {
     }
   };
 
-  useEffect(() => {
-    makeRequest(pagination.currentPage);
-  }, [makeRequest, pagination.currentPage]);
-
   const handleSearch = () => {
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
     makeRequest(1);
@@ -84,6 +76,11 @@ function OwnerDashboard() {
   const redirectTo = () => {
     navigate("/restaurant/new");
   };
+
+  useEffect(() => {
+    makeRequest(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="App">
@@ -99,16 +96,12 @@ function OwnerDashboard() {
             />
           </Card.Body>
         </Card>
-        <Button
-          className="mt-1 mb-1"
-          variant="primary"
-          onClick={() => redirectTo()}
-        >
+        <ActionButton type="primary" icon={<FaPlus />} onClick={redirectTo}>
           Crear Restaurante
-        </Button>
+        </ActionButton>
         <Table striped bordered hover responsive>
           <thead>
-            <tr>
+            <tr className="align-middle text-center">
               <th>Nombre</th>
               <th>Facultad</th>
               <th>Horario Inicio</th>
@@ -120,34 +113,40 @@ function OwnerDashboard() {
           </thead>
           <tbody>
             {bares.map((restaurant) => (
-              <tr key={restaurant.id_bar}>
+              <tr key={restaurant.id_bar} className="align-middle text-center">
                 <td>{restaurant.nombre}</td>
                 <td>{restaurant.facultad.nombre}</td>
                 <td>{restaurant.horario_inicio}</td>
                 <td>{restaurant.horario_fin}</td>
-                <td>{restaurant.tipo_menu}</td>
+                <td>
+                  <Badge
+                    className={`badge-${restaurant.tipo_menu} text-uppercase`}
+                    pill
+                  >
+                    {restaurant.tipo_menu}
+                  </Badge>
+                </td>
                 <td>{restaurant.activo ? "Sí" : "No"}</td>
                 <td>
                   <ButtonGroup>
                     {restaurant.activo && (
-                      <Button
-                        variant="warning"
-                        onClick={() => {
-                          navigate(`/restaurant/edit/${restaurant.id_bar}`);
-                        }}
+                      <ActionButton
+                        type="edit"
+                        iconLeft={<FaEdit />}
+                        onClick={() =>
+                          navigate(`/restaurant/edit/${restaurant.id_bar}`)
+                        }
                       >
-                        <FaEdit /> Editar
-                      </Button>
+                        Editar
+                      </ActionButton>
                     )}
-                    <Button
-                      variant={restaurant.activo ? "danger" : "success"}
+                    <ActionButton
+                      type={restaurant.activo ? "delete" : "primary"}
+                      iconLeft={restaurant.activo ? <FaBan /> : <FaCheck />}
                       onClick={() => handleStatus(restaurant)}
                     >
-                      {restaurant.activo ? <FaBan /> : <FaCheck />}{" "}
-                      <span className="d-none d-md-inline">
-                        {restaurant.activo ? "Desactivar" : "Activar"}
-                      </span>
-                    </Button>
+                      {restaurant.activo ? "Desactivar" : "Activar"}
+                    </ActionButton>
                   </ButtonGroup>
                 </td>
               </tr>

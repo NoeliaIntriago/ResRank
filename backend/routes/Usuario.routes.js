@@ -18,6 +18,6 @@ router.use(function (req, res, next) {
 // Define routes with middleware for JWT authentication
 router.get("/", [authJwt.verifyToken], controller.getAllUsuarios);
 router.post("/", [authJwt.verifyToken], controller.createUsuario);
-router.put("/:id_usuario", [authJwt.verifyToken], controller.updateUsuario);
+router.put("/:id", [authJwt.verifyToken], controller.updateUsuario);
 
 module.exports = router;
