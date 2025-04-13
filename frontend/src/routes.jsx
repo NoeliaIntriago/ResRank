@@ -45,7 +45,7 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/restaurant/:id/review"
+      path="/restaurant/review/:id"
       element={
         <PrivateRoute roles={[Roles.ESTUDIANTE]}>
           <Reviews />
