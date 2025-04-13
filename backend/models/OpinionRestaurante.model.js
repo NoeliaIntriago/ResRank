@@ -54,5 +54,16 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
+  OpinionRestaurante.associate = (models) => {
+    OpinionRestaurante.belongsTo(models.Usuario, {
+      foreignKey: "id_usuario",
+      as: "usuario",
+    });
+    OpinionRestaurante.belongsTo(models.Bar, {
+      foreignKey: "id_bar",
+      as: "bar",
+    });
+  };
+
   return OpinionRestaurante;
 };

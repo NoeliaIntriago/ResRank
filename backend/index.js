@@ -29,7 +29,7 @@ const barRouter = require("./routes/Bar.routes");
 app.use("/api/bar", barRouter);
 
 const opinionRestauranteRouter = require("./routes/OpinionRestaurante.routes");
-app.use("/api/opinion-restaurante", opinionRestauranteRouter);
+app.use("/api/review", opinionRestauranteRouter);
 
 const perfilRouter = require("./routes/Perfil.routes");
 app.use("/api/perfil", perfilRouter);
