@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import ProfileTabs from "../components/tabs/ProfileTabs";
 import AuthService from "../services/auth.service";
+import perfilService from "../services/perfil.service";
 import userService from "../services/user.service";
+import { showAlert, showErrorAlert } from "../utils/alert";
 import { Roles } from "../utils/global";
 
 function Profile() {
@@ -42,14 +44,69 @@ function Profile() {
     fetchData(); // Llamamos a la función asíncrona
   }, [fetchData]);
 
+  const handleProfileUpdate = async (data) => {
+    try {
+      const { nombre, nombre_usuario, correo, celular } = data;
+      await perfilService.updateInformacion(
+        currentUser.id_usuario,
+        {
+          nombre,
+          nombre_usuario,
+          correo,
+          celular,
+        },
+        currentUser.id_usuario
+      );
+
+      showAlert("Éxito", "Perfil actualizado con éxito", "success");
+
+      // Refrescar los datos del usuario después de la actualización
+      fetchData();
+    } catch (error) {
+      console.error("Error al actualizar perfil:", error);
+      showErrorAlert(
+        "Error",
+        error.response?.data?.message || "Error al actualizar el perfil"
+      );
+    }
+  };
+
+  const handlePasswordUpdate = async (data) => {
+    try {
+      const { contrasena_actual, contrasena_nueva } = data;
+      await perfilService.updatePassword(
+        currentUser.id_usuario,
+        {
+          contrasena_actual,
+          contrasena_nueva,
+        },
+        currentUser.id_usuario
+      );
+
+      showAlert("Éxito", "Contraseña actualizada con éxito", "success");
+
+      // lIMPIAR CAMPOS
+      setUsuario((prevState) => ({
+        ...prevState,
+        contrasena: "",
+      }));
+    } catch (error) {
+      console.error("Error al actualizar contraseña:", error);
+      showErrorAlert(
+        "Error",
+        error.response?.data?.message || "Error al actualizar la contraseña"
+      );
+    }
+  };
+
   return (
     <div className="App">
       <div className="app-container">
         <h1>Perfil</h1>
         <ProfileTabs
           initialProfile={usuario}
-          onSubmitProfile={(data) => console.log("Actualizar perfil:", data)}
-          onSubmitPassword={(data) => console.log("Cambiar contraseña:", data)}
+          onSubmitProfile={(data) => handleProfileUpdate(data)}
+          onSubmitPassword={(data) => handlePasswordUpdate(data)}
         />
       </div>
     </div>
