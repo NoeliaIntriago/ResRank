@@ -1,8 +1,9 @@
 // src/components/forms/RestaurantFilterForm.jsx
 import React from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
 import { TipoMenu } from "../../utils/global";
+import ActionButton from "../ActionButton";
 import FacultadSelect from "../selects/FacultadSelect";
 
 function RestaurantFilterForm({ filter, setFilter, onSearch }) {
@@ -59,9 +60,13 @@ function RestaurantFilterForm({ filter, setFilter, onSearch }) {
       </Row>
       <Row className="justify-content-end mt-1 mb-1">
         <Col sm={12} lg={4} className="d-grid">
-          <Button variant="primary" onClick={onSearch}>
-            <FaSearch /> <span className="d-none d-md-inline">Buscar</span>
-          </Button>
+          <ActionButton
+            type="primary"
+            iconLeft={<FaSearch />}
+            onClick={onSearch}
+          >
+            Consultar
+          </ActionButton>
         </Col>
       </Row>
     </Form>
