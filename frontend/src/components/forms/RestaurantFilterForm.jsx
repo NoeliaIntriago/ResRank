@@ -63,7 +63,10 @@ function RestaurantFilterForm({ filter, setFilter, onSearch }) {
           <ActionButton
             type="primary"
             iconLeft={<FaSearch />}
-            onClick={onSearch}
+            onClick={(e) => {
+              e.preventDefault();
+              onSearch();
+            }}
           >
             Consultar
           </ActionButton>
