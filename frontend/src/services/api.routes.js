@@ -13,4 +13,5 @@ export const API_ROUTES = {
   BAR: `${BASE_URL}/bar`,
   FACULTAD: `${BASE_URL}/facultad`,
   PERFIL: `${BASE_URL}/perfil`,
+  REVIEWS: `${BASE_URL}/review`,
 };
