@@ -187,7 +187,7 @@ function AdminDashboard() {
           <Tab eventKey="usuarios" title="Usuarios">
             <ActionButton
               type="primary"
-              icon={<FaPlus />}
+              iconLeft={<FaPlus />}
               onClick={() => handleShowModal("usuario")}
             >
               Agregar Usuario
@@ -202,7 +202,7 @@ function AdminDashboard() {
           <Tab eventKey="facultades" title="Facultades">
             <ActionButton
               type="primary"
-              icon={<FaPlus />}
+              iconLeft={<FaPlus />}
               onClick={() => handleShowModal("facultad")}
             >
               Agregar Facultad
