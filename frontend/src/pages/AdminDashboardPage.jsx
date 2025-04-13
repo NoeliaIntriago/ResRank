@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Button, Tab, Tabs } from "react-bootstrap";
+import { Tab, Tabs } from "react-bootstrap";
+import { FaPlus } from "react-icons/fa";
+import ActionButton from "../components/ActionButton";
 import FacultadForm from "../components/forms/FacultadForm";
 import UsuarioForm from "../components/forms/UsuarioForm";
 import FacultadesTable from "../components/tables/FacultadesTable";
@@ -183,12 +185,13 @@ function AdminDashboard() {
           className="mb-3"
         >
           <Tab eventKey="usuarios" title="Usuarios">
-            <Button
-              variant="primary"
+            <ActionButton
+              type="primary"
+              icon={<FaPlus />}
               onClick={() => handleShowModal("usuario")}
             >
               Agregar Usuario
-            </Button>
+            </ActionButton>
             <UsuariosTable
               usuarios={usuarios}
               onEdit={handleShowModal}
@@ -197,12 +200,13 @@ function AdminDashboard() {
             />
           </Tab>
           <Tab eventKey="facultades" title="Facultades">
-            <Button
-              variant="primary"
+            <ActionButton
+              type="primary"
+              icon={<FaPlus />}
               onClick={() => handleShowModal("facultad")}
             >
               Agregar Facultad
-            </Button>
+            </ActionButton>
             <FacultadesTable
               facultades={facultades}
               onEdit={handleShowModal}

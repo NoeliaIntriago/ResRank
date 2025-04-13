@@ -31,6 +31,9 @@ app.use("/api/bar", barRouter);
 const opinionRestauranteRouter = require("./routes/OpinionRestaurante.routes");
 app.use("/api/opinion-restaurante", opinionRestauranteRouter);
 
+const perfilRouter = require("./routes/Perfil.routes");
+app.use("/api/perfil", perfilRouter);
+
 const db = require("./models");
 db.sequelize
   .sync()

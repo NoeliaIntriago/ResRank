@@ -1,8 +1,8 @@
-// routes/Usuario.js
+// routes/Perfil.js
 
 const express = require("express");
 const { authJwt } = require("../middlewares");
-const controller = require("../controllers/Usuario.controller");
+const controller = require("../controllers/Perfil.controller");
 
 const router = express.Router();
 
@@ -16,9 +16,15 @@ router.use(function (req, res, next) {
 });
 
 // Define routes with middleware for JWT authentication
-router.get("/", [authJwt.verifyToken], controller.getAllUsuarios);
-router.get("/:id_usuario", [authJwt.verifyToken], controller.getUsuarioById);
-router.post("/", [authJwt.verifyToken], controller.createUsuario);
-router.put("/:id", [authJwt.verifyToken], controller.updateUsuario);
+router.patch(
+  "/informacion-general/:id",
+  [authJwt.verifyToken],
+  controller.updateProfile
+);
+router.patch(
+  "/contrasena/:id",
+  [authJwt.verifyToken],
+  controller.updatePassword
+);
 
 module.exports = router;
