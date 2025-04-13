@@ -51,7 +51,7 @@ function RestaurantList() {
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
     makeRequest(1);
   };
-  const redirectTo = () => {
+  const redirectTo = (restaurant) => {
     navigate(`/restaurant/review/${restaurant.id_bar}`);
   };
 
