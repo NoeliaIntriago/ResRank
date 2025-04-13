@@ -12,4 +12,5 @@ export const API_ROUTES = {
   USUARIO: `${BASE_URL}/usuario`,
   BAR: `${BASE_URL}/bar`,
   FACULTAD: `${BASE_URL}/facultad`,
+  PERFIL: `${BASE_URL}/perfil`,
 };
