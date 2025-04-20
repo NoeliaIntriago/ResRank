@@ -9,8 +9,19 @@ const getAll = (filters = {}) => {
   });
 };
 
+const create = (opinion, usuario_creacion) => {
+  console.log("usuario_creacion", usuario_creacion);
+  return axios.post(API_ROUTES.REVIEWS, opinion, {
+    headers: {
+      ...authHeader(),
+      usuario_creacion,
+    },
+  });
+};
+
 const opinionService = {
   getAll,
+  create,
 };
 
 export default opinionService;
