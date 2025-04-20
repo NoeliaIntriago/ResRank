@@ -4,7 +4,14 @@ const { getPagingData, getPagination } = require("./utils/pagination");
 const logger = require("../services/logger");
 
 exports.getReviews = async (req, res) => {
-  const { id_bar, id_usuario, calificacion, page = 1, perPage } = req.query;
+  const {
+    id_bar,
+    id_usuario,
+    calificacion,
+    comentario,
+    page = 1,
+    perPage,
+  } = req.query;
   const { limit, offset } = getPagination(page, perPage);
 
   try {
@@ -12,6 +19,11 @@ exports.getReviews = async (req, res) => {
     if (id_bar) condition.id_bar = id_bar;
     if (id_usuario) condition.id_usuario = id_usuario;
     if (calificacion) condition.calificacion = calificacion;
+    if (comentario) {
+      condition.comentario = {
+        [Op.like]: `%${comentario}%`,
+      };
+    }
 
     const data = await OpinionRestaurante.findAndCountAll({
       where: condition,
