@@ -18,7 +18,7 @@ exports.getReviews = async (req, res) => {
     const condition = {};
     if (id_bar) condition.id_bar = id_bar;
     if (id_usuario) condition.id_usuario = id_usuario;
-    if (calificacion) condition.calificacion = calificacion;
+    if (calificacion > 0) condition.calificacion = calificacion;
     if (comentario) {
       condition.comentario = {
         [Op.like]: `%${comentario}%`,
@@ -38,5 +38,26 @@ exports.getReviews = async (req, res) => {
     logger.error(error);
     console.error(error);
     res.status(400).json({ message: "Error fetching reviews", error });
+  }
+};
+
+exports.createReview = async (req, res) => {
+  const { id_bar, id_usuario, calificacion, comentario } = req.body;
+  try {
+    const { usuario_creacion } = req.headers;
+
+    const newReview = await OpinionRestaurante.create({
+      id_bar,
+      id_usuario,
+      calificacion,
+      comentario,
+      usuario_creacion,
+    });
+
+    res.status(201).json(newReview);
+  } catch (error) {
+    logger.error(error);
+    console.error(error);
+    res.status(400).json({ message: "Error creating review", error });
   }
 };
