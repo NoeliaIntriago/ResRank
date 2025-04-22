@@ -1,4 +1,5 @@
-import React from "react";
+import debounce from "lodash/debounce";
+import React, { useCallback } from "react";
 import { Card, Form } from "react-bootstrap";
 import { FaFilter } from "react-icons/fa";
 import ReactStars from "react-rating-stars-component";
@@ -14,11 +15,22 @@ const calificaciones = [
 function OpinionFilterForm({ filter, totalReviews, setFilter, onSearch }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFilter((prev) => ({ ...prev, [name]: value }));
+    const updated = { ...filter, [name]: value };
+    setFilter(updated);
+    debouncedSearch(updated);
   };
 
+  const debouncedSearch = useCallback(
+    debounce((updatedFilter) => {
+      onSearch(1, updatedFilter);
+    }, 500),
+    [onSearch]
+  );
+
   const handleCalificacionChange = (value) => {
-    setFilter((prev) => ({ ...prev, calificacion: String(value) }));
+    const updated = { ...filter, calificacion: String(value) };
+    setFilter(updated);
+    onSearch(1, updated);
   };
 
   return (
@@ -37,6 +49,7 @@ function OpinionFilterForm({ filter, totalReviews, setFilter, onSearch }) {
               type="text"
               value={filter.comentario}
               onChange={handleChange}
+              onBlur={() => onSearch(1, filter)}
             />
           </Form.Group>
         </Form>

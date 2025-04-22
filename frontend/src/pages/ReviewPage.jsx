@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
+import { CiLogout } from "react-icons/ci";
 import { FaComment } from "react-icons/fa";
+
 import ReactStars from "react-rating-stars-component";
 import { useNavigate, useParams } from "react-router-dom";
 import ActionButton from "../components/ActionButton";
@@ -41,12 +43,12 @@ function Reviews() {
     return result;
   }, [reviews]);
 
-  const makeRequest = async (page = 1) => {
+  const makeRequest = async (page = 1, customFilters = filter) => {
     try {
       const filters = {
         id_bar: id,
-        calificacion: Number(filter.calificacion),
-        comentario: filter.comentario,
+        calificacion: Number(customFilters.calificacion),
+        comentario: customFilters.comentario,
         page,
         perPage: pagination.perPage,
       };
@@ -121,15 +123,24 @@ function Reviews() {
 
         <Row>
           {/* Sección Filtros */}
-          <Col xs={12} md={4} lg={3}>
+          <Col xs={12} lg={4} xl={3}>
             <OpinionFilterForm
               filter={filter}
               totalReviews={reviews.length}
               setFilter={setFilter}
+              onSearch={makeRequest}
             />
+            <Button
+              variant="secondary"
+              className="my-2 w-100"
+              onClick={() => navigate("/restaurants")}
+            >
+              <CiLogout className="me-2" />
+              Regresar
+            </Button>
           </Col>
           {/* Sección Lista de opiniones */}
-          <Col xs={12} md={8} lg={9}>
+          <Col xs={12} lg={8} xl={9}>
             <OpinionList
               reviews={reviews}
               pagination={pagination}
