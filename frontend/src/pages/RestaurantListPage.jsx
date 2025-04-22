@@ -1,32 +1,105 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Card, Col, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import RestaurantFilterForm from "../components/forms/RestaurantFilterForm";
+import RestaurantCard from "../components/restaurant/RestaurantCard";
+import CustomPagination from "../components/ui/Pagination";
+import AuthService from "../services/auth.service";
+import restaurantService from "../services/restaurant.service";
 
 function RestaurantList() {
-  const [restaurantes, setRestaurantes] = useState([]);
+  const currentUser = AuthService.getCurrentUser();
+  const navigate = useNavigate();
+  const [bares, setBares] = useState([]);
+
+  const [filter, setFilter] = useState({
+    nombre: "",
+    id_facultad: "",
+    tipo_menu: "",
+  });
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    perPage: 10,
+    totalPages: 0,
+  });
+
+  const makeRequest = async (page = 1) => {
+    try {
+      const filters = {
+        nombre: filter.nombre,
+        tipo_menu: filter.tipo_menu,
+        id_facultad: filter.id_facultad,
+        activo: 1,
+        page,
+        perPage: pagination.perPage,
+      };
+
+      const { data } = await restaurantService.getAll(filters);
+
+      setBares(data.results);
+      setPagination((prev) => ({
+        ...prev,
+        currentPage: data.currentPage,
+        totalPages: data.totalPages,
+      }));
+    } catch (error) {
+      console.error("Error fetching restaurants", error);
+    }
+  };
+
+  const handleSearch = () => {
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
+    makeRequest(1);
+  };
+  const redirectTo = (restaurant) => {
+    navigate(`/restaurant/review/${restaurant.id_bar}`);
+  };
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_APP_URL}:3001/api/bar`).then((response) => {
-      setRestaurantes(response.data.bares);
-    });
+    makeRequest(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="App">
       <div className="app-container">
         <h1>Restaurantes</h1>
-        <ul>
-          {restaurantes.map((restaurant) => {
-            return (
-              <li key={restaurant.id_bar}>
-                <p>Nombre de restaurant: {restaurant.nombre}</p>
-                <p>Horario inicio: {restaurant.horario_inicio}</p>
-                <p>Horario fin: {restaurant.horario_fin}</p>
-                <p>Tipo Menu: {restaurant.tipo_menu}</p>
-                <p>Activo: {restaurant.activo ? "Sí" : "No"}</p>
-              </li>
-            );
-          })}
-        </ul>
+        <Card>
+          <Card.Body>
+            <Card.Title>Filtros</Card.Title>
+            <RestaurantFilterForm
+              filter={filter}
+              setFilter={setFilter}
+              onSearch={handleSearch}
+            />
+          </Card.Body>
+        </Card>
+
+        <Row className="mt-3">
+          {/* {Crea una card para cada restaurante en bares */}
+          {bares.map((restaurant) => (
+            <Col
+              key={restaurant.id_bar}
+              xs={12}
+              sm={6}
+              md={4}
+              lg={3}
+              className="d-flex"
+              style={{ gap: "1rem", margin: "1rem 0" }}
+            >
+              <RestaurantCard
+                restaurant={restaurant}
+                onClick={() => redirectTo(restaurant)}
+              />
+            </Col>
+          ))}
+        </Row>
+
+        <CustomPagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          onPageChange={makeRequest}
+        />
       </div>
     </div>
   );

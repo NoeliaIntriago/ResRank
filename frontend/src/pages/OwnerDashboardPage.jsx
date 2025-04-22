@@ -96,7 +96,7 @@ function OwnerDashboard() {
             />
           </Card.Body>
         </Card>
-        <ActionButton type="primary" icon={<FaPlus />} onClick={redirectTo}>
+        <ActionButton type="primary" iconLeft={<FaPlus />} onClick={redirectTo}>
           Crear Restaurante
         </ActionButton>
         <Table striped bordered hover responsive>
@@ -115,7 +115,17 @@ function OwnerDashboard() {
             {bares.map((restaurant) => (
               <tr key={restaurant.id_bar} className="align-middle text-center">
                 <td>{restaurant.nombre}</td>
-                <td>{restaurant.facultad.nombre}</td>
+                <td>
+                  <div
+                    className="custom-badge"
+                    style={{
+                      backgroundColor: restaurant.facultad.color,
+                      fontWeight: "500",
+                    }}
+                  >
+                    {restaurant.facultad.nombre}
+                  </div>
+                </td>
                 <td>{restaurant.horario_inicio}</td>
                 <td>{restaurant.horario_fin}</td>
                 <td>

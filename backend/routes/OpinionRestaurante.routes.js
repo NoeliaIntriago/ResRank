@@ -1,28 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-const { OpinionRestaurante } = require("../models");
+const { authJwt } = require("../middlewares");
+const OpinionController = require("../controllers/OpinionRestaurante.controller");
 
-router.get("/", async (req, res) => {
-  try {
-    const opiniones = await OpinionRestaurante.findAll();
-    res.json(opiniones);
-  } catch (error) {
-    console.error(error);
-    res.status(400).json(error);
-  }
-});
-
-router.post("/", async (req, res) => {
-  const body = req.body;
-
-  try {
-    const opinion = await OpinionRestaurante.create(body);
-    res.json(opinion);
-  } catch (error) {
-    console.error(error);
-    res.status(400).json(error);
-  }
-});
+router.get("/", OpinionController.getReviews);
+router.post("/", [authJwt.verifyToken], OpinionController.createReview);
 
 module.exports = router;

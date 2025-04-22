@@ -12,6 +12,10 @@ h1, h2, h3, h4, h5, h6 {
   color: #0F110C;
 }
 
+h1 {
+  font-weight: bold;
+}
+
 p {
   line-height: 1.6;
   margin-bottom: 1rem;
@@ -231,4 +235,15 @@ a:hover {
   border-color: #e5e7eb #e5e7eb #fff;
   font-weight: 600;
   box-shadow: inset 0 -2px 0 0 #059669;
+}
+
+/* Personalización de badges */
+.custom-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #fff;
 }

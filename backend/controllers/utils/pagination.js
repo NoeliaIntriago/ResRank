@@ -6,9 +6,11 @@ exports.getPagination = (page, perPage) => {
 };
 
 exports.getPagingData = (data, page, limit) => {
-  const { count: totalItems, rows: results } = data;
+  const totalItems = data?.count ?? 0;
+  const results = Array.isArray(data?.rows) ? data.rows : [];
   const currentPage = page ? +page : 1;
-  const totalPages = Math.ceil(totalItems / limit);
+  const totalPages =
+    totalItems === 0 ? 0 : Math.ceil(totalItems / (limit || 10));
 
   return { results, totalItems, totalPages, currentPage, perPage: limit };
 };
