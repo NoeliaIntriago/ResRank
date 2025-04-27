@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, Formik, Form as FormikForm } from "formik";
-import { Button, Col, Form } from "react-bootstrap";
+import { Col, Form } from "react-bootstrap";
 import * as Yup from "yup";
 import { Roles } from "../../utils/global";
 
@@ -7,9 +7,6 @@ const UserSchema = Yup.object().shape({
   nombre: Yup.string().required("Campo requerido"),
   nombre_usuario: Yup.string().min(3).max(15).required("Campo requerido"),
   correo: Yup.string().email("Correo inválido").required("Campo requerido"),
-  contrasena: Yup.string()
-    .min(6, "Mínimo 6 caracteres")
-    .max(16, "Máximo 16 caracteres"),
   celular: Yup.string().max(10).required("Campo requerido"),
   rol: Yup.mixed()
     .oneOf(Object.values(Roles), "Rol inválido")
@@ -17,14 +14,17 @@ const UserSchema = Yup.object().shape({
   matricula: Yup.string().when("rol", {
     is: Roles.ESTUDIANTE,
     then: (schema) => schema.required("Campo requerido"),
+    otherwise: (schema) => schema.notRequired(),
   }),
 });
 
-function UsuarioForm({ initialValues, onSubmit }) {
+function UsuarioForm({ initialValues, onSubmit, innerRef }) {
   return (
     <Formik
+      innerRef={innerRef}
       initialValues={initialValues}
       validationSchema={UserSchema}
+      enableReinitialize
       onSubmit={onSubmit}
     >
       {({ handleSubmit, values }) => (
@@ -144,10 +144,6 @@ function UsuarioForm({ initialValues, onSubmit }) {
               />
             </Form.Group>
           )}
-
-          <Button variant="primary" type="submit">
-            Guardar
-          </Button>
         </FormikForm>
       )}
     </Formik>
