@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Tab, Tabs } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
 import ActionButton from "../components/ActionButton";
@@ -16,6 +16,8 @@ import { showToast } from "../utils/toast";
 
 function AdminDashboard() {
   const currentUser = AuthService.getCurrentUser();
+  const usuarioFormRef = useRef();
+  const facultadFormRef = useRef();
 
   const [usuarios, setUsuarios] = useState([]);
   const [facultades, setFacultades] = useState([]);
@@ -224,15 +226,28 @@ function AdminDashboard() {
               ? `Editar ${modalInfo.type}`
               : `Agregar ${modalInfo.type}`
           }
+          primaryAction={{
+            label: "Guardar",
+            onClick: () => {
+              if (modalInfo.type === "usuario") {
+                usuarioFormRef.current?.submitForm();
+              } else if (modalInfo.type === "facultad") {
+                facultadFormRef.current?.submitForm();
+              }
+            },
+          }}
         >
           {modalInfo.type === "usuario" && (
             <UsuarioForm
+              key={modalInfo.data?.id_usuario || "nuevo"}
+              innerRef={usuarioFormRef}
               initialValues={modalInfo.data || initialUsuarioValues}
               onSubmit={handleSubmit}
             />
           )}
           {modalInfo.type === "facultad" && (
             <FacultadForm
+              innerRef={facultadFormRef}
               initialValues={modalInfo.data || initialFacultadValues}
               onSubmit={handleSubmit}
             />
