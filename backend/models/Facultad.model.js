@@ -36,5 +36,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
+  Facultad.associate = (models) => {
+    Facultad.hasMany(models.Bar, {
+      foreignKey: "id_facultad",
+      as: "restaurants",
+    });
+  };
+
   return Facultad;
 };
