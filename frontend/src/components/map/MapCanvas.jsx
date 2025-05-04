@@ -12,13 +12,10 @@ const center = {
   lng: -79.95973177634244,
 };
 
-const generarIcono = (color) => {
-  const svg = `
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="24" cy="24" r="12" fill="${color}" stroke="black" stroke-width="2"/>
-    </svg>
-  `;
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+const generarIconoPersonalizado = (facultad) => {
+  const { nombre } = facultad;
+
+  return `/icons/markers/marker_${nombre.toLowerCase()}.svg`;
 };
 
 function MapCanvas({ isLoaded, locations }) {
@@ -35,7 +32,7 @@ function MapCanvas({ isLoaded, locations }) {
               lng: Number(facultad.longitud),
             }}
             icon={{
-              url: generarIcono(facultad.color || "#f1c40f"),
+              url: generarIconoPersonalizado(facultad),
               scaledSize: new window.google.maps.Size(40, 40),
             }}
             onMouseOver={() => setSelectedFacultad(facultad)}
