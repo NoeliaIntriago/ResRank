@@ -1,31 +1,40 @@
-import axios from "axios";
+import { useJsApiLoader } from "@react-google-maps/api";
 import React, { useEffect, useState } from "react";
+import MapCanvas from "../components/map/MapCanvas";
+import { mapOptions } from "../components/map/MapSettings";
+import facultadService from "../services/facultad.service";
 
 function Locations() {
-  const [restaurantes, setRestaurantes] = useState([]);
+  const { isLoaded } = useJsApiLoader({
+    id: mapOptions.googleMapApiKey,
+    googleMapsApiKey: mapOptions.googleMapApiKey,
+  });
+
+  const [facultades, setFacultades] = useState([]);
+
+  const fetchFacultades = async () => {
+    try {
+      const response = await facultadService.getAll({
+        append_restaurants: true,
+      });
+      setFacultades(response.data);
+    } catch (error) {
+      console.error("Error fetching facultades", error);
+    }
+  };
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_APP_URL}:3001/api/bar`).then((response) => {
-      setRestaurantes(response.data);
-    });
+    fetchFacultades();
   }, []);
 
   return (
     <div className="App">
-      <h1>Ubicaciones</h1>
-      <ul>
-        {restaurantes.map((restaurant) => {
-          return (
-            <li key={restaurant.id_bar}>
-              <p>Nombre de restaurant: {restaurant.nombre}</p>
-              <p>Horario inicio: {restaurant.horario_inicio}</p>
-              <p>Horario fin: {restaurant.horario_fin}</p>
-              <p>Tipo Menu: {restaurant.tipo_menu}</p>
-              <p>Activo: {restaurant.activo ? "Sí" : "No"}</p>
-            </li>
-          );
-        })}
-      </ul>
+      <div className="app-container">
+        <h1>Ubicaciones</h1>
+        <div style={{ width: "100%", height: "100vh" }}>
+          <MapCanvas isLoaded={isLoaded} locations={facultades} />
+        </div>
+      </div>
     </div>
   );
 }

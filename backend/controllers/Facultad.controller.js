@@ -1,12 +1,22 @@
 // controllers/Facultad.controller.js
 
-const { Facultad } = require("../models");
+const { Facultad, Bar } = require("../models");
 
 exports.getAllFacultades = async (req, res) => {
   try {
+    const params = req.query;
     const facultades = await Facultad.findAll({
       order: [["nombre", "ASC"]],
+      include: params.append_restaurants
+        ? [
+            {
+              model: Bar,
+              as: "restaurants",
+            },
+          ]
+        : [],
     });
+
     res.json(facultades);
   } catch (error) {
     console.error(error);

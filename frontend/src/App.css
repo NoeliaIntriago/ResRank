@@ -23,12 +23,12 @@ p {
 
 a {
   text-decoration: none;
-  color: #059669;
+  color: #9333ea;
   transition: color 0.3s ease;
 }
 
 a:hover {
-  color: #047857;
+  color: #7e22ce;
 }
 
 /* CONTENEDOR PRINCIPAL */
@@ -62,7 +62,7 @@ a:hover {
 }
 
 .custom-navbar .navbar-brand {
-  color: #059669 !important;
+  color: #9333ea !important;
   font-size: 1.5rem;
   font-weight: bold;
   padding: 1rem 2rem;
@@ -77,18 +77,18 @@ a:hover {
 }
 
 .custom-navbar .nav-link.active {
-  border-bottom: 2px solid #059669;
-  color: #059669 !important;
+  border-bottom: 2px solid #9333ea;
+  color: #9333ea !important;
 }
 
 .custom-navbar .nav-link:hover {
-  color: #047857 !important;
+  color: #7e22ce !important;
 }
 
 /* BOTÓN CERRAR SESIÓN */
 .custom-nav-logout {
   color: #ffffff !important;
-  background-color: #059669 !important;
+  background-color: #9333ea !important;
   border: none;
   padding: 8px 16px;
   border-radius: 5px;
@@ -98,12 +98,12 @@ a:hover {
 }
 
 .custom-nav-logout:hover {
-  background-color: #047857 !important;
+  background-color: #7e22ce !important;
 }
 
 /* BOTONES DE ACCIÓN */
 .btn-main {
-  background-color: #059669 !important;
+  background-color: #9333ea !important;
   color: #ffffff !important;
   border: none;
   border-radius: 6px;
@@ -112,52 +112,60 @@ a:hover {
 }
 
 .btn-main:hover {
-  background-color: #047857 !important;
+  background-color: #7e22ce !important;
 }
 
 .btn-editar {
-  background-color: #facc15 !important;
-  color: #78350f !important;
-  border: none;
+  background-color: #ffffff !important;
+  color: #9333ea !important; 
+  border: 1px solid #9333ea !important; 
   padding: 6px 12px;
   border-radius: 5px;
   font-size: 0.9rem;
   font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .btn-editar:hover {
-  background-color: #eab308 !important;
+  background-color: #f3e8ff !important; 
+  color: #7e22ce !important; 
+  border-color: #7e22ce !important; 
 }
 
 .btn-desactivar {
-  background-color: #fda4af !important;
-  color: #881337 !important;
-  border: none;
+  background-color: #ffffff !important; 
+  color: #e11d48 !important; 
+  border: 1px solid #e11d48 !important; 
   padding: 6px 12px;
   border-radius: 5px;
   font-size: 0.9rem;
   font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .btn-desactivar:hover {
-  background-color: #f43f5e !important;
-  color: white !important;
+  background-color: #fee2e2 !important; 
+  color: #be123c !important;
+  border-color: #be123c !important;
 }
 
 .btn-activar {
-  background-color: #bbf7d0 !important;
-  color: #166534 !important;
-  border: none;
+  background-color: #ffffff !important; 
+  color: #16a34a !important; 
+  border: 1px solid #16a34a !important; 
   padding: 6px 12px;
   border-radius: 5px;
   font-size: 0.9rem;
   font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .btn-activar:hover {
-  background-color: #86efac !important;
-  color: white !important;
+  background-color: #dcfce7 !important; 
+  color: #15803d !important; 
+  border-color: #15803d !important; 
 }
+
 .btn-sm {
   padding: 4px 10px;
   font-size: 0.8rem;
@@ -211,12 +219,12 @@ a:hover {
 }
 
 .pagination .page-item .page-link {
-  color: #059669;
+  color: #9333ea;
 }
 
 .pagination .page-item.active .page-link {
-  background-color: #059669;
-  border-color: #059669;
+  background-color: #9333ea;
+  border-color: #9333ea;
   color: white;
 }
 
@@ -230,11 +238,11 @@ a:hover {
 }
 
 .nav-tabs .nav-link.active {
-  color: #059669 !important; /* verde institucional */
+  color: #9333ea !important; /* verde institucional */
   background-color: #fff;
   border-color: #e5e7eb #e5e7eb #fff;
   font-weight: 600;
-  box-shadow: inset 0 -2px 0 0 #059669;
+  box-shadow: inset 0 -2px 0 0 #9333ea;
 }
 
 /* Personalización de badges */

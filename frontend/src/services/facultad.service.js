@@ -2,8 +2,9 @@ import axios from "axios";
 import { API_ROUTES } from "./api.routes";
 import authHeader from "./auth-header";
 
-const getAll = () => {
+const getAll = (filters = {}) => {
   return axios.get(API_ROUTES.FACULTAD, {
+    params: filters,
     headers: authHeader(),
   });
 };

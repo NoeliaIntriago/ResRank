@@ -41,11 +41,9 @@ function CustomNavbar() {
                 Restaurantes
               </Nav.Link>
 
-              {userRole === Roles.ESTUDIANTE && (
-                <Nav.Link as={Link} to="/locations">
-                  Ubicaciones
-                </Nav.Link>
-              )}
+              <Nav.Link as={Link} to="/locations">
+                Ubicaciones
+              </Nav.Link>
 
               {(userRole === Roles.DUENO || userRole === Roles.ADMIN) && (
                 <Nav.Link as={Link} to="/restaurant-management">
