@@ -11,16 +11,15 @@ function Locations() {
   });
 
   const [facultades, setFacultades] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const fetchFacultades = async () => {
     try {
-      const response = await facultadService.getAll();
+      const response = await facultadService.getAll({
+        append_restaurants: true,
+      });
       setFacultades(response.data);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching facultades", error);
-      setLoading(false);
     }
   };
 
