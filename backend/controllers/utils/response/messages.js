@@ -2,6 +2,7 @@ module.exports = {
   AUTH_USER_NOT_FOUND: "El usuario no fue encontrado.",
   AUTH_INVALID_PASSWORD: "La contraseña es incorrecta.",
   AUTH_TOKEN_INVALID: "Token inválido o expirado.",
+  AUTH_NO_TOKEN_PROVIDED: "No se proporcionó un token de autenticación.",
   AUTH_SUCCESS: "Autenticación exitosa.",
   AUTH_SELF_DEACTIVATION_FORBIDDEN: "No puedes desactivar tu propia cuenta.",
 
