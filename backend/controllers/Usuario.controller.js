@@ -3,6 +3,8 @@
 const bcrypt = require("bcryptjs");
 const { Usuario, Estudiante } = require("../models");
 const logger = require("../services/logger");
+const { errorResponse, successResponse } = require("./utils/response");
+const CODE = require("./utils/response/codes");
 
 exports.getAllUsuarios = async (req, res) => {
   try {
@@ -11,8 +13,8 @@ exports.getAllUsuarios = async (req, res) => {
     });
     res.json(usuarios);
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: "Error retrieving users", error });
+    logger.error(error);
+    return errorResponse(res, CODE.SERVER.UNKNOWN, error, 500);
   }
 };
 
@@ -25,8 +27,8 @@ exports.getUsuarioById = async (req, res) => {
     });
     res.json(usuario);
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: "Error retrieving user", error });
+    logger.error(error);
+    return errorResponse(res, CODE.SERVER.UNKNOWN, error, 500);
   }
 };
 
@@ -41,9 +43,7 @@ exports.createUsuario = async (req, res) => {
     });
 
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "El nombre de usuario ya existe" });
+      return errorResponse(res, CODE.REGISTER.USERNAME_EXISTS, null, 422);
     }
 
     const userIsAdmin = await Usuario.findOne({
@@ -51,9 +51,7 @@ exports.createUsuario = async (req, res) => {
     });
 
     if (!userIsAdmin && body.rol === "admin") {
-      return res.status(403).json({
-        message: "No tienes permisos para crear un usuario administrador",
-      });
+      return errorResponse(res, CODE.AUTH.CREATE_ADMIN_FORBIDDEN, null, 403);
     }
 
     const usuario = await Usuario.create({
@@ -69,11 +67,10 @@ exports.createUsuario = async (req, res) => {
       });
     }
 
-    res.status(201).json({ usuario, message: "Usuario creado" });
+    return successResponse(res, CODE.REGISTER.SUCCESS, usuario, 201);
   } catch (error) {
-    console.error(error);
     logger.error(error);
-    res.status(400).json({ message: "Error al crear el usuario", error });
+    return errorResponse(res, CODE.SERVER.UNKNOWN, error, 500);
   }
 };
 
@@ -87,9 +84,12 @@ exports.updateUsuario = async (req, res) => {
 
     // Validar que no se esté desactivando a sí mismo
     if (usuario.nombre_usuario === usuario_modificacion && !body.activo) {
-      return res.status(400).json({
-        message: "No puedes desactivar tu propia cuenta",
-      });
+      return errorResponse(
+        res,
+        CODE.AUTH.SELF_DEACTIVATION_FORBIDDEN,
+        null,
+        403
+      );
     }
 
     const userIsAdmin = await Usuario.findOne({
@@ -97,9 +97,7 @@ exports.updateUsuario = async (req, res) => {
     });
 
     if (!userIsAdmin && body.rol === "admin") {
-      return res.status(403).json({
-        message: "No tienes permisos para crear un usuario administrador",
-      });
+      return errorResponse(res, CODE.AUTH.CREATE_ADMIN_FORBIDDEN, null, 403);
     }
 
     if (body.contrasena) {
@@ -117,10 +115,14 @@ exports.updateUsuario = async (req, res) => {
       );
     }
 
-    res.json({ message: "Usuario actualizado" });
+    return successResponse(
+      res,
+      CODE.REGISTER.SUCCESS,
+      { id_usuario: params.id, ...body },
+      200
+    );
   } catch (error) {
-    console.error(error);
     logger.error(error);
-    res.status(400).json({ message: "Error al actualizar el usuario", error });
+    return errorResponse(res, CODE.SERVER.UNKNOWN, error, 500);
   }
 };

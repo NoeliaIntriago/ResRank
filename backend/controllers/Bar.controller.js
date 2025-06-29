@@ -4,6 +4,8 @@ const { Bar, Facultad, Menu, Usuario } = require("../models");
 const { Op } = require("sequelize");
 const { getPagingData, getPagination } = require("./utils/pagination");
 const logger = require("../services/logger");
+const { errorResponse, successResponse } = require("./utils/response");
+const CODE = require("./utils/response/codes");
 
 exports.getAllBars = async (req, res) => {
   const {
@@ -33,11 +35,10 @@ exports.getAllBars = async (req, res) => {
       include: [{ model: Facultad, as: "facultad" }],
     });
 
-    res.json(getPagingData(data, page, limit));
+    return res.json(getPagingData(data, page, limit));
   } catch (error) {
     logger.error(error);
-    console.error(error);
-    res.status(400).json(error);
+    return errorResponse(res, CODE.SERVER.UNKNOWN, error, 500);
   }
 };
 
@@ -54,13 +55,13 @@ exports.getBarById = async (req, res) => {
     });
 
     if (!bar) {
-      return res.status(404).json({ message: "Bar not found" });
+      return errorResponse(res, CODE.BAR.NOT_FOUND, null, 404);
     }
 
     res.json(bar);
   } catch (error) {
-    console.error(error);
-    res.status(400).json(error);
+    logger.error(error);
+    return errorResponse(res, CODE.SERVER.UNKNOWN, error, 500);
   }
 };
 
@@ -85,10 +86,15 @@ exports.createBar = async (req, res) => {
       });
     }
 
-    res.status(201).json(bar);
+    return successResponse(
+      res,
+      CODE.BAR.CREATE_SUCCESS,
+      { id_bar: bar.id_bar, ...body },
+      201
+    );
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: "Error creating bar", error });
+    logger.error(error);
+    return errorResponse(res, CODE.BAR.CREATE_FAILED, error, 500);
   }
 };
 
@@ -115,10 +121,15 @@ exports.updateBar = async (req, res) => {
       });
     }
 
-    res.json({ message: "Bar updated" });
+    return successResponse(
+      res,
+      CODE.BAR.UPDATE_SUCCESS,
+      { id_bar: id, ...body },
+      200
+    );
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: "Error updating bar", error });
+    logger.error(error);
+    return errorResponse(res, CODE.BAR.UPDATE_FAILED, error, 500);
   }
 };
 
@@ -134,9 +145,9 @@ exports.changeStatus = async (req, res) => {
       { where: { id_bar: id } }
     );
 
-    res.json({ message: "Bar status updated" });
+    return successResponse(res, CODE.BAR.UPDATE_SUCCESS, { id_bar: id }, 200);
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: "Error updating bar status", error });
+    logger.error(error);
+    return errorResponse(res, CODE.BAR.UPDATE_FAILED, error, 500);
   }
 };

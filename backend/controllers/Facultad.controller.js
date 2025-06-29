@@ -1,6 +1,9 @@
 // controllers/Facultad.controller.js
 
 const { Facultad, Bar } = require("../models");
+const logger = require("../services/logger");
+const { errorResponse, successResponse } = require("./utils/response");
+const CODE = require("./utils/response/codes");
 
 exports.getAllFacultades = async (req, res) => {
   try {
@@ -19,8 +22,8 @@ exports.getAllFacultades = async (req, res) => {
 
     res.json(facultades);
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: "Error retrieving faculties", error });
+    logger.error(error);
+    return errorResponse(res, CODE.SERVER.UNKNOWN, error, 500);
   }
 };
 
@@ -29,10 +32,10 @@ exports.createFacultad = async (req, res) => {
 
   try {
     const facultad = await Facultad.create(body);
-    res.status(201).json({ facultad, message: "Facultad creada" });
+    return successResponse(res, CODE.FACULTAD.CREATE_SUCCESS, facultad, 201);
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: "Error al crear la facultad", error });
+    logger.error(error);
+    return errorResponse(res, CODE.FACULTAD.CREATE_FAILED, error, 500);
   }
 };
 
@@ -46,12 +49,17 @@ exports.updateFacultad = async (req, res) => {
     });
 
     if (updatedRows === 0) {
-      return res.status(404).json({ message: "Facultad not found" });
+      return errorResponse(res, CODE.FACULTAD.NOT_FOUND, null, 404);
     }
 
-    res.json({ message: "Facultad actualizada" });
+    return successResponse(
+      res,
+      CODE.FACULTAD.UPDATE_SUCCESS,
+      { id_facultad, ...body },
+      200
+    );
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ message: "Error al actualizar la facultad", error });
+    logger.error(error);
+    return errorResponse(res, CODE.FACULTAD.UPDATE_FAILED, error, 500);
   }
 };

@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { Usuario } = require("../models");
 const logger = require("../services/logger");
+const { errorResponse, successResponse } = require("./utils/response");
+const CODE = require("./utils/response/codes");
 const SECRET_KEY = process.env.SECRET_KEY;
 
 exports.signup = async (req, res) => {
@@ -13,7 +15,7 @@ exports.signup = async (req, res) => {
     // Verificar si el correo ya existe
     const correoExistente = await Usuario.findOne({ where: { correo } });
     if (correoExistente) {
-      return res.status(422).json({ error: "Correo ya registrado" });
+      return errorResponse(res, CODE.REGISTER.EMAIL_EXISTS, null, 422);
     }
 
     // Verificar si el usuario ya existe
@@ -21,7 +23,7 @@ exports.signup = async (req, res) => {
       where: { nombre_usuario },
     });
     if (usuarioExistente) {
-      return res.status(422).json({ error: "Usuario ya existe" });
+      return errorResponse(res, CODE.REGISTER.USERNAME_EXISTS, null, 422);
     }
 
     const hashedPassword = await bcrypt.hashSync(contrasena, 8);
@@ -37,15 +39,10 @@ exports.signup = async (req, res) => {
       usuario_creacion: nombre_usuario,
     });
 
-    res.status(201).json({
-      message: "Usuario registrado con éxito!",
-      usuario: nuevoUsuario,
-    });
+    successResponse(res, CODE.REGISTER.SUCCESS, nuevoUsuario, 201);
   } catch (error) {
     logger.error(error);
-    res
-      .status(500)
-      .json({ error: "Error al registrar el usuario", message: error });
+    return errorResponse(res, CODE.SERVER.UNKNOWN, error, 500);
   }
 };
 
@@ -56,16 +53,14 @@ exports.signin = async (req, res) => {
     const usuario = await Usuario.findOne({ where: { nombre_usuario } });
 
     if (!usuario) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return errorResponse(res, CODE.AUTH.USER_NOT_FOUND, null, 404);
     }
 
     // Verificar la contraseña
     const isMatch = bcrypt.compareSync(contrasena, usuario.contrasena);
 
     if (!isMatch) {
-      return res
-        .status(401)
-        .json({ accessToken: null, message: "Contraseña incorrecta" });
+      return errorResponse(res, CODE.AUTH.INVALID_PASSWORD, null, 401);
     }
 
     // Crear el token JWT
@@ -83,17 +78,10 @@ exports.signin = async (req, res) => {
       }
     );
 
-    res.status(200).json({
-      id_usuario: usuario.id_usuario,
-      nombre_usuario: usuario.nombre_usuario,
-      correo: usuario.correo,
-      rol: usuario.rol,
-      accessToken: token,
-    });
+    return successResponse(res, CODE.AUTH.SUCCESS, { token, usuario }, 200);
   } catch (error) {
-    console.error(error);
     logger.error(error);
-    res.status(500).json({ message: "Error en el servidor" });
+    return errorResponse(res, CODE.SERVER.UNKNOWN, error, 500);
   }
 };
 
@@ -101,7 +89,12 @@ exports.authenticateJWT = (req, res, next) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
-    return res.status(401).json({ error: "Acceso denegado" });
+    return errorResponse(
+      res,
+      CODE.AUTH.TOKEN_INVALID,
+      "Token no proporcionado",
+      401
+    );
   }
 
   try {
@@ -110,22 +103,6 @@ exports.authenticateJWT = (req, res, next) => {
     next();
   } catch (err) {
     logger.error(err);
-    res.status(400).json({ error: "Token no válido", message: err });
-  }
-};
-
-exports.protectedRoute = async (req, res) => {
-  try {
-    const usuario = await Usuario.findByPk(req.user.id_usuario);
-    if (!usuario) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
-    }
-
-    res.json({ usuario });
-  } catch (error) {
-    logger.error(error);
-    res
-      .status(500)
-      .json({ error: "Error al acceder a la ruta protegida", message: error });
+    return errorResponse(res, CODE.SERVER.UNKNOWN, error, 500);
   }
 };

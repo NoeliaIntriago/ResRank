@@ -3,6 +3,8 @@
 const bcrypt = require("bcryptjs");
 const { Usuario, Estudiante } = require("../models");
 const logger = require("../services/logger");
+const { errorResponse, successResponse } = require("./utils/response");
+const CODE = require("./utils/response/codes");
 
 exports.updateProfile = async (req, res) => {
   const params = req.params;
@@ -12,7 +14,7 @@ exports.updateProfile = async (req, res) => {
   try {
     const usuario = await Usuario.findByPk(params.id);
     if (!usuario) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return errorResponse(res, CODE.PROFILE.NOT_FOUND, null, 404);
     }
 
     const { nombre, nombre_usuario, correo, celular } = body;
@@ -33,11 +35,15 @@ exports.updateProfile = async (req, res) => {
     }
 
     await Usuario.update(updatedData, { where: { id_usuario: params.id } });
-    res.json({ message: "Perfil actualizado" });
+    return successResponse(
+      res,
+      CODE.PROFILE.UPDATE_SUCCESS,
+      { id_usuario: params.id, ...updatedData },
+      200
+    );
   } catch (error) {
-    console.error(error);
     logger.error(error);
-    res.status(400).json({ message: "Error al actualizar perfil", error });
+    return errorResponse(res, CODE.PROFILE.UPDATE_FAILED, error, 500);
   }
 };
 
@@ -50,23 +56,27 @@ exports.updatePassword = async (req, res) => {
   try {
     const usuario = await Usuario.findByPk(params.id);
     if (!usuario) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return errorResponse(res, CODE.PROFILE.NOT_FOUND, null, 404);
     }
     const isMatch = await bcrypt.compare(contrasena_actual, usuario.contrasena);
     if (!isMatch) {
-      return res.status(400).json({ message: "Contraseña actual incorrecta" });
+      return errorResponse(res, CODE.PROFILE.PASSWORD_MISMATCH, null, 400);
     }
+
     const hashedPassword = await bcrypt.hash(contrasena_nueva, 8);
     await Usuario.update(
       { contrasena: hashedPassword, usuario_modificacion },
       { where: { id_usuario: params.id } }
     );
-    res.json({ message: "Contraseña actualizada" });
+
+    return successResponse(
+      res,
+      CODE.PROFILE.PASSWORD_UPDATE_SUCCESS,
+      { id_usuario: params.id },
+      200
+    );
   } catch (error) {
-    console.error(error);
     logger.error(error);
-    res
-      .status(400)
-      .json({ message: "Error al actualizar la contraseña", error });
+    return errorResponse(res, CODE.SERVER.UNKNOWN, error, 500);
   }
 };

@@ -2,6 +2,8 @@ const { OpinionRestaurante, Usuario } = require("../models");
 const { Op } = require("sequelize");
 const { getPagingData, getPagination } = require("./utils/pagination");
 const logger = require("../services/logger");
+const { errorResponse, successResponse } = require("./utils/response");
+const CODE = require("./utils/response/codes");
 
 exports.getReviews = async (req, res) => {
   const {
@@ -36,8 +38,7 @@ exports.getReviews = async (req, res) => {
     res.json(getPagingData(data, page, limit));
   } catch (error) {
     logger.error(error);
-    console.error(error);
-    res.status(400).json({ message: "Error fetching reviews", error });
+    return errorResponse(res, CODE.SERVER.UNKNOWN, error, 500);
   }
 };
 
@@ -54,10 +55,9 @@ exports.createReview = async (req, res) => {
       usuario_creacion,
     });
 
-    res.status(201).json(newReview);
+    return successResponse(res, CODE.REVIEW.CREATE_SUCCESS, newReview, 201);
   } catch (error) {
     logger.error(error);
-    console.error(error);
-    res.status(400).json({ message: "Error creating review", error });
+    return errorResponse(res, CODE.REVIEW.CREATE_FAILED, error, 500);
   }
 };
