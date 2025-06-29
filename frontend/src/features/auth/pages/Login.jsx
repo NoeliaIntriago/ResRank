@@ -1,3 +1,5 @@
+import { jwtDecode } from "jwt-decode";
+import { useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { showAlert, showErrorAlert } from "../../../shared/utils/alert";
@@ -8,6 +10,28 @@ import AuthService from "../services/auth.service";
 
 function Login() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = AuthService.getToken();
+
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
+
+        if (decoded.exp > currentTime) {
+          navigate("/profile", { replace: true });
+        } else {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+        }
+      } catch (error) {
+        console.error("Token malformado:", error);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+      }
+    }
+  }, []);
 
   const loginForm = {
     nombre_usuario: "",
