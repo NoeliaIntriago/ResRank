@@ -2,36 +2,46 @@ import { jwtDecode } from "jwt-decode";
 import { Navigate } from "react-router-dom";
 import NotAuthorized from "../../features/auth/pages/NotAuthorized";
 import { Roles } from "../utils/global";
+import { showToast } from "../utils/toast";
 
 const PrivateRoute = ({ children, roles = [] }) => {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    return <Navigate to="/" />;
+    return <Navigate to="/login" replace />;
   }
 
   try {
     const decodedToken = jwtDecode(token);
     const userRole = decodedToken.rol;
-    const currentTime = Date.now() / 1000; // Tiempo actual en segundos
+    const currentTime = Date.now() / 1000;
 
-    // Verifica si el token ha expirado
+    // 🔐 Token expirado
     if (decodedToken.exp < currentTime) {
-      localStorage.removeItem("token"); // Elimina el token expirado
-      return <Navigate to="/" />;
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      showToast(
+        "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.",
+        "error"
+      );
+      return <Navigate to="/login" replace />;
     }
 
-    // Agregar el rol de ADMIN como rol permitido adicionalmente
+    // ✅ Admin puede acceder a todo
     const allowedRoles = [...roles, Roles.ADMIN];
 
-    if (!allowedRoles.includes(userRole)) {
-      return <NotAuthorized />; // Mostrar pantalla de "No Autorizado"
+    if (roles.length > 0 && !allowedRoles.includes(userRole)) {
+      return <NotAuthorized />;
     }
 
     return children;
   } catch (error) {
-    console.error("Error al decodificar el token:", error);
-    return <Navigate to="/" />;
+    console.error("Token inválido o malformado:", error);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    showToast("Sesión inválida. Por favor, vuelve a iniciar sesión.", "error");
+    return <Navigate to="/login" replace />;
   }
 };
 

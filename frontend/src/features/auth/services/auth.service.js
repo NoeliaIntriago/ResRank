@@ -1,5 +1,5 @@
-import axios from "axios";
 import { API_ROUTES } from "../../../shared/routes/api.routes";
+import axios from "../../../shared/utils/axios";
 
 const register = (payload) => {
   return axios.post(API_ROUTES.AUTH.SIGNUP, {
