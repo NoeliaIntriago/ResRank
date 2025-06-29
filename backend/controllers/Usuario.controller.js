@@ -9,7 +9,7 @@ const CODE = require("./utils/response/codes");
 exports.getAllUsuarios = async (req, res) => {
   try {
     const usuarios = await Usuario.findAll({
-      include: [{ model: Estudiante, as: "estudiante" }],
+      include: [{ model: Estudiante, as: "estudinte" }],
     });
     res.json(usuarios);
   } catch (error) {
