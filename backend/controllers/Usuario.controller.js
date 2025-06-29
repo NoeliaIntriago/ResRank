@@ -36,6 +36,26 @@ exports.createUsuario = async (req, res) => {
   try {
     const { usuario_creacion } = req.headers;
 
+    const existingUser = await Usuario.findOne({
+      where: { nombre_usuario: body.nombre_usuario },
+    });
+
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: "El nombre de usuario ya existe" });
+    }
+
+    const userIsAdmin = await Usuario.findOne({
+      where: { nombre_usuario: usuario_creacion, rol: "admin" },
+    });
+
+    if (!userIsAdmin && body.rol === "admin") {
+      return res.status(403).json({
+        message: "No tienes permisos para crear un usuario administrador",
+      });
+    }
+
     const usuario = await Usuario.create({
       ...body,
       usuario_creacion,
@@ -69,6 +89,16 @@ exports.updateUsuario = async (req, res) => {
     if (usuario.nombre_usuario === usuario_modificacion && !body.activo) {
       return res.status(400).json({
         message: "No puedes desactivar tu propia cuenta",
+      });
+    }
+
+    const userIsAdmin = await Usuario.findOne({
+      where: { nombre_usuario: usuario_modificacion, rol: "admin" },
+    });
+
+    if (!userIsAdmin && body.rol === "admin") {
+      return res.status(403).json({
+        message: "No tienes permisos para crear un usuario administrador",
       });
     }
 

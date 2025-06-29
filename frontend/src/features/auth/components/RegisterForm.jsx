@@ -112,7 +112,6 @@ function RegisterForm({ initialValues, onSubmit }) {
           <Form.Group className="mb-3" controlId="selectRol">
             <Form.Label>Rol</Form.Label>
             <Field name="rol" as="select" className="form-control">
-              <option value={Roles.ADMIN}>Administrador</option>
               <option value={Roles.DUENO}>Dueño Restaurante</option>
               <option value={Roles.ESTUDIANTE}>Estudiante</option>
             </Field>
