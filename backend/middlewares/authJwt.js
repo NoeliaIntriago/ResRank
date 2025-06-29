@@ -1,72 +1,23 @@
 const jwt = require("jsonwebtoken");
-const { Usuario } = require("../models");
+const CODE = require("../controllers/utils/response/codes");
+const { errorResponse } = require("../controllers/utils/response");
 
-verifyToken = (req, res, next) => {
-  let token = req.headers["x-access-token"];
-
+function verifyToken(req, res, next) {
+  const token = req.header("Authorization")?.split(" ")[1];
   if (!token) {
-    return res.status(403).send({
-      message: "No token provided!",
-    });
+    return errorResponse(res, CODE.AUTH.NO_TOKEN_PROVIDED, null, 401);
   }
 
-  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-    if (err) {
-      return res.status(401).send({
-        message: "Unauthorized!",
-      });
-    }
-    req.userId = decoded.id_usuario;
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    req.user = decoded;
     next();
-  });
-};
-
-isAdmin = (req, res, next) => {
-  Usuario.findByPk(req.userId).then((user) => {
-    if (user.rol === "admin") {
-      next();
-      return;
-    }
-
-    res.status(403).send({
-      message: "Require Admin Role!",
-    });
-    return;
-  });
-};
-
-isEstudiante = (req, res, next) => {
-  Usuario.findByPk(req.userId).then((user) => {
-    if (user.rol === "estudiante") {
-      next();
-      return;
-    }
-
-    res.status(403).send({
-      message: "Require Estudiante Role!",
-    });
-    return;
-  });
-};
-
-isOwner = (req, res, next) => {
-  Usuario.findByPk(req.userId).then((user) => {
-    if (user.rol === "dueno_restaurante") {
-      next();
-      return;
-    }
-
-    res.status(403).send({
-      message: "Require Owner Role!",
-    });
-    return;
-  });
-};
+  } catch (err) {
+    return errorResponse(res, CODE.AUTH.TOKEN_INVALID, null, 401);
+  }
+}
 
 const authJwt = {
   verifyToken: verifyToken,
-  isAdmin: isAdmin,
-  isEstudiante: isEstudiante,
-  isOwner: isOwner,
 };
 module.exports = authJwt;
