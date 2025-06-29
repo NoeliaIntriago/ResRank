@@ -1,5 +1,3 @@
-// src/components/forms/MenuForm.jsx
-import React from "react";
 import { Button, Col, Form, Row, Table } from "react-bootstrap";
 
 function MenuForm({ menu, newMenuItem, setNewMenuItem, addMenuItem }) {

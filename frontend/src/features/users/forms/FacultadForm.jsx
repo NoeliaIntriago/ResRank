@@ -1,5 +1,4 @@
 import { ErrorMessage, Field, Formik, Form as FormikForm } from "formik";
-import React from "react";
 import { Col, Form } from "react-bootstrap";
 
 function FacultadForm({ initialValues, onSubmit, innerRef }) {
