@@ -1,24 +1,45 @@
 const winston = require("winston");
+const stackTrace = require("stack-trace");
+const path = require("path");
 
-const { combine, timestamp, json, printf } = winston.format;
-const timestampFormat = "MMM-DD-YYYY HH:mm:ss";
+// Configuración del logger de winston
+const customFormat = winston.format.printf(
+  ({ level, message, timestamp, meta }) => {
+    const trace = stackTrace.get();
+    const caller = trace[3]; // ajusta según capas (logger > wrapper > caller > controller)
+    const fileName = path.basename(caller.getFileName());
+    const lineNumber = caller.getLineNumber();
+    const functionName = caller.getFunctionName() || "anonymous";
+
+    return `${timestamp} [${level.toUpperCase()}] (${fileName}:${lineNumber} - ${functionName}) ${message}`;
+  }
+);
 
 const logger = winston.createLogger({
-  format: combine(
-    timestamp({ format: timestampFormat }),
-    json(),
-    printf(({ timestamp, level, message, ...data }) => {
-      const response = {
-        level,
-        timestamp,
-        message,
-        data,
-      };
-
-      return JSON.stringify(response);
-    })
-  ),
-  transports: [new winston.transports.File({ filename: "logs.log" })],
+  level: "info",
+  format: winston.format.combine(winston.format.timestamp(), customFormat),
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: "logs.log" }),
+  ],
 });
 
-module.exports = logger;
+// Función para asegurar que los errores se registren como texto
+function extractMessage(message) {
+  if (message instanceof Error) return message.stack || message.message;
+  if (typeof message === "object") return JSON.stringify(message, null, 2);
+  return message;
+}
+
+// Función exportada
+const log = (level, message) => {
+  logger.log({ level, message: extractMessage(message) });
+};
+
+module.exports = {
+  log,
+  info: (msg) => log("info", msg),
+  error: (msg) => log("error", msg),
+  warn: (msg) => log("warn", msg),
+  debug: (msg) => log("debug", msg),
+};
