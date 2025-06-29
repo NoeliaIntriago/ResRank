@@ -14,7 +14,6 @@ const login = async (username, password) => {
   });
 
   const { data } = response.data;
-  console.log("Login response:", data);
   if (data.token) {
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.usuario));

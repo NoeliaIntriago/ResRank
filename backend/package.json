@@ -21,6 +21,7 @@
     "nodemon": "^3.1.4",
     "sequelize": "^6.37.3",
     "sequelize-cli": "^6.6.2",
+    "stack-trace": "1.0.0-pre2",
     "winston": "^3.17.0"
   }
 }
