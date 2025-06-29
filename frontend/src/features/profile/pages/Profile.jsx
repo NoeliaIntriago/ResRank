@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { showAlert, showErrorAlert } from "../../../shared/utils/alert";
 import { Roles } from "../../../shared/utils/global";
+import { handleApiError } from "../../../shared/utils/handleApiError";
 import AuthService from "../../auth/services/auth.service";
 import userService from "../../users/services/user.service";
 import ProfileTabs from "../components/ProfileTabs";
@@ -22,6 +23,12 @@ function Profile() {
 
   const fetchData = useCallback(async () => {
     try {
+      const alert = showAlert(
+        "Cargando datos",
+        "Por favor, espera mientras se procesa tu solicitud.",
+        "info"
+      );
+
       const { data: response } = await userService.getById(
         currentUser.id_usuario
       );
@@ -35,17 +42,27 @@ function Profile() {
         rol: response.rol,
         matricula: response.estudiante?.matricula || "",
       });
+
+      alert.close();
     } catch (error) {
       console.error("Error al cargar datos:", error);
+      const { title, message } = handleApiError(error);
+      await showErrorAlert(title, message);
     }
   }, [currentUser.id_usuario]);
 
   useEffect(() => {
-    fetchData(); // Llamamos a la función asíncrona
+    fetchData();
   }, [fetchData]);
 
   const handleProfileUpdate = async (data) => {
     try {
+      showAlert(
+        "Cargando datos",
+        "Por favor, espera mientras se procesa tu solicitud.",
+        "info"
+      );
+
       const { nombre, nombre_usuario, correo, celular } = data;
       await perfilService.updateInformacion(
         currentUser.id_usuario,
@@ -58,21 +75,24 @@ function Profile() {
         currentUser.id_usuario
       );
 
-      showAlert("Éxito", "Perfil actualizado con éxito", "success");
+      await showAlert("Éxito", "Perfil actualizado con éxito", "success");
 
-      // Refrescar los datos del usuario después de la actualización
       fetchData();
     } catch (error) {
       console.error("Error al actualizar perfil:", error);
-      showErrorAlert(
-        "Error",
-        error.response?.data?.message || "Error al actualizar el perfil"
-      );
+      const { title, message } = handleApiError(error);
+      await showErrorAlert(title, message);
     }
   };
 
   const handlePasswordUpdate = async (data) => {
     try {
+      showAlert(
+        "Cargando datos",
+        "Por favor, espera mientras se procesa tu solicitud.",
+        "info"
+      );
+
       const { contrasena_actual, contrasena_nueva } = data;
       await perfilService.updatePassword(
         currentUser.id_usuario,
@@ -83,19 +103,16 @@ function Profile() {
         currentUser.id_usuario
       );
 
-      showAlert("Éxito", "Contraseña actualizada con éxito", "success");
+      await showAlert("Éxito", "Contraseña actualizada con éxito", "success");
 
-      // lIMPIAR CAMPOS
       setUsuario((prevState) => ({
         ...prevState,
         contrasena: "",
       }));
     } catch (error) {
       console.error("Error al actualizar contraseña:", error);
-      showErrorAlert(
-        "Error",
-        error.response?.data?.message || "Error al actualizar la contraseña"
-      );
+      const { title, message } = handleApiError(error);
+      await showErrorAlert(title, message);
     }
   };
 

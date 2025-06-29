@@ -4,7 +4,9 @@ import { FaBan, FaCheck, FaEdit, FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import ActionButton from "../../../shared/components/ActionButton";
 import CustomPagination from "../../../shared/components/Pagination";
+import { showAlert, showErrorAlert } from "../../../shared/utils/alert";
 import { Roles } from "../../../shared/utils/global";
+import { handleApiError } from "../../../shared/utils/handleApiError";
 import AuthService from "../../auth/services/auth.service";
 import RestaurantFilterForm from "../../restaurants/forms/RestaurantFilterForm";
 import restaurantService from "../../restaurants/services/restaurant.service";
@@ -27,6 +29,12 @@ function OwnerDashboard() {
 
   const makeRequest = async (page = 1) => {
     try {
+      const alert = showAlert(
+        "Cargando datos",
+        "Por favor, espera mientras se procesa tu solicitud.",
+        "info"
+      );
+
       const uid = currentUser?.id_usuario;
       const rol = currentUser?.rol;
 
@@ -47,24 +55,36 @@ function OwnerDashboard() {
         currentPage: data.currentPage,
         totalPages: data.totalPages,
       }));
+
+      alert.close();
     } catch (error) {
       console.error("Error fetching restaurants", error);
+      const { title, message } = handleApiError(error);
+      await showErrorAlert(title, message);
     }
   };
 
   const handleStatus = async (data) => {
     try {
-      const response = await restaurantService.changeStatus(
+      const alert = showAlert(
+        "Cargando datos",
+        "Por favor, espera mientras se procesa tu solicitud.",
+        "info"
+      );
+
+      await restaurantService.changeStatus(
         data.id_bar,
         !data.activo,
         currentUser.nombre_usuario
       );
 
-      if (response.status === 200) {
-        makeRequest(pagination.currentPage);
-      }
+      makeRequest(pagination.currentPage);
+
+      alert.close();
     } catch (error) {
       console.error("Error updating restaurant status", error);
+      const { title, message } = handleApiError(error);
+      await showErrorAlert(title, message);
     }
   };
 

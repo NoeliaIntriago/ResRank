@@ -3,8 +3,9 @@ import { Tab, Tabs } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
 import ActionButton from "../../../shared/components/ActionButton";
 import ModalWrapper from "../../../shared/components/ModalWrapper";
-import { showErrorAlert } from "../../../shared/utils/alert";
+import { showAlert, showErrorAlert } from "../../../shared/utils/alert";
 import { Roles } from "../../../shared/utils/global";
+import { handleApiError } from "../../../shared/utils/handleApiError";
 import { showToast } from "../../../shared/utils/toast";
 import AuthService from "../../auth/services/auth.service";
 import FacultadesTable from "../../users/components/FacultadesTable";
@@ -62,6 +63,12 @@ function AdminDashboard() {
 
   const fetchData = async () => {
     try {
+      const alert = showAlert(
+        "Cargando datos",
+        "Por favor, espera mientras se procesa tu solicitud.",
+        "info"
+      );
+
       const usuariosResponse = await userService.getAll();
       setUsuarios(
         usuariosResponse.data.map((usuario) => ({
@@ -73,13 +80,17 @@ function AdminDashboard() {
 
       const facultadesResponse = await facultadService.getAll();
       setFacultades(facultadesResponse.data);
+
+      alert.close();
     } catch (error) {
       console.error("Error al cargar datos:", error);
+      const { title, message } = handleApiError(error);
+      await showErrorAlert(title, message);
     }
   };
 
   useEffect(() => {
-    fetchData(); // Llamamos a la función asíncrona
+    fetchData();
   }, []);
 
   const handleShowModal = (type, data = null) => {
@@ -94,6 +105,12 @@ function AdminDashboard() {
 
   const handleSubmit = async (values) => {
     try {
+      const alert = showAlert(
+        "Cargando datos",
+        "Por favor, espera mientras se procesa tu solicitud.",
+        "info"
+      );
+
       let response;
 
       if (modalInfo.type === "usuario") {
@@ -132,19 +149,25 @@ function AdminDashboard() {
         }
       }
 
-      showToast(response.message, "success");
+      alert.close();
+      showToast(response.data.message, "success");
       fetchData();
       handleCloseModal();
     } catch (error) {
-      showErrorAlert(
-        "Error",
-        error.response?.data?.message || "Error al guardar los datos"
-      );
+      console.error("Error al actualizar/crear datos:", error);
+      const { title, message } = handleApiError(error);
+      await showErrorAlert(title, message);
     }
   };
 
   const handleStatus = async (type, data) => {
     try {
+      const alert = showAlert(
+        "Cargando datos",
+        "Por favor, espera mientras se procesa tu solicitud.",
+        "info"
+      );
+
       let response;
 
       if (type === "usuario") {
@@ -162,15 +185,14 @@ function AdminDashboard() {
       }
 
       const message = response.data.message;
-      showToast(message, "success");
 
+      alert.close();
+      showToast(message, "success");
       fetchData();
     } catch (error) {
       console.error("Error al cambiar el estado:", error);
-      showErrorAlert(
-        "Error",
-        error.response?.data?.message || "Error al cambiar el estado"
-      );
+      const { title, message } = handleApiError(error);
+      await showErrorAlert(title, message);
     }
   };
 

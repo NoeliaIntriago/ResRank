@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import CustomPagination from "../../../shared/components/Pagination";
-import AuthService from "../../auth/services/auth.service";
+import { showAlert, showErrorAlert } from "../../../shared/utils/alert";
+import { handleApiError } from "../../../shared/utils/handleApiError";
 import RestaurantCard from "../components/RestaurantCard";
 import RestaurantFilterForm from "../forms/RestaurantFilterForm";
 import restaurantService from "../services/restaurant.service";
 
 function RestaurantList() {
-  const currentUser = AuthService.getCurrentUser();
   const navigate = useNavigate();
   const [bares, setBares] = useState([]);
 
@@ -25,6 +25,12 @@ function RestaurantList() {
 
   const makeRequest = async (page = 1) => {
     try {
+      const alert = showAlert(
+        "Cargando datos",
+        "Por favor, espera mientras se procesa tu solicitud.",
+        "info"
+      );
+
       const filters = {
         nombre: filter.nombre,
         tipo_menu: filter.tipo_menu,
@@ -42,8 +48,11 @@ function RestaurantList() {
         currentPage: data.currentPage,
         totalPages: data.totalPages,
       }));
+      alert.close();
     } catch (error) {
       console.error("Error fetching restaurants", error);
+      const { title, message } = handleApiError(error);
+      await showErrorAlert(title, message);
     }
   };
 

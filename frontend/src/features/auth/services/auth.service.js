@@ -7,20 +7,19 @@ const register = (payload) => {
   });
 };
 
-const login = (username, password) => {
-  return axios
-    .post(API_ROUTES.AUTH.LOGIN, {
-      nombre_usuario: username,
-      contrasena: password,
-    })
-    .then((response) => {
-      if (response.data.accessToken) {
-        localStorage.setItem("token", response.data.accessToken);
-        localStorage.setItem("user", JSON.stringify(response.data));
-      }
+const login = async (username, password) => {
+  const response = await axios.post(API_ROUTES.AUTH.LOGIN, {
+    nombre_usuario: username,
+    contrasena: password,
+  });
 
-      return response.data;
-    });
+  const { data } = response.data;
+  console.log("Login response:", data);
+  if (data.token) {
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.usuario));
+  }
+  return data;
 };
 
 const logout = () => {

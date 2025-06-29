@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Card, Col, Row, Tab, Tabs } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import { showAlert, showErrorAlert } from "../../../shared/utils/alert";
+import { handleApiError } from "../../../shared/utils/handleApiError";
 import {
   secondsToTimeFormat,
   timeFormatToSeconds,
@@ -17,10 +18,9 @@ function EditRestaurant() {
   const currentUser = AuthService.getCurrentUser();
 
   const { id } = useParams();
-  const isEdit = !!id; // Si existe id, entonces es edición; si no, es creación.
+  const isEdit = !!id;
   const [activeTab, setActiveTab] = useState("info");
 
-  // Estado para la información general del restaurante
   const [restaurantInfo, setRestaurantInfo] = useState({
     nombre: "",
     tipo_menu: "",
@@ -32,7 +32,6 @@ function EditRestaurant() {
     },
   });
 
-  // Estado para el menú
   const [menu, setMenu] = useState([]);
   const [newMenuItem, setNewMenuItem] = useState({
     descripcion: "",
@@ -41,19 +40,32 @@ function EditRestaurant() {
 
   useEffect(() => {
     if (isEdit) {
-      restaurantService.getById(id).then((response) => {
-        const { data } = response;
+      const alert = showAlert(
+        "Cargando datos",
+        "Por favor, espera mientras se procesa tu solicitud.",
+        "info"
+      );
 
-        setRestaurantInfo(data);
-        handleStartTimeChange(timeFormatToSeconds(data.horario_inicio));
-        handleEndTimeChange(timeFormatToSeconds(data.horario_fin));
+      restaurantService
+        .getById(id)
+        .then((response) => {
+          const { data } = response;
 
-        setMenu(data.menu);
-      });
+          setRestaurantInfo(data);
+          handleStartTimeChange(timeFormatToSeconds(data.horario_inicio));
+          handleEndTimeChange(timeFormatToSeconds(data.horario_fin));
+
+          setMenu(data.menu);
+          alert.close();
+        })
+        .catch((error) => {
+          console.error("Error al cargar datos:", error);
+          const { title, message } = handleApiError(error);
+          showErrorAlert(title, message);
+        });
     }
   }, [isEdit, id]);
 
-  // Manejar cambios en los inputs de información general
   const handleChange = (e) => {
     const { name, value } = e.target;
     setRestaurantInfo((prevInfo) => ({
@@ -62,7 +74,6 @@ function EditRestaurant() {
     }));
   };
 
-  // Manejar cambios en la hora de inicio
   const handleStartTimeChange = (time) => {
     setRestaurantInfo((prevInfo) => ({
       ...prevInfo,
@@ -70,7 +81,6 @@ function EditRestaurant() {
     }));
   };
 
-  // Manejar cambios en la hora de fin
   const handleEndTimeChange = (time) => {
     setRestaurantInfo((prevInfo) => ({
       ...prevInfo,
@@ -78,7 +88,6 @@ function EditRestaurant() {
     }));
   };
 
-  // Manejar cambio de facultad
   const handleFacultadChange = (selectedOption) => {
     setRestaurantInfo((prevInfo) => ({
       ...prevInfo,
@@ -86,19 +95,16 @@ function EditRestaurant() {
     }));
   };
 
-  // Agregar un nuevo plato al menú
   const addMenuItem = () => {
     if (newMenuItem.descripcion && newMenuItem.precio) {
       setMenu([...menu, { ...newMenuItem }]);
-      setNewMenuItem({ descripcion: "", precio: 0.0 }); // Reiniciar el formulario
+      setNewMenuItem({ descripcion: "", precio: 0.0 });
     } else {
       alert("Debe completar la descripción y el precio del plato.");
     }
   };
 
-  // Manejar el envío de los datos
-  const handleSubmit = () => {
-    // Validar campos obligatorios
+  const handleSubmit = async () => {
     if (!restaurantInfo.nombre) {
       showToast("El nombre del restaurante es obligatorio.", "error");
       return;
@@ -119,7 +125,6 @@ function EditRestaurant() {
       return;
     }
 
-    // Validar que la hora de fin sea mayor que la hora de inicio
     if (restaurantInfo.horario_fin <= restaurantInfo.horario_inicio) {
       showToast(
         "La hora de cierre debe ser mayor que la hora de inicio.",
@@ -128,13 +133,11 @@ function EditRestaurant() {
       return;
     }
 
-    // Validar que el menú tenga al menos un plato
     if (menu.length === 0) {
       showToast("Debe agregar al menos un plato al menú.", "error");
       return;
     }
 
-    // Validación adicional para cada plato del menú (ejemplo: precios válidos)
     for (let item of menu) {
       if (!item.descripcion || item.precio <= 0) {
         showToast(
@@ -153,40 +156,37 @@ function EditRestaurant() {
       menu,
     };
 
+    showAlert(
+      "Guardando datos",
+      "Por favor, espera mientras se guardan los datos.",
+      "info"
+    );
+
     if (isEdit) {
-      restaurantService
-        .update(id, payload, currentUser.nombre_usuario)
-        .then(async () => {
-          await showAlert(
-            "Guardado",
-            "Datos guardados correctamente",
-            "success"
-          );
-          navigate("/restaurant/edit/" + id);
-        })
-        .catch((error) => {
-          showErrorAlert(
-            "Error",
-            error.response?.data?.message || "Error al guardar los datos"
-          );
-        });
+      try {
+        await restaurantService.update(id, payload, currentUser.nombre_usuario);
+
+        await showAlert("Guardado", "Datos guardados correctamente", "success");
+        navigate("/restaurant/edit/" + id);
+      } catch (error) {
+        console.error("Error al guardar los datos:", error);
+        const { title, message } = handleApiError(error);
+        showErrorAlert(title, message);
+      }
     } else {
-      restaurantService
-        .create(payload, currentUser.nombre_usuario)
-        .then(async (response) => {
-          await showAlert(
-            "Guardado",
-            "Datos guardados correctamente",
-            "success"
-          );
-          navigate("/restaurant/edit/" + response.data.id_bar);
-        })
-        .catch((error) => {
-          showErrorAlert(
-            "Error",
-            error.response?.data?.message || "Error al guardar los datos"
-          );
-        });
+      try {
+        const { data: response } = await restaurantService.create(
+          payload,
+          currentUser.nombre_usuario
+        );
+
+        await showAlert("Guardado", "Datos guardados correctamente", "success");
+        navigate("/restaurant/edit/" + response.data.id_bar);
+      } catch (error) {
+        console.error("Error al guardar los datos:", error);
+        const { title, message } = handleApiError(error);
+        showErrorAlert(title, message);
+      }
     }
   };
 

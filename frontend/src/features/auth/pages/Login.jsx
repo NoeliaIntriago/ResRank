@@ -1,6 +1,7 @@
-import { Col, Container, Row } from "react-bootstrap"; // Usa los componentes necesarios de react-bootstrap
+import { Col, Container, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { showErrorAlert } from "../../../shared/utils/alert";
+import { showAlert, showErrorAlert } from "../../../shared/utils/alert";
+import { handleApiError } from "../../../shared/utils/handleApiError";
 import { showToast } from "../../../shared/utils/toast";
 import LoginForm from "../components/LoginForm";
 import AuthService from "../services/auth.service";
@@ -13,19 +14,25 @@ function Login() {
     contrasena: "",
   };
 
-  const handleLogin = (data) => {
-    AuthService.login(data.nombre_usuario, data.contrasena).then(
-      () => {
-        showToast("Inicio de sesión exitoso", "success");
-        navigate("/profile");
-      },
-      (error) => {
-        showErrorAlert(
-          "Error",
-          error.response?.data?.error || "Error al iniciar sesión"
-        );
-      }
-    );
+  const handleLogin = async (data) => {
+    try {
+      const alert = showAlert(
+        "Iniciando sesión",
+        "Por favor, espera mientras se procesa tu solicitud.",
+        "info"
+      );
+
+      await AuthService.login(data.nombre_usuario, data.contrasena);
+      showToast("Inicio de sesión exitoso", "success");
+      navigate("/profile");
+
+      alert.close();
+    } catch (error) {
+      console.error("Error mostrando alerta:", error);
+      const { title, message } = handleApiError(error);
+      await showErrorAlert(title, message);
+      return;
+    }
   };
 
   return (
